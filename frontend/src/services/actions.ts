@@ -1,44 +1,68 @@
-import store from "../store";
-import { ActionMessage } from "../types/Message";
-import { setScreenshotSrc, setUrl } from "../state/browserSlice";
-import { appendAssistantMessage } from "../state/chatSlice";
-import { setCode } from "../state/codeSlice";
-import { setInitialized } from "../state/taskSlice";
+import { addAssistantMessage, addUserMessage } from "#/state/chatSlice";
+import { setCode, setActiveFilepath } from "#/state/codeSlice";
+import { appendInput } from "#/state/commandSlice";
+import { appendJupyterInput } from "#/state/jupyterSlice";
+import { setRootTask } from "#/state/taskSlice";
+import store from "#/store";
+import ActionType from "#/types/ActionType";
+import { ActionMessage } from "#/types/Message";
+import { SocketMessage } from "#/types/ResponseType";
 import { handleObservationMessage } from "./observations";
-import { appendInput } from "../state/commandSlice";
-import { SocketMessage } from "../types/ResponseType";
-
-let isInitialized = false;
+import { getRootTask } from "./taskService";
 
 const messageActions = {
-  initialize: () => {
-    store.dispatch(setInitialized(true));
-    if (isInitialized) {
-      return;
+  [ActionType.BROWSE]: (message: ActionMessage) => {
+    store.dispatch(addAssistantMessage(message.message));
+  },
+  [ActionType.BROWSE_INTERACTIVE]: (message: ActionMessage) => {
+    if (message.args.thought) {
+      store.dispatch(addAssistantMessage(message.args.thought));
+    } else {
+      store.dispatch(addAssistantMessage(message.message));
     }
-    store.dispatch(
-      appendAssistantMessage(
-        "Hi! I'm OpenDevin, an AI Software Engineer. What would you like to build with me today?",
-      ),
-    );
-    isInitialized = true;
   },
-  browse: (message: ActionMessage) => {
-    const { url, screenshotSrc } = message.args;
-    store.dispatch(setUrl(url));
-    store.dispatch(setScreenshotSrc(screenshotSrc));
+  [ActionType.WRITE]: (message: ActionMessage) => {
+    const { path, content } = message.args;
+    store.dispatch(setActiveFilepath(path));
+    store.dispatch(setCode(content));
   },
-  write: (message: ActionMessage) => {
-    store.dispatch(setCode(message.args.content));
+  [ActionType.MESSAGE]: (message: ActionMessage) => {
+    if (message.source === "user") {
+      store.dispatch(addUserMessage(message.args.content));
+    } else {
+      store.dispatch(addAssistantMessage(message.args.content));
+    }
   },
-  think: (message: ActionMessage) => {
-    store.dispatch(appendAssistantMessage(message.args.thought));
+  [ActionType.FINISH]: (message: ActionMessage) => {
+    store.dispatch(addAssistantMessage(message.message));
   },
-  finish: (message: ActionMessage) => {
-    store.dispatch(appendAssistantMessage(message.message));
+  [ActionType.REJECT]: (message: ActionMessage) => {
+    store.dispatch(addAssistantMessage(message.message));
   },
-  run: (message: ActionMessage) => {
+  [ActionType.DELEGATE]: (message: ActionMessage) => {
+    store.dispatch(addAssistantMessage(message.message));
+  },
+  [ActionType.RUN]: (message: ActionMessage) => {
+    if (message.args.thought) {
+      store.dispatch(addAssistantMessage(message.args.thought));
+    }
     store.dispatch(appendInput(message.args.command));
+  },
+  [ActionType.RUN_IPYTHON]: (message: ActionMessage) => {
+    if (message.args.thought) {
+      store.dispatch(addAssistantMessage(message.args.thought));
+    }
+    store.dispatch(appendJupyterInput(message.args.code));
+  },
+  [ActionType.ADD_TASK]: () => {
+    getRootTask().then((fetchedRootTask) =>
+      store.dispatch(setRootTask(fetchedRootTask)),
+    );
+  },
+  [ActionType.MODIFY_TASK]: () => {
+    getRootTask().then((fetchedRootTask) =>
+      store.dispatch(setRootTask(fetchedRootTask)),
+    );
   },
 };
 

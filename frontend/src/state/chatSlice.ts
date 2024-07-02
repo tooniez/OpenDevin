@@ -1,68 +1,39 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export type Message = {
-  content: string;
-  sender: "user" | "assistant";
+type SliceState = { messages: Message[] };
+
+const initialState: SliceState = {
+  messages: [],
 };
 
-const initialMessages: Message[] = [];
-const queuedMessages: number[] = [];
-const currentQueueMarker: number = 0;
 export const chatSlice = createSlice({
   name: "chat",
-  initialState: {
-    messages: initialMessages,
-    queuedTyping: queuedMessages,
-    typingActive: false,
-    currentTypingMessage: "",
-    currentQueueMarker,
-    userMessages: initialMessages,
-    assistantMessages: initialMessages,
-    newChatSequence: initialMessages,
-  },
+  initialState,
   reducers: {
-    appendUserMessage: (state, action) => {
-      state.messages.push({ content: action.payload, sender: "user" });
-      state.userMessages.push({ content: action.payload, sender: "user" });
-      state.newChatSequence.push({ content: action.payload, sender: "user" });
-    },
-    appendAssistantMessage: (state, action) => {
-      state.messages.push({ content: action.payload, sender: "assistant" });
-      state.assistantMessages.push({
+    addUserMessage(state, action: PayloadAction<string>) {
+      const message: Message = {
+        sender: "user",
         content: action.payload,
+      };
+
+      state.messages.push(message);
+    },
+
+    addAssistantMessage(state, action: PayloadAction<string>) {
+      const message: Message = {
         sender: "assistant",
-      });
-      // state.queuedTyping.push(action.payload);
-      const assistantMessageIndex = state.messages.length - 1;
-      state.queuedTyping.push(assistantMessageIndex);
+        content: action.payload,
+      };
+
+      state.messages.push(message);
     },
-    setCurrentQueueMarker: (state, action) => {
-      state.currentQueueMarker = action.payload;
-    },
-    toggleTypingActive: (state, action) => {
-      state.typingActive = action.payload;
-    },
-    emptyOutQueuedTyping: (state) => {
-      state.queuedTyping = [];
-    },
-    setCurrentTypingMessage: (state, action) => {
-      state.currentTypingMessage = action.payload;
-      // state.currentQueueMarker += 1;
-    },
-    appendToNewChatSequence: (state, action) => {
-      state.newChatSequence.push(action.payload);
+
+    clearMessages(state) {
+      state.messages = [];
     },
   },
 });
 
-export const {
-  appendUserMessage,
-  appendAssistantMessage,
-  toggleTypingActive,
-  emptyOutQueuedTyping,
-  setCurrentTypingMessage,
-  setCurrentQueueMarker,
-  appendToNewChatSequence,
-} = chatSlice.actions;
-
+export const { addUserMessage, addAssistantMessage, clearMessages } =
+  chatSlice.actions;
 export default chatSlice.reducer;

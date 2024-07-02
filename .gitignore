@@ -57,7 +57,6 @@ cover/
 *.pot
 
 # Django stuff:
-*.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -127,6 +126,7 @@ env/
 venv/
 ENV/
 env.bak/
+.env.bak
 venv.bak/
 *venv/
 
@@ -161,9 +161,14 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
 .vscode/
+.cursorignore
 
 # evaluation
+evaluation/evaluation_outputs
+evaluation/outputs
+evaluation/swe_bench/eval_workspace*
 evaluation/SWE-bench/data
+evaluation/webarena/scripts/webarena_env.sh
 
 # frontend
 
@@ -176,6 +181,8 @@ frontend/yarn.lock
 
 # testing
 frontend/coverage
+test_results*
+/_test_files_tmp/
 
 # production
 frontend/build
@@ -197,8 +204,16 @@ logs
 # agent
 .envrc
 /workspace
+/_test_workspace
 /debug
 cache
 
 # configuration
 config.toml
+config.toml.bak
+
+containers/agnostic_sandbox
+
+# swe-bench-eval
+image_build_logs
+run_instance_logs

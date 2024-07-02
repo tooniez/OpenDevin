@@ -1,80 +1,114 @@
-import React, { useEffect, useState } from "react";
+import { useDisclosure } from "@nextui-org/react";
+import React, { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
+import CogTooth from "#/assets/cog-tooth";
+import ChatInterface from "#/components/chat/ChatInterface";
+import Errors from "#/components/Errors";
+import { Container, Orientation } from "#/components/Resizable";
+import Workspace from "#/components/Workspace";
+import LoadPreviousSessionModal from "#/components/modals/load-previous-session/LoadPreviousSessionModal";
+import SettingsModal from "#/components/modals/settings/SettingsModal";
 import "./App.css";
-import { useSelector } from "react-redux";
-import CogTooth from "./assets/cog-tooth";
-import ChatInterface from "./components/ChatInterface";
-import Errors from "./components/Errors";
-import SettingModal from "./components/SettingModal";
-import Terminal from "./components/Terminal";
-import Workspace from "./components/Workspace";
-import store, { RootState } from "./store";
-import { setInitialized } from "./state/globalSlice";
-import { fetchMsgTotal } from "./services/session";
-import LoadMessageModal from "./components/LoadMessageModal";
-import { ResFetchMsgTotal } from "./types/ResponseType";
+import AgentControlBar from "./components/AgentControlBar";
+import AgentStatusBar from "./components/AgentStatusBar";
+import VolumeIcon from "./components/VolumeIcon";
+import Terminal from "./components/terminal/Terminal";
+import Session from "#/services/session";
+import { getToken } from "#/services/auth";
+import { settingsAreUpToDate } from "#/services/settings";
 
 interface Props {
   setSettingOpen: (isOpen: boolean) => void;
 }
 
-function LeftNav({ setSettingOpen }: Props): JSX.Element {
+function Controls({ setSettingOpen }: Props): JSX.Element {
   return (
-    <div className="flex flex-col h-full p-4 bg-bg-dark w-16 items-center shrink-0">
-      <div
-        className="mt-auto cursor-pointer hover:opacity-80"
-        onClick={() => setSettingOpen(true)}
-      >
-        <CogTooth />
+    <div className="flex w-full p-4 bg-neutral-900 items-center shrink-0 justify-between">
+      <div className="flex items-center gap-4">
+        <AgentControlBar />
+      </div>
+      <AgentStatusBar />
+
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ marginRight: "8px" }}>
+          <VolumeIcon />
+        </div>
+        <div
+          className="cursor-pointer hover:opacity-80 transition-all"
+          onClick={() => setSettingOpen(true)}
+        >
+          <CogTooth />
+        </div>
       </div>
     </div>
   );
 }
 
+// React.StrictMode will cause double rendering, use this to prevent it
+let initOnce = false;
+
 function App(): JSX.Element {
-  const { initialized } = useSelector((state: RootState) => state.global);
-  const [settingOpen, setSettingOpen] = useState(false);
-  const [loadMsgWarning, setLoadMsgWarning] = useState(false);
+  const {
+    isOpen: settingsModalIsOpen,
+    onOpen: onSettingsModalOpen,
+    onOpenChange: onSettingsModalOpenChange,
+  } = useDisclosure();
+
+  const {
+    isOpen: loadPreviousSessionModalIsOpen,
+    onOpen: onLoadPreviousSessionModalOpen,
+    onOpenChange: onLoadPreviousSessionModalOpenChange,
+  } = useDisclosure();
 
   useEffect(() => {
-    if (!initialized) {
-      fetchMsgTotal()
-        .then((data: ResFetchMsgTotal) => {
-          if (data.msg_total > 0) {
-            setLoadMsgWarning(true);
-          }
-          store.dispatch(setInitialized(true));
-        })
-        .catch();
+    if (initOnce) return;
+    initOnce = true;
+
+    if (!settingsAreUpToDate()) {
+      onSettingsModalOpen();
+    } else if (getToken()) {
+      onLoadPreviousSessionModalOpen();
+    } else {
+      Session.startNewSession();
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleCloseModal = () => {
-    setSettingOpen(false);
-  };
-
   return (
-    <div className="flex h-screen bg-bg-dark text-white">
-      <LeftNav setSettingOpen={setSettingOpen} />
-      <div className="flex flex-col grow gap-3 py-3 pr-3">
-        <div className="flex gap-3 grow min-h-0">
-          <div className="w-[500px] shrink-0 rounded-xl overflow-hidden border border-border">
-            <ChatInterface />
-          </div>
-          <div className="flex flex-col flex-1 overflow-hidden rounded-xl bg-bg-workspace border border-border">
-            <Workspace />
-          </div>
-        </div>
-        <div className="h-72 shrink-0 bg-bg-workspace rounded-xl border border-border flex flex-col">
-          <Terminal key="terminal" />
-        </div>
+    <div className="h-screen w-screen flex flex-col">
+      <div className="flex grow bg-neutral-900 text-white min-h-0">
+        <Container
+          orientation={Orientation.HORIZONTAL}
+          className="grow h-full min-h-0 min-w-0 px-3 pt-3"
+          initialSize={500}
+          firstChild={<ChatInterface />}
+          firstClassName="min-w-[500px] rounded-xl overflow-hidden border border-neutral-600"
+          secondChild={
+            <Container
+              orientation={Orientation.VERTICAL}
+              className="grow h-full min-h-0 min-w-0"
+              initialSize={window.innerHeight - 300}
+              firstChild={<Workspace />}
+              firstClassName="min-h-72 rounded-xl border border-neutral-600 bg-neutral-800 flex flex-col overflow-hidden"
+              secondChild={<Terminal />}
+              secondClassName="min-h-72 rounded-xl border border-neutral-600 bg-neutral-800"
+            />
+          }
+          secondClassName="flex flex-col overflow-hidden grow min-w-[500px]"
+        />
       </div>
-      <SettingModal isOpen={settingOpen} onClose={handleCloseModal} />
-
-      <LoadMessageModal
-        isOpen={loadMsgWarning}
-        onClose={() => setLoadMsgWarning(false)}
+      <Controls setSettingOpen={onSettingsModalOpen} />
+      <SettingsModal
+        isOpen={settingsModalIsOpen}
+        onOpenChange={onSettingsModalOpenChange}
+      />
+      <LoadPreviousSessionModal
+        isOpen={loadPreviousSessionModalIsOpen}
+        onOpenChange={onLoadPreviousSessionModalOpenChange}
       />
       <Errors />
+      <Toaster />
     </div>
   );
 }
