@@ -69,7 +69,8 @@
 - OpenHands repo bootstrap files live under `.openhands/`:
   - `.openhands/setup.sh` installs frontend dependencies with `npm ci` when needed, creates `.env` from `.env.sample` if missing, appends `VITE_WORKING_DIR` for this repo when unset, and generates `src/i18n/declaration.ts` via `npm run make-i18n`.
   - `.openhands/pre-commit.sh` mirrors the repo's local quality gate with `npm run lint && npm run test`.
-- `.github/workflows/pr-review.yml` mirrors the OpenHands/extensions PR review workflow: it auto-runs for newly opened non-draft PRs and `ready_for_review` events from established contributors, still supports the `review-this` label / `openhands-agent` / `all-hands-bot` reviewer triggers, uses the OpenHands app LLM proxy defaults, and expects `LLM_API_KEY`, `OPENHANDS_BOT_GITHUB_PAT_PUBLIC`, and optional `LMNR_SKILLS_API_KEY` repository secrets.
+- GitHub PR-review automation should stay aligned with the current OpenHands repo conventions: keep the review workflow at `.github/workflows/pr-review-by-openhands.yml`, keep the companion `.github/workflows/pr-review-evaluation.yml`, auto-run on newly opened non-draft PRs and `ready_for_review` events from established contributors, still support the `review-this` label / `openhands-agent` / `all-hands-bot` reviewer triggers, use the OpenHands app LLM proxy defaults, and use the dual-trigger pattern (`pull_request` for same-repo PRs, `pull_request_target` for forks) so workflow changes can self-verify without widening fork secret exposure.
+
 - HeroUI v3 migration notes:
   - The repo now uses `@heroui/react@3.0.3` plus `@heroui/styles@3.0.3`.
   - `src/tailwind.css` should import `@heroui/styles`; the old `hero.ts` Tailwind plugin file was removed and should not be reintroduced.
