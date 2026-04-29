@@ -69,7 +69,7 @@
 - OpenHands repo bootstrap files live under `.openhands/`:
   - `.openhands/setup.sh` installs frontend dependencies with `npm ci` when needed, creates `.env` from `.env.sample` if missing, appends `VITE_WORKING_DIR` for this repo when unset, and generates `src/i18n/declaration.ts` via `npm run make-i18n`.
   - `.openhands/pre-commit.sh` mirrors the repo's local quality gate with `npm run lint && npm run test`.
-- `.github/workflows/pr-review.yml` is configured for on-demand OpenHands reviews only (`review-this` label or requesting `openhands-agent` / `all-hands-bot`), uses the OpenHands app LLM proxy defaults, and expects a repository `LLM_API_KEY` secret.
+- `.github/workflows/pr-review.yml` mirrors the OpenHands/extensions PR review workflow: it auto-runs for newly opened non-draft PRs and `ready_for_review` events from established contributors, still supports the `review-this` label / `openhands-agent` / `all-hands-bot` reviewer triggers, uses the OpenHands app LLM proxy defaults, and expects `LLM_API_KEY`, `OPENHANDS_BOT_GITHUB_PAT_PUBLIC`, and optional `LMNR_SKILLS_API_KEY` repository secrets.
 - HeroUI rollback / migration notes:
   - The attempted HeroUI v3 upgrade changed global theme wiring and homepage design tokens enough that the repo currently prefers `@heroui/react@2.8.10` until a broader visual validation pass is done.
   - Keep the v2 Tailwind integration active via `@plugin '../hero.ts'` in `src/tailwind.css` and source HeroUI classes from `node_modules/@heroui/theme/dist/**/*`.
