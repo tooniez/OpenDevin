@@ -10,3 +10,4 @@ build/
 /playwright/.cache/
 .react-router/
 ralph/
+.vercel

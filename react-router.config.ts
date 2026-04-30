@@ -1,4 +1,5 @@
 import type { Config } from "@react-router/dev/config";
+import { vercelPreset } from "@vercel/react-router/vite";
 
 /**
  * This script is used to unpack the client directory from the frontend build directory.
@@ -9,6 +10,11 @@ import type { Config } from "@react-router/dev/config";
  * This script is used in the buildEnd function of the Vite config.
  */
 const unpackClientDirectory = async () => {
+  if (process.env.VERCEL) {
+    // Vercel's React Router builder reads static assets from build/client.
+    return;
+  }
+
   const fs = await import("fs");
   const path = await import("path");
 
@@ -31,5 +37,6 @@ const unpackClientDirectory = async () => {
 export default {
   appDirectory: "src",
   buildEnd: unpackClientDirectory,
+  presets: [vercelPreset()],
   ssr: false,
 } satisfies Config;
