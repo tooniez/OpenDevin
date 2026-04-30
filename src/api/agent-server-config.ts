@@ -1,4 +1,4 @@
-const STORAGE_KEY = "openhands-agent-server-config";
+export const AGENT_SERVER_CONFIG_STORAGE_KEY = "openhands-agent-server-config";
 
 interface StoredAgentServerConfig {
   baseUrl?: string | null;
@@ -6,17 +6,51 @@ interface StoredAgentServerConfig {
   workingDir?: string | null;
 }
 
+export interface AgentServerFormDefaults {
+  baseUrl: string;
+  sessionApiKey: string;
+}
+
 function readStoredConfig(): StoredAgentServerConfig {
   if (typeof window === "undefined") return {};
 
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = window.localStorage.getItem(AGENT_SERVER_CONFIG_STORAGE_KEY);
     if (!raw) return {};
     const parsed = JSON.parse(raw) as StoredAgentServerConfig;
     return parsed ?? {};
   } catch {
     return {};
   }
+}
+
+function writeStoredConfig(config: StoredAgentServerConfig): void {
+  if (typeof window === "undefined") return;
+
+  const nextConfig = Object.fromEntries(
+    Object.entries(config).flatMap(([key, value]) => {
+      if (typeof value !== "string") return [];
+
+      const trimmed = value.trim();
+      if (!trimmed) return [];
+
+      return [[key, trimmed]];
+    }),
+  ) as StoredAgentServerConfig;
+
+  if (Object.keys(nextConfig).length === 0) {
+    window.localStorage.removeItem(AGENT_SERVER_CONFIG_STORAGE_KEY);
+    return;
+  }
+
+  window.localStorage.setItem(
+    AGENT_SERVER_CONFIG_STORAGE_KEY,
+    JSON.stringify(nextConfig),
+  );
+}
+
+function trimToNull(value?: string | null): string | null {
+  return value?.trim() || null;
 }
 
 function normalizeBaseUrl(value?: string | null): string | null {
@@ -36,6 +70,20 @@ function normalizeBaseUrl(value?: string | null): string | null {
   return `http://${trimmed}`;
 }
 
+function getConfiguredBaseUrl(): string | null {
+  const storedUrl = normalizeBaseUrl(readStoredConfig().baseUrl);
+  if (storedUrl) return storedUrl;
+
+  return normalizeBaseUrl(import.meta.env.VITE_BACKEND_BASE_URL);
+}
+
+function getConfiguredSessionApiKey(): string | null {
+  const storedKey = trimToNull(readStoredConfig().sessionApiKey);
+  if (storedKey) return storedKey;
+
+  return trimToNull(import.meta.env.VITE_SESSION_API_KEY);
+}
+
 function shouldUseProxyOrigin(baseUrl: string): boolean {
   if (typeof window === "undefined") {
     return false;
@@ -47,8 +95,7 @@ function shouldUseProxyOrigin(baseUrl: string): boolean {
     const browserHostname = window.location.hostname;
 
     return (
-      localHosts.has(configuredUrl.hostname) &&
-      !localHosts.has(browserHostname)
+      localHosts.has(configuredUrl.hostname) && !localHosts.has(browserHostname)
     );
   } catch {
     return false;
@@ -67,16 +114,26 @@ function resolveAgentServerBaseUrl(baseUrl: string | null): string | null {
   return baseUrl;
 }
 
-export function getAgentServerBaseUrl(): string {
-  const envUrl = resolveAgentServerBaseUrl(
-    normalizeBaseUrl(import.meta.env.VITE_BACKEND_BASE_URL),
-  );
-  if (envUrl) return envUrl;
+export function getAgentServerFormDefaults(): AgentServerFormDefaults {
+  return {
+    baseUrl: getConfiguredBaseUrl() ?? "",
+    sessionApiKey: getConfiguredSessionApiKey() ?? "",
+  };
+}
 
-  const storedUrl = resolveAgentServerBaseUrl(
-    normalizeBaseUrl(readStoredConfig().baseUrl),
-  );
-  if (storedUrl) return storedUrl;
+export function saveAgentServerConfig(config: AgentServerFormDefaults): void {
+  const currentConfig = readStoredConfig();
+
+  writeStoredConfig({
+    ...currentConfig,
+    baseUrl: normalizeBaseUrl(config.baseUrl),
+    sessionApiKey: trimToNull(config.sessionApiKey),
+  });
+}
+
+export function getAgentServerBaseUrl(): string {
+  const configuredUrl = resolveAgentServerBaseUrl(getConfiguredBaseUrl());
+  if (configuredUrl) return configuredUrl;
 
   if (typeof window !== "undefined") {
     return window.location.origin;
@@ -86,13 +143,7 @@ export function getAgentServerBaseUrl(): string {
 }
 
 export function getAgentServerSessionApiKey(): string | null {
-  const envKey = import.meta.env.VITE_SESSION_API_KEY?.trim();
-  if (envKey) return envKey;
-
-  const storedKey = readStoredConfig().sessionApiKey?.trim();
-  if (storedKey) return storedKey;
-
-  return null;
+  return getConfiguredSessionApiKey();
 }
 
 export function getAgentServerWorkingDir(): string {

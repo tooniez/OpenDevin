@@ -63,6 +63,7 @@
   - A successful end-to-end live run in this environment required a real LLM config (`LLM_MODEL` + `LLM_API_KEY`). The default `litellm_proxy/...` model with no `llm_api_key` failed at runtime with a `litellm.AuthenticationError`.
 
 - Git provider token persistence note: this direct-agent-server frontend now persists `Settings > Git` provider tokens locally in browser storage instead of posting to an app-backend secrets route. `src/api/secrets-service.ts` writes the token payload to localStorage, mirrors provider hosts into `provider_tokens_set` through `SettingsService.saveSettings()`, and `use-delete-git-providers` clears that local state.
+- Agent server connection settings now live at `Settings > Agent Server` (`/settings/agent-server`). The page reads deployment defaults from `VITE_BACKEND_BASE_URL` / `VITE_SESSION_API_KEY`, saves user overrides in the `openhands-agent-server-config` localStorage key, and must stay reachable even when the backend compatibility probe fails so users can recover from missing or wrong backend configuration.
 
 - README expectation: keep the first section as a concrete, chronological from-scratch quickstart for running this frontend against a real `openhands-agent-server` (clone, install backend, optional `.env`, run `npm run dev`).
 - Keep README user-focused and move contributor/developer-specific workflows (Cloud sandbox debugging, `dev:safe`, mock mode, detailed env vars/build-test notes) into `DEVELOPMENT.md`.

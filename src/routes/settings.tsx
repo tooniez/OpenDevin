@@ -18,6 +18,10 @@ export const clientLoader = async ({ request }: Route.ClientLoaderArgs) => {
   const url = new URL(request.url);
   const { pathname } = url;
 
+  if (pathname === "/settings/agent-server") {
+    return null;
+  }
+
   const config = await queryClient.fetchQuery<WebClientConfig>({
     queryKey: QUERY_KEYS.WEB_CLIENT_CONFIG,
     queryFn: OptionService.getConfig,
@@ -63,7 +67,9 @@ function SettingsScreen() {
     <main data-testid="settings-screen" className="h-full">
       <SettingsLayout navigationItems={navItems}>
         <div className="flex flex-col gap-6 h-full">
-          {!shouldHideTitle && <Typography.H2>{t(currentSectionTitle)}</Typography.H2>}
+          {!shouldHideTitle && (
+            <Typography.H2>{t(currentSectionTitle)}</Typography.H2>
+          )}
           <div className="flex-1 overflow-auto custom-scrollbar-always">
             <Outlet />
           </div>

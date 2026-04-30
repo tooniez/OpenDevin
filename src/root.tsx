@@ -1,10 +1,12 @@
 import {
+  Link,
   Links,
   Meta,
   MetaFunction,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 import "./tailwind.css";
 import "./index.css";
@@ -55,6 +57,7 @@ function AgentServerNotice({
         data-testid={testId}
         className="w-full max-w-2xl rounded-2xl border border-danger/30 bg-neutral-900/80 p-8 shadow-2xl"
       >
+        {/* eslint-disable-next-line i18next/no-literal-string */}
         <p className="text-sm font-medium uppercase tracking-[0.24em] text-danger">
           Connection blocked
         </p>
@@ -63,6 +66,18 @@ function AgentServerNotice({
         {children}
       </div>
     </main>
+  );
+}
+
+function ConfigureAgentServerLink() {
+  return (
+    <Link
+      to="/settings/agent-server"
+      className="mt-6 inline-flex w-fit items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
+    >
+      {/* eslint-disable-next-line i18next/no-literal-string */}
+      Configure agent server
+    </Link>
   );
 }
 
@@ -79,9 +94,11 @@ function UnsupportedAgentServerNotice({
     >
       {error.serverVersion && (
         <p className="mt-4 text-sm text-neutral-400">
+          {/* eslint-disable-next-line i18next/no-literal-string */}
           Detected version: <code>{error.serverVersion}</code>
         </p>
       )}
+      <ConfigureAgentServerLink />
     </AgentServerNotice>
   );
 }
@@ -99,9 +116,11 @@ function MissingAgentServerNotice({
     >
       {error.details && (
         <p className="mt-4 text-sm text-neutral-400">
+          {/* eslint-disable-next-line i18next/no-literal-string */}
           Details: {error.details}
         </p>
       )}
+      <ConfigureAgentServerLink />
     </AgentServerNotice>
   );
 }
@@ -112,13 +131,22 @@ export const meta: MetaFunction = () => [
 ];
 
 export default function App() {
+  const location = useLocation();
   const config = useConfig({ enabled: true });
+  const isAgentServerSettingsRoute =
+    location.pathname === "/settings/agent-server";
 
-  if (isAgentServerUnavailableError(config.error)) {
+  if (
+    !isAgentServerSettingsRoute &&
+    isAgentServerUnavailableError(config.error)
+  ) {
     return <MissingAgentServerNotice error={config.error} />;
   }
 
-  if (isAgentServerIncompatibilityError(config.error)) {
+  if (
+    !isAgentServerSettingsRoute &&
+    isAgentServerIncompatibilityError(config.error)
+  ) {
     return <UnsupportedAgentServerNotice error={config.error} />;
   }
 

@@ -70,6 +70,19 @@ describe("settings route", () => {
     expect(response.headers.get("Location")).toBe("/settings/mcp");
   });
 
+  it("skips backend config loading for the agent server settings route", async () => {
+    const getConfigSpy = vi.spyOn(OptionService, "getConfig");
+
+    const result = await clientLoader({
+      request: new Request("http://localhost/settings/agent-server"),
+      params: {},
+      context: {},
+    } as never);
+
+    expect(result).toBeNull();
+    expect(getConfigSpy).not.toHaveBeenCalled();
+  });
+
   it("renders the current OSS section title", () => {
     const RouterStub = createRoutesStub([
       {
@@ -90,7 +103,9 @@ describe("settings route", () => {
       </QueryClientProvider>,
     );
 
-    expect(screen.getAllByText("SETTINGS$NAV_APPLICATION").length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText("SETTINGS$NAV_APPLICATION").length,
+    ).toBeGreaterThan(0);
     expect(screen.getByTestId("app-settings-screen")).toBeInTheDocument();
   });
 });

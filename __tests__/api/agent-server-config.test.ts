@@ -1,7 +1,12 @@
-import { afterEach, describe, expect, it } from "vitest";
-import { getAgentServerBaseUrl } from "#/api/agent-server-config";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  AGENT_SERVER_CONFIG_STORAGE_KEY,
+  getAgentServerBaseUrl,
+  getAgentServerFormDefaults,
+  getAgentServerSessionApiKey,
+  saveAgentServerConfig,
+} from "#/api/agent-server-config";
 
-const STORAGE_KEY = "openhands-agent-server-config";
 const ORIGINAL_LOCATION = window.location;
 
 function mockWindowLocation(url: string) {
@@ -13,17 +18,18 @@ function mockWindowLocation(url: string) {
 
 afterEach(() => {
   window.localStorage.clear();
+  vi.unstubAllEnvs();
   Object.defineProperty(window, "location", {
     configurable: true,
     value: ORIGINAL_LOCATION,
   });
 });
 
-describe("getAgentServerBaseUrl", () => {
+describe("agent server config", () => {
   it("uses the browser origin when a remote browser is pointed at localhost backend config", () => {
     mockWindowLocation("https://work-1.example.dev/settings");
     window.localStorage.setItem(
-      STORAGE_KEY,
+      AGENT_SERVER_CONFIG_STORAGE_KEY,
       JSON.stringify({ baseUrl: "http://127.0.0.1:8000" }),
     );
 
@@ -33,11 +39,38 @@ describe("getAgentServerBaseUrl", () => {
   it("preserves a non-local backend URL from stored config", () => {
     mockWindowLocation("https://work-1.example.dev/settings");
     window.localStorage.setItem(
-      STORAGE_KEY,
+      AGENT_SERVER_CONFIG_STORAGE_KEY,
       JSON.stringify({ baseUrl: "https://agent.example.com" }),
     );
 
     expect(getAgentServerBaseUrl()).toBe("https://agent.example.com");
   });
-});
 
+  it("prefills the settings form from environment defaults when local settings are empty", () => {
+    vi.stubEnv("VITE_BACKEND_BASE_URL", "https://env-agent.example.com/");
+    vi.stubEnv("VITE_SESSION_API_KEY", "env-session-key");
+
+    expect(getAgentServerFormDefaults()).toEqual({
+      baseUrl: "https://env-agent.example.com",
+      sessionApiKey: "env-session-key",
+    });
+    expect(getAgentServerSessionApiKey()).toBe("env-session-key");
+  });
+
+  it("lets saved interface settings override environment defaults", () => {
+    vi.stubEnv("VITE_BACKEND_BASE_URL", "https://env-agent.example.com");
+    vi.stubEnv("VITE_SESSION_API_KEY", "env-session-key");
+
+    saveAgentServerConfig({
+      baseUrl: "https://saved-agent.example.com/",
+      sessionApiKey: "saved-session-key ",
+    });
+
+    expect(getAgentServerFormDefaults()).toEqual({
+      baseUrl: "https://saved-agent.example.com",
+      sessionApiKey: "saved-session-key",
+    });
+    expect(getAgentServerBaseUrl()).toBe("https://saved-agent.example.com");
+    expect(getAgentServerSessionApiKey()).toBe("saved-session-key");
+  });
+});
