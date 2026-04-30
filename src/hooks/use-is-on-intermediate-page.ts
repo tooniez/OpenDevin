@@ -1,6 +1,6 @@
 import { useLocation } from "react-router";
 
-const INTERMEDIATE_PAGE_PATHS: string[] = [];
+const INTERMEDIATE_PAGE_PATHS = ["/settings/agent-server"] as const;
 
 /**
  * Checks if the current page is an intermediate page.

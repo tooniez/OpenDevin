@@ -25,7 +25,10 @@ export const createAgentServerQueryClient = () => {
           handle401Error(error, client);
         }
 
-        if (!query.meta?.disableToast) {
+        const disableToast =
+          query.meta?.disableToast ?? query.options.meta?.disableToast;
+
+        if (!disableToast) {
           const errorMessage = retrieveAxiosErrorMessage(error);
 
           if (!shownErrors.has(errorMessage || "")) {
@@ -43,7 +46,10 @@ export const createAgentServerQueryClient = () => {
       onError: (error, _, __, mutation) => {
         handle401Error(error, client);
 
-        if (!mutation?.meta?.disableToast) {
+        const disableToast =
+          mutation?.meta?.disableToast ?? mutation?.options.meta?.disableToast;
+
+        if (!disableToast) {
           const message = retrieveAxiosErrorMessage(error);
           displayErrorToast(message || i18n.t(I18nKey.ERROR$GENERIC));
         }

@@ -170,4 +170,18 @@ describe("PostHogWrapper", () => {
       }),
     );
   });
+
+  it("keeps rendering children when config fetch fails", async () => {
+    vi.spyOn(OptionService, "getConfig").mockRejectedValueOnce(new Error("boom"));
+
+    renderWithQueryClient(
+      <PostHogWrapper>
+        <div data-testid="child" />
+      </PostHogWrapper>,
+    );
+
+    await screen.findByTestId("child");
+
+    expect(mockPostHogProvider).not.toHaveBeenCalled();
+  });
 });

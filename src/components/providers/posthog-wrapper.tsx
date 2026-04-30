@@ -3,7 +3,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { PostHogProvider } from "posthog-js/react";
 import OptionService from "#/api/option-service/option-service.api";
 import { QUERY_KEYS, CONFIG_CACHE_OPTIONS } from "#/hooks/query/query-keys";
-import { displayErrorToast } from "#/utils/custom-toast-handlers";
 
 const POSTHOG_BOOTSTRAP_KEY = "posthog_bootstrap";
 
@@ -54,11 +53,12 @@ export function PostHogWrapper({ children }: { children: React.ReactNode }) {
         const config = await queryClient.fetchQuery({
           queryKey: QUERY_KEYS.WEB_CLIENT_CONFIG,
           queryFn: OptionService.getConfig,
+          meta: { disableToast: true },
           ...CONFIG_CACHE_OPTIONS,
         });
         setPosthogClientKey(config.posthog_client_key);
       } catch {
-        displayErrorToast("Error fetching PostHog client key");
+        // Analytics are optional; keep onboarding and recovery flows quiet.
       } finally {
         setIsLoading(false);
       }

@@ -1,5 +1,6 @@
 import { renderHook } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { useIsOnIntermediatePage } from "#/hooks/use-is-on-intermediate-page";
 
 const useLocationMock = vi.fn();
 
@@ -8,15 +9,17 @@ vi.mock("react-router", async () => ({
   useLocation: () => useLocationMock(),
 }));
 
+beforeEach(() => {
+  useLocationMock.mockReset();
+});
+
 describe("useIsOnIntermediatePage", () => {
-  it("returns false for OSS app routes", async () => {
+  it("returns false for OSS app routes", () => {
     useLocationMock.mockReturnValue({ pathname: "/settings" });
-    const { useIsOnIntermediatePage } = await import(
-      "#/hooks/use-is-on-intermediate-page"
-    );
 
     const { result } = renderHook(() => useIsOnIntermediatePage());
 
     expect(result.current).toBe(false);
   });
+
 });
