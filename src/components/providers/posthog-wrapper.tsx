@@ -1,6 +1,6 @@
 import React from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { PostHogProvider } from "posthog-js/react";
-import { queryClient } from "#/query-client-config";
 import OptionService from "#/api/option-service/option-service.api";
 import { QUERY_KEYS, CONFIG_CACHE_OPTIONS } from "#/hooks/query/query-keys";
 import { displayErrorToast } from "#/utils/custom-toast-handlers";
@@ -40,6 +40,7 @@ function getBootstrapIds() {
 }
 
 export function PostHogWrapper({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient();
   const [posthogClientKey, setPosthogClientKey] = React.useState<string | null>(
     null,
   );
@@ -62,7 +63,7 @@ export function PostHogWrapper({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
       }
     })();
-  }, []);
+  }, [queryClient]);
 
   if (isLoading || !posthogClientKey) {
     return children;

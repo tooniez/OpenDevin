@@ -1,48 +1,86 @@
 import { QueryCache, MutationCache, QueryClient } from "@tanstack/react-query";
-import i18next from "i18next";
 import { AxiosError } from "axios";
+import i18n from "#/i18n";
 import { I18nKey } from "./i18n/declaration";
 import { retrieveAxiosErrorMessage } from "./utils/retrieve-axios-error-message";
 import { displayErrorToast } from "./utils/custom-toast-handlers";
 
-const handle401Error = (error: AxiosError, queryClient: QueryClient) => {
+const handle401Error = (error: AxiosError, client: QueryClient) => {
   if (error?.response?.status === 401 || error?.status === 401) {
-    queryClient.invalidateQueries({ queryKey: ["user", "authenticated"] });
+    client.invalidateQueries({ queryKey: ["user", "authenticated"] });
   }
 };
 
 const shownErrors = new Set<string>();
-export const queryClient = new QueryClient({
-  queryCache: new QueryCache({
-    onError: (error, query) => {
-      const isAuthQuery =
-        query.queryKey[0] === "user" && query.queryKey[1] === "authenticated";
-      if (!isAuthQuery) {
-        handle401Error(error, queryClient);
-      }
 
-      if (!query.meta?.disableToast) {
-        const errorMessage = retrieveAxiosErrorMessage(error);
+export const createAgentServerQueryClient = () => {
+  let client: QueryClient;
 
-        if (!shownErrors.has(errorMessage || "")) {
-          displayErrorToast(errorMessage || i18next.t(I18nKey.ERROR$GENERIC));
-          shownErrors.add(errorMessage);
-
-          setTimeout(() => {
-            shownErrors.delete(errorMessage);
-          }, 3000);
+  client = new QueryClient({
+    queryCache: new QueryCache({
+      onError: (error, query) => {
+        const isAuthQuery =
+          query.queryKey[0] === "user" && query.queryKey[1] === "authenticated";
+        if (!isAuthQuery) {
+          handle401Error(error, client);
         }
-      }
-    },
-  }),
-  mutationCache: new MutationCache({
-    onError: (error, _, __, mutation) => {
-      handle401Error(error, queryClient);
 
-      if (!mutation?.meta?.disableToast) {
-        const message = retrieveAxiosErrorMessage(error);
-        displayErrorToast(message || i18next.t(I18nKey.ERROR$GENERIC));
-      }
-    },
-  }),
-});
+        if (!query.meta?.disableToast) {
+          const errorMessage = retrieveAxiosErrorMessage(error);
+
+          if (!shownErrors.has(errorMessage || "")) {
+            displayErrorToast(errorMessage || i18n.t(I18nKey.ERROR$GENERIC));
+            shownErrors.add(errorMessage || "");
+
+            setTimeout(() => {
+              shownErrors.delete(errorMessage || "");
+            }, 3000);
+          }
+        }
+      },
+    }),
+    mutationCache: new MutationCache({
+      onError: (error, _, __, mutation) => {
+        handle401Error(error, client);
+
+        if (!mutation?.meta?.disableToast) {
+          const message = retrieveAxiosErrorMessage(error);
+          displayErrorToast(message || i18n.t(I18nKey.ERROR$GENERIC));
+        }
+      },
+    }),
+  });
+
+  return client;
+};
+
+let defaultQueryClient: QueryClient | null = null;
+let activeQueryClient: QueryClient | null = null;
+
+export const getDefaultQueryClient = () => {
+  if (!defaultQueryClient) {
+    defaultQueryClient = createAgentServerQueryClient();
+  }
+
+  return defaultQueryClient;
+};
+
+export const getQueryClient = () =>
+  activeQueryClient ?? getDefaultQueryClient();
+
+export const setQueryClient = (client?: QueryClient | null) => {
+  activeQueryClient = client ?? getDefaultQueryClient();
+  return activeQueryClient;
+};
+
+export const queryClient = new Proxy({} as QueryClient, {
+  get: (_target, prop) => {
+    const client = getQueryClient();
+    const value = Reflect.get(client, prop, client);
+    return typeof value === "function" ? value.bind(client) : value;
+  },
+  set: (_target, prop, value) => {
+    const client = getQueryClient();
+    return Reflect.set(client, prop, value, client);
+  },
+}) as QueryClient;

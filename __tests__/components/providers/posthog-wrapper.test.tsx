@@ -1,5 +1,7 @@
+import { type ReactNode } from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PostHogWrapper } from "#/components/providers/posthog-wrapper";
 import OptionService from "#/api/option-service/option-service.api";
 
@@ -11,6 +13,21 @@ vi.mock("posthog-js/react", () => ({
     return props.children;
   },
 }));
+
+const renderWithQueryClient = (children: ReactNode) =>
+  render(
+    <QueryClientProvider
+      client={
+        new QueryClient({
+          defaultOptions: {
+            queries: { retry: false },
+          },
+        })
+      }
+    >
+      {children}
+    </QueryClientProvider>,
+  );
 
 describe("PostHogWrapper", () => {
   beforeEach(() => {
@@ -30,7 +47,7 @@ describe("PostHogWrapper", () => {
     // Webflow sends distinct_id and session_id without the ph_ prefix
     window.location.hash = "distinct_id=user-123&session_id=session-456";
 
-    render(
+    renderWithQueryClient(
       <PostHogWrapper>
         <div data-testid="child" />
       </PostHogWrapper>,
@@ -53,7 +70,7 @@ describe("PostHogWrapper", () => {
   it("should clean up URL hash after extracting bootstrap IDs", async () => {
     window.location.hash = "distinct_id=user-123&session_id=session-456";
 
-    render(
+    renderWithQueryClient(
       <PostHogWrapper>
         <div data-testid="child" />
       </PostHogWrapper>,
@@ -67,7 +84,7 @@ describe("PostHogWrapper", () => {
   it("should persist bootstrap IDs to sessionStorage for OAuth survival", async () => {
     window.location.hash = "distinct_id=user-123&session_id=session-456";
 
-    render(
+    renderWithQueryClient(
       <PostHogWrapper>
         <div data-testid="child" />
       </PostHogWrapper>,
@@ -99,7 +116,7 @@ describe("PostHogWrapper", () => {
       JSON.stringify({ distinctID: "user-123", sessionID: "session-456" }),
     );
 
-    render(
+    renderWithQueryClient(
       <PostHogWrapper>
         <div data-testid="child" />
       </PostHogWrapper>,
@@ -125,7 +142,7 @@ describe("PostHogWrapper", () => {
       JSON.stringify({ distinctID: "user-123", sessionID: "session-456" }),
     );
 
-    render(
+    renderWithQueryClient(
       <PostHogWrapper>
         <div data-testid="child" />
       </PostHogWrapper>,
@@ -137,7 +154,7 @@ describe("PostHogWrapper", () => {
   });
 
   it("should initialize without bootstrap when neither hash nor sessionStorage has IDs", async () => {
-    render(
+    renderWithQueryClient(
       <PostHogWrapper>
         <div data-testid="child" />
       </PostHogWrapper>,

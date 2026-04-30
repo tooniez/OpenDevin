@@ -8,10 +8,10 @@
 import { HydratedRouter } from "react-router/dom";
 import { startTransition, StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
-import "./i18n";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "./query-client-config";
-import { PostHogWrapper } from "./components/providers/posthog-wrapper";
+import {
+  AgentServerUIProviders,
+  DEFAULT_AGENT_SERVER_ANALYTICS,
+} from "./components/providers";
 import { shouldStartMockWorker } from "./mocks/should-start-mock-worker";
 
 async function prepareApp() {
@@ -29,11 +29,9 @@ prepareApp().then(() =>
     hydrateRoot(
       document,
       <StrictMode>
-        <QueryClientProvider client={queryClient}>
-          <PostHogWrapper>
-            <HydratedRouter />
-          </PostHogWrapper>
-        </QueryClientProvider>
+        <AgentServerUIProviders analytics={DEFAULT_AGENT_SERVER_ANALYTICS}>
+          <HydratedRouter />
+        </AgentServerUIProviders>
       </StrictMode>,
     );
   }),
