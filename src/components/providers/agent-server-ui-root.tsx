@@ -45,7 +45,11 @@ export function AgentServerUIRoot({
       className={className}
       style={scopedStyle}
     >
-      <div className={cn(theme, contentClassName)} data-theme={theme}>
+      <div
+        className={cn(theme, contentClassName)}
+        data-theme={theme}
+        style={{ color: "var(--foreground)" }}
+      >
         {children}
       </div>
     </div>
