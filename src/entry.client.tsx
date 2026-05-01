@@ -32,7 +32,10 @@ prepareApp().then(() =>
     hydrateRoot(
       document,
       <StrictMode>
-        <AgentServerUIProviders analytics={DEFAULT_AGENT_SERVER_ANALYTICS}>
+        <AgentServerUIProviders
+          analytics={DEFAULT_AGENT_SERVER_ANALYTICS}
+          withStyleRoot={false}
+        >
           <HydratedRouter />
         </AgentServerUIProviders>
       </StrictMode>,

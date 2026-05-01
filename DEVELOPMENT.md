@@ -67,6 +67,34 @@ Useful targeted verification for the isolated dev launcher:
 npm run test -- __tests__/api/agent-server-config.test.ts __tests__/scripts/dev-safe.test.ts
 ```
 
+## CSS isolation and host-app customization
+
+The standalone app and the exported provider/root wrapper now scope all bundled CSS under a dedicated shell element with the `data-agent-server-ui` attribute. That means Tailwind utilities, HeroUI component styles, xterm styles, and local CSS only apply inside the OpenHands UI subtree instead of leaking into a host app.
+
+### Embedding strategy
+
+- Use `AgentServerUIProviders` in host apps. It renders a scoped style root by default.
+- For direct wrapper control, use `AgentServerUIRoot`.
+- The standalone app opts out of the provider wrapper because the router layout already renders the scoped root.
+
+### Customization strategy
+
+Theme and surface tokens are exposed as CSS custom properties on the scoped root. You can override them either through the provider/root `styleOverrides` prop or with host CSS targeting `[data-agent-server-ui]`.
+
+```tsx
+<AgentServerUIProviders
+  styleOverrides={{
+    "--oh-color-base": "#101820",
+    "--oh-color-content-2": "#f5f7ff",
+    "--oh-accent": "#8b5cf6",
+  }}
+>
+  <App />
+</AgentServerUIProviders>
+```
+
+If you want Tailwind layout utilities on the inner themed container, pass `contentClassName` instead of `className`, because the outer scope element is what all generated selectors key off of.
+
 ## Environment variables
 
 You can create a `.env` file in the project directory with these variables based on `.env.sample`.

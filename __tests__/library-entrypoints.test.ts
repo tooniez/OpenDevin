@@ -19,6 +19,11 @@ describe("library public entrypoints", () => {
     expect(publicApi.Sidebar).toBeTypeOf("function");
     expect(publicApi.ConversationPanel).toBeTypeOf("function");
     expect(publicApi.AgentServerUIProviders).toBeTypeOf("function");
+    expect(publicApi.AgentServerUIRoot).toBeTypeOf("function");
+    expect(publicApi.AGENT_SERVER_UI_SCOPE_SELECTOR).toBe(
+      "[data-agent-server-ui]",
+    );
+    expect(publicApi.AGENT_SERVER_UI_DEFAULT_THEME).toBe("dark");
   });
 
   it("keeps each component-domain barrel importable", () => {

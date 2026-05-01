@@ -14,6 +14,10 @@ import {
   setI18n,
 } from "#/i18n";
 import { PostHogWrapper } from "./posthog-wrapper";
+import {
+  AgentServerUIRoot,
+  type AgentServerUIRootProps,
+} from "./agent-server-ui-root";
 
 export type AgentServerUIAnalyticsConfig =
   | {
@@ -26,11 +30,15 @@ export const DEFAULT_AGENT_SERVER_ANALYTICS: AgentServerUIAnalyticsConfig = {
   provider: "posthog",
 };
 
-export interface AgentServerUIProvidersProps {
+export interface AgentServerUIProvidersProps extends Pick<
+  AgentServerUIRootProps,
+  "className" | "contentClassName" | "style" | "styleOverrides" | "theme"
+> {
   children: React.ReactNode;
   queryClient?: QueryClient;
   analytics?: AgentServerUIAnalyticsConfig;
   i18n?: I18nInstance;
+  withStyleRoot?: boolean;
 }
 
 export function AgentServerUIProviders({
@@ -38,6 +46,12 @@ export function AgentServerUIProviders({
   queryClient,
   analytics,
   i18n,
+  className,
+  contentClassName,
+  style,
+  styleOverrides,
+  theme,
+  withStyleRoot = true,
 }: AgentServerUIProvidersProps) {
   const resolvedQueryClient = React.useMemo(
     () => queryClient ?? getDefaultQueryClient(),
@@ -76,10 +90,24 @@ export function AgentServerUIProviders({
       children
     );
 
+  const wrappedContent = withStyleRoot ? (
+    <AgentServerUIRoot
+      className={className}
+      contentClassName={contentClassName}
+      style={style}
+      styleOverrides={styleOverrides}
+      theme={theme}
+    >
+      {content}
+    </AgentServerUIRoot>
+  ) : (
+    content
+  );
+
   return (
     <I18nextProvider i18n={resolvedI18n} defaultNS={OPENHANDS_I18N_NAMESPACE}>
       <QueryClientProvider client={resolvedQueryClient}>
-        {content}
+        {wrappedContent}
       </QueryClientProvider>
     </I18nextProvider>
   );

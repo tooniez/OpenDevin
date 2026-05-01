@@ -22,6 +22,7 @@ import {
 import { AgentServerConnectionForm } from "#/components/features/settings/agent-server-onboarding";
 import { LoadingSpinner } from "#/components/shared/loading-spinner";
 import { useConfig } from "#/hooks/query/use-config";
+import { AgentServerUIRoot } from "#/components/providers";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -32,12 +33,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
-        {children}
+      <body style={{ margin: 0 }}>
+        <AgentServerUIRoot contentClassName="min-h-screen">
+          {children}
+          <Toaster />
+          <div id="modal-portal-exit" />
+        </AgentServerUIRoot>
         <ScrollRestoration />
         <Scripts />
-        <Toaster />
-        <div id="modal-portal-exit" />
       </body>
     </html>
   );

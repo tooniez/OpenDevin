@@ -11,6 +11,8 @@ vi.mock("react-i18next", async (importOriginal) =>
 
 import OptionService from "#/api/option-service/option-service.api";
 import {
+  AGENT_SERVER_UI_SCOPE_SELECTOR,
+  AgentServerUIRoot,
   AgentServerUIProviders,
   DEFAULT_AGENT_SERVER_ANALYTICS,
   OPENHANDS_I18N_NAMESPACE,
@@ -188,5 +190,71 @@ describe("AgentServerUIProviders", () => {
     await waitFor(() => {
       expect(getConfigSpy).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it("wraps children in a scoped, customizable style root by default", () => {
+    const { unmount } = render(
+      <AgentServerUIProviders
+        contentClassName="min-h-screen"
+        styleOverrides={{ "--oh-color-base": "#010203" }}
+      >
+        <div data-testid="styled-child">child</div>
+      </AgentServerUIProviders>,
+    );
+
+    const scopeRoot = document.querySelector<HTMLDivElement>(
+      AGENT_SERVER_UI_SCOPE_SELECTOR,
+    );
+
+    expect(scopeRoot).toBeInTheDocument();
+    expect(scopeRoot?.style.getPropertyValue("--oh-color-base")).toBe(
+      "#010203",
+    );
+
+    const themedContainer =
+      scopeRoot?.firstElementChild as HTMLDivElement | null;
+    expect(themedContainer).toHaveAttribute("data-theme", "dark");
+    expect(themedContainer).toHaveClass("dark", "min-h-screen");
+    expect(themedContainer).toContainElement(
+      screen.getByTestId("styled-child"),
+    );
+
+    unmount();
+
+    render(
+      <AgentServerUIProviders withStyleRoot={false}>
+        <div data-testid="unstyled-child">child</div>
+      </AgentServerUIProviders>,
+    );
+
+    expect(document.querySelector(AGENT_SERVER_UI_SCOPE_SELECTOR)).toBeNull();
+  });
+
+  it("exposes a standalone style root for host-controlled customization", () => {
+    render(
+      <AgentServerUIRoot
+        className="outer-shell"
+        contentClassName="inner-shell"
+        theme="light"
+        styleOverrides={{ "--oh-color-primary": "#abcdef" }}
+      >
+        <div data-testid="root-child">child</div>
+      </AgentServerUIRoot>,
+    );
+
+    const scopeRoot = document.querySelector<HTMLDivElement>(
+      AGENT_SERVER_UI_SCOPE_SELECTOR,
+    );
+
+    expect(scopeRoot).toHaveClass("outer-shell");
+    expect(scopeRoot?.style.getPropertyValue("--oh-color-primary")).toBe(
+      "#abcdef",
+    );
+
+    const themedContainer =
+      scopeRoot?.firstElementChild as HTMLDivElement | null;
+    expect(themedContainer).toHaveAttribute("data-theme", "light");
+    expect(themedContainer).toHaveClass("light", "inner-shell");
+    expect(themedContainer).toContainElement(screen.getByTestId("root-child"));
   });
 });

@@ -7,6 +7,11 @@ import svgr from "vite-plugin-svgr";
 import { reactRouter } from "@react-router/dev/vite";
 import { configDefaults } from "vitest/config";
 import tailwindcss from "@tailwindcss/vite";
+import prefixer from "postcss-prefix-selector";
+import {
+  AGENT_SERVER_UI_SCOPE_SELECTOR,
+  transformAgentServerUISelector,
+} from "./src/styles/agent-server-ui-style-scope";
 
 const LIB_ENTRY = fileURLToPath(new URL("./src/index.ts", import.meta.url));
 const LIB_EXTERNALS = [
@@ -42,6 +47,26 @@ export default defineConfig(({ mode }) => {
       svgr(),
       tailwindcss(),
     ],
+    css: {
+      postcss: {
+        plugins: [
+          prefixer({
+            prefix: AGENT_SERVER_UI_SCOPE_SELECTOR,
+            transform(
+              prefix: string,
+              selector: string,
+              prefixedSelector: string,
+            ) {
+              return transformAgentServerUISelector(
+                prefix,
+                selector,
+                prefixedSelector,
+              );
+            },
+          }),
+        ],
+      },
+    },
     build: isLibraryBuild
       ? {
           outDir: "dist",

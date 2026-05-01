@@ -1,19 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Outfit:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Outfit:wght@100..900&display=swap");
 
 :root {
-  --bg-dark: #0c0e10;
-  --bg-light: #292929;
-  --bg-input: #393939;
-  --bg-workspace: #1f2228;
-  --border: #3c3c4a;
-  --text-editor-base: #9099ac;
-  --text-editor-active: #c4cbda;
-  --bg-editor-sidebar: #24272e;
-  --bg-editor-active: #31343d;
-  --border-editor-sidebar: #3c3c4a;
-  background-color: var(--base) !important;
-  --bg-neutral-muted: #afb8c133;
+  --oh-bg-dark: #0c0e10;
+  --oh-bg-light: #292929;
+  --oh-bg-input: #393939;
+  --oh-bg-workspace: #1f2228;
+  --oh-text-editor-base: #9099ac;
+  --oh-text-editor-active: #c4cbda;
+  --oh-bg-editor-sidebar: #24272e;
+  --oh-bg-editor-active: #31343d;
+  --oh-border-editor-sidebar: #3c3c4a;
+  --oh-bg-neutral-muted: #afb8c133;
+  --bg-dark: var(--oh-bg-dark);
+  --bg-light: var(--oh-bg-light);
+  --bg-input: var(--oh-bg-input);
+  --bg-workspace: var(--oh-bg-workspace);
+  --text-editor-base: var(--oh-text-editor-base);
+  --text-editor-active: var(--oh-text-editor-active);
+  --bg-editor-sidebar: var(--oh-bg-editor-sidebar);
+  --bg-editor-active: var(--oh-bg-editor-active);
+  --border-editor-sidebar: var(--oh-border-editor-sidebar);
+  --bg-neutral-muted: var(--oh-bg-neutral-muted);
+  background-color: var(--oh-color-base) !important;
 }
 
 body {
