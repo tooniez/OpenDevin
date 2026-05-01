@@ -19,8 +19,11 @@ export {
 } from "../query-client-config";
 export {
   AvailableLanguages,
+  OPENHANDS_I18N_NAMESPACE,
   createAgentServerI18n,
   getDefaultI18n,
   getI18n,
   setI18n,
+  translationResources,
+  waitForI18n,
 } from "../i18n";

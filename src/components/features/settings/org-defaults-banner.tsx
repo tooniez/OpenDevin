@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { I18nKey } from "#/i18n/declaration";
 
 export function OrgDefaultsBanner() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div className="flex flex-col gap-3">

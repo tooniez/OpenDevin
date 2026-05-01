@@ -9,7 +9,7 @@ interface HookMatcherContentProps {
 }
 
 export function HookMatcherContent({ matcher }: HookMatcherContentProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div className="mb-4 p-3 bg-gray-800 rounded-md">

@@ -9,7 +9,7 @@ interface SettingsNavHeaderProps {
 }
 
 export function SettingsNavHeader({ text, className }: SettingsNavHeaderProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div className={cn("px-3.5", className)}>

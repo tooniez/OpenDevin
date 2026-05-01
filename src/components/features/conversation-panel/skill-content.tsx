@@ -8,7 +8,7 @@ interface SkillContentProps {
 }
 
 export function SkillContent({ content }: SkillContentProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div className="mt-2">

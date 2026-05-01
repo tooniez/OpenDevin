@@ -3,7 +3,7 @@ import { FaCodeCompare } from "react-icons/fa6";
 import { I18nKey } from "#/i18n/declaration";
 
 export function EmptyChangesMessage() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full p-10 gap-4">

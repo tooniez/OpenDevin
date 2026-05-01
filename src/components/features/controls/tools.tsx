@@ -11,7 +11,7 @@ import { SkillsModal } from "../conversation-panel/skills-modal";
 import { HooksModal } from "../conversation-panel/hooks-modal";
 
 export function Tools() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { conversationId } = useConversationId();
   const { data: conversation } = useActiveConversation();
   const [contextMenuOpen, setContextMenuOpen] = React.useState(false);

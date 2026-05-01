@@ -8,7 +8,7 @@ import { useInfiniteScroll } from "#/hooks/use-infinite-scroll";
 import { cn } from "#/utils/utils";
 
 export function RecentConversations() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const [isExpanded, setIsExpanded] = useState(false);
 
   const {

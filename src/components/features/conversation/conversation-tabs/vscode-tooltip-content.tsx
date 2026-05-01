@@ -7,7 +7,7 @@ import { RUNTIME_STARTING_STATES } from "#/types/agent-state";
 
 export function VSCodeTooltipContent() {
   const { curAgentState } = useAgentState();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { data, refetch } = useUnifiedVSCodeUrl();
   const isRuntimeStarting = RUNTIME_STARTING_STATES.includes(curAgentState);
 

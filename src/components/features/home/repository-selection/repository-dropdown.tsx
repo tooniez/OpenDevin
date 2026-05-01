@@ -23,7 +23,7 @@ export function RepositoryDropdown({
   defaultSelectedKey,
   selectedKey,
 }: RepositoryDropdownProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <SettingsDropdownInput

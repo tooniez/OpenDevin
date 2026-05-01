@@ -12,7 +12,7 @@ export function TabNavigation({
   onTabChange,
   hasTools,
 }: TabNavigationProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div className="flex border-b mb-2" role="tablist">

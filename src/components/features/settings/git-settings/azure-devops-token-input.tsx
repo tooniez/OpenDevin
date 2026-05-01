@@ -19,7 +19,7 @@ export function AzureDevOpsTokenInput({
   name,
   azureDevOpsHostSet,
 }: AzureDevOpsTokenInputProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div className="flex flex-col gap-6">

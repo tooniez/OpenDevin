@@ -19,7 +19,7 @@ export function GitControlBarPushButton({
   currentGitProvider,
   isConversationReady = true,
 }: GitControlBarPushButtonProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { trackPushButtonClick } = useTracking();
 
   const { providers } = useUserProviders();

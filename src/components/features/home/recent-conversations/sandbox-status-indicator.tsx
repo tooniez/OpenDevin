@@ -27,7 +27,7 @@ const getSandboxStatusLabel = (status: V1SandboxStatus): string => {
 export function SandboxStatusIndicator({
   sandboxStatus,
 }: SandboxStatusIndicatorProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const sandboxStatusBackgroundColor = useMemo(() => {
     switch (sandboxStatus) {

@@ -13,7 +13,7 @@ interface TaskItemProps {
 }
 
 export function TaskItem({ task }: TaskItemProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const icon = useMemo(() => {
     switch (task.status) {

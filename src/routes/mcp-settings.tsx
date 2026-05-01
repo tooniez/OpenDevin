@@ -44,7 +44,7 @@ interface MCPServerConfig {
 }
 
 export function MCPSettingsScreen() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { data: settings, isLoading } = useSettings();
   const { data: config } = useConfig();
   const { mutate: saveSettings, isPending: isSavingSearchApiKey } =

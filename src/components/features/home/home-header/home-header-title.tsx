@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Typography } from "#/ui/typography";
 
 export function HomeHeaderTitle() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div className="h-[80px] flex items-center">

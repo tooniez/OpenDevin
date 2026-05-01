@@ -13,6 +13,7 @@ import OptionService from "#/api/option-service/option-service.api";
 import {
   AgentServerUIProviders,
   DEFAULT_AGENT_SERVER_ANALYTICS,
+  OPENHANDS_I18N_NAMESPACE,
   getDefaultI18n,
   getDefaultQueryClient,
   getI18n,
@@ -21,6 +22,7 @@ import {
   setI18n,
   setQueryClient,
 } from "#/index";
+import i18n from "#/i18n";
 
 vi.mock("posthog-js/react", () => ({
   PostHogProvider: ({ children }: { children: React.ReactNode }) => children,
@@ -39,7 +41,7 @@ const BaseProbe = ({ translation }: { translation?: string }) => {
       </div>
       {translation && <div data-testid="translation-value">{translation}</div>}
       <div data-testid="imperative-translation-value">
-        {getI18n().t("PROVIDER$LABEL")}
+        {i18n.t("PROVIDER$LABEL")}
       </div>
     </div>
   );
@@ -48,7 +50,7 @@ const BaseProbe = ({ translation }: { translation?: string }) => {
 const DefaultProbe = () => <BaseProbe />;
 
 const CustomProbe = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(OPENHANDS_I18N_NAMESPACE);
 
   return <BaseProbe translation={t("PROVIDER$LABEL")} />;
 };
@@ -59,12 +61,15 @@ const createTestI18n = async (value: string) => {
   await instance.use(initReactI18next).init({
     lng: "en",
     fallbackLng: "en",
-    ns: ["translation"],
-    defaultNS: "translation",
+    ns: ["host", OPENHANDS_I18N_NAMESPACE],
+    defaultNS: "host",
     interpolation: { escapeValue: false },
     resources: {
       en: {
-        translation: {
+        host: {
+          PROVIDER$LABEL: "Host provider",
+        },
+        [OPENHANDS_I18N_NAMESPACE]: {
           PROVIDER$LABEL: value,
         },
       },
@@ -88,7 +93,7 @@ describe("AgentServerUIProviders", () => {
 
     defaultI18n.addResourceBundle(
       "en",
-      "translation",
+      OPENHANDS_I18N_NAMESPACE,
       { PROVIDER$LABEL: "Default provider" },
       true,
       true,

@@ -10,7 +10,7 @@ interface ContextMenuNavLinkProps {
 }
 
 export function ContextMenuNavLink({ item, onClick }: ContextMenuNavLinkProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { to, icon, text } = item;
 
   return (

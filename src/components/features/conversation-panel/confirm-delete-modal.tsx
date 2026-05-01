@@ -19,10 +19,11 @@ export function ConfirmDeleteModal({
   onCancel,
   conversationTitle,
 }: ConfirmDeleteModalProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const confirmationMessage = conversationTitle ? (
     <Trans
+      ns="openhands"
       i18nKey={I18nKey.CONVERSATION$DELETE_WARNING_WITH_TITLE}
       values={{ title: conversationTitle }}
       components={{ title: <span className="text-white" /> }}

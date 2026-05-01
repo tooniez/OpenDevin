@@ -10,7 +10,7 @@ export function UpgradeBannerWithBackdrop({
   onUpgradeClick,
   isDisabled,
 }: UpgradeBannerWithBackdropProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <>

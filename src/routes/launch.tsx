@@ -91,7 +91,7 @@ function ErrorDisplay({
   onGoHome: () => void;
   onTryAgain?: () => void;
 }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const errorMessages: Record<ErrorType, string> = {
     no_plugins: t(I18nKey.LAUNCH$ERROR_NO_PLUGINS),
@@ -137,7 +137,7 @@ function ErrorDisplay({
 export default function LaunchRoute() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const createConversation = useCreateConversation();
 
   const [creationError, setCreationError] = React.useState<string | null>(null);

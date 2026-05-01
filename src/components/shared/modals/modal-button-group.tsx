@@ -28,7 +28,7 @@ export function ModalButtonGroup({
   secondaryTestId,
   fullWidth = false,
 }: ModalButtonGroupProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const closeText = secondaryText ?? t(I18nKey.BUTTON$CLOSE);
 
   return (

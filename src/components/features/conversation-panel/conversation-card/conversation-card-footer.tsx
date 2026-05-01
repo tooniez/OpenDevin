@@ -23,7 +23,7 @@ export function ConversationCardFooter({
   sandboxStatus,
   llmModel,
 }: ConversationCardFooterProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const isConversationArchived = sandboxStatus === "MISSING";
 

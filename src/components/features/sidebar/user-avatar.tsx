@@ -11,7 +11,7 @@ interface UserAvatarProps {
 }
 
 export function UserAvatar({ avatarUrl, isLoading }: UserAvatarProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <button

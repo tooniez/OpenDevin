@@ -18,7 +18,7 @@ export function useUnlinkIntegration(
   },
 ) {
   const queryClient = useQueryClient();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return useMutation({
     mutationFn: () =>

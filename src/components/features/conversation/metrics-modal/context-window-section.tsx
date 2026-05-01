@@ -10,7 +10,7 @@ export function ContextWindowSection({
   perTurnToken,
   contextWindow,
 }: ContextWindowSectionProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const usagePercentage =
     contextWindow > 0 ? (perTurnToken / contextWindow) * 100 : 0;

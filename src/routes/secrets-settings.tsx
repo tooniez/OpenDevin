@@ -18,7 +18,7 @@ export const clientLoader = createPermissionGuard("manage_secrets");
 
 export function SecretsSettingsScreen() {
   const queryClient = useQueryClient();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const tableContainerRef = useRef<HTMLDivElement>(null);
 
   const {

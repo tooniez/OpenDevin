@@ -27,7 +27,7 @@ export function ConversationTabsContextMenu({
   onClose,
 }: ConversationTabsContextMenuProps) {
   const ref = useClickOutsideElement<HTMLUListElement>(onClose);
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { conversationId } = useConversationId();
   const { state, setUnpinnedTabs, setRightPanelShown } =
     useConversationLocalStorageState(conversationId);

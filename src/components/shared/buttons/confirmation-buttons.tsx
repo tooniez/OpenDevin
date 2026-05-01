@@ -21,7 +21,7 @@ export function ConfirmationButtons() {
     (state) => state.addSubmittedEventId,
   );
 
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const { send } = useSendMessage();
   const events = useEventStore((state) => state.events);

@@ -10,7 +10,7 @@ export function WaitingForRuntimeMessage({
   className,
   testId,
 }: WaitingForRuntimeMessageProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div

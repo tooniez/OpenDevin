@@ -14,7 +14,7 @@ interface HomepageCTAProps {
 }
 
 export function HomepageCTA({ setShouldShowCTA }: HomepageCTAProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { trackSaasSelfhostedInquiry } = useTracking();
 
   const handleClose = () => {

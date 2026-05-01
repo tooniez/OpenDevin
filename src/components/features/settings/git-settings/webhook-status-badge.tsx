@@ -11,7 +11,7 @@ export function WebhookStatusBadge({
   webhookInstalled,
   installationResult,
 }: WebhookStatusBadgeProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   if (installationResult) {
     if (installationResult.success) {

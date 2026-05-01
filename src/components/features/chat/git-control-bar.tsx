@@ -25,7 +25,7 @@ interface GitControlBarProps {
 }
 
 export function GitControlBar({ onSuggestionsClick }: GitControlBarProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { conversationId } = useConversationId();
   const [isOpenRepoModalOpen, setIsOpenRepoModalOpen] = useState(false);
   const { addRecentRepository } = useHomeStore();

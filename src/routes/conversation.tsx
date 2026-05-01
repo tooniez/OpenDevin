@@ -28,7 +28,7 @@ import { I18nKey } from "#/i18n/declaration";
 import { useEventStore } from "#/stores/use-event-store";
 
 function AppContent() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { conversationId } = useConversationId();
   const clearEvents = useEventStore((state) => state.clearEvents);
 

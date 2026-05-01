@@ -9,7 +9,7 @@ interface MCPObservationContentProps {
 }
 
 export function MCPObservationContent({ event }: MCPObservationContentProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   // Parse the content as JSON if possible
   let outputData: unknown;

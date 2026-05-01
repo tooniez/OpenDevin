@@ -24,7 +24,7 @@ export function ChangeAgentContextMenu({
   onCodeClick,
   onPlanClick,
 }: ChangeAgentContextMenuProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const menuRef = useClickOutsideElement<HTMLUListElement>(onClose);
 
   const handleCodeClick = (event: React.MouseEvent<HTMLButtonElement>) => {

@@ -7,7 +7,7 @@ import { CreateConversationButton } from "./create-conversation-button";
 import { Card } from "#/ui/card";
 
 export function NewConversation() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <Card className="flex-col p-5 gap-2.5 min-h-[286px] md:min-h-auto w-full">

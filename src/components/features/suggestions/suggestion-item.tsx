@@ -14,7 +14,7 @@ interface SuggestionItemProps {
 }
 
 export function SuggestionItem({ suggestion, onClick }: SuggestionItemProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const itemIcon = useMemo(() => {
     switch (suggestion.label) {

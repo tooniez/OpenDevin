@@ -84,7 +84,7 @@ interface OpenHandsApiKeyHelpProps {
 }
 
 function OpenHandsApiKeyHelp({ testId }: OpenHandsApiKeyHelpProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <>
@@ -115,7 +115,7 @@ export function LlmSettingsScreen({
 }: {
   scope?: SettingsScope;
 }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const [searchParams, setSearchParams] = useSearchParams();
 
   const { data: settings } = useSettings(scope);

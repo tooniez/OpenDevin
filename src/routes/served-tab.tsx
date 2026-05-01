@@ -8,7 +8,7 @@ import { I18nKey } from "#/i18n/declaration";
 import ServerProcessIcon from "#/icons/server-process.svg?react";
 
 function ServedApp() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { activeHost } = useUnifiedActiveHost();
   const [refreshKey, setRefreshKey] = React.useState(0);
   const [currentActiveHost, setCurrentActiveHost] = React.useState<

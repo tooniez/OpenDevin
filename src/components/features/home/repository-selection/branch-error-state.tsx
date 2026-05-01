@@ -6,7 +6,7 @@ interface BranchErrorStateProps {
 }
 
 export function BranchErrorState({ wrapperClassName }: BranchErrorStateProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   return (
     <div
       data-testid="branch-dropdown-error"

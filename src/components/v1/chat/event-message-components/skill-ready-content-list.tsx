@@ -11,7 +11,7 @@ interface SkillReadyContentListProps {
 }
 
 export function SkillReadyContentList({ items }: SkillReadyContentListProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const [expandedSkills, setExpandedSkills] = React.useState<
     Record<string, boolean>
   >({});

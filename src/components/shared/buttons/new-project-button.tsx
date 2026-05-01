@@ -10,7 +10,7 @@ interface NewProjectButtonProps {
 }
 
 export function NewProjectButton({ disabled = false }: NewProjectButtonProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const startNewProject = t(I18nKey.CONVERSATION$START_NEW);
 

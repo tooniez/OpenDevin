@@ -13,7 +13,7 @@ import {
 import { retrieveAxiosErrorMessage } from "#/utils/retrieve-axios-error-message";
 
 function SkillsSettingsScreen() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const { mutate: saveSettings, isPending } = useSaveSettings();
   const { data: settings, isLoading: settingsLoading } = useSettings();

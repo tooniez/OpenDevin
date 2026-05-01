@@ -15,7 +15,7 @@ export function useLinkIntegration(
   },
 ) {
   const queryClient = useQueryClient();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return useMutation({
     mutationFn: async (workspace: string) => {

@@ -26,7 +26,7 @@ export function OpenRepositoryModal({
   onLaunch,
   defaultProvider = "github",
 }: OpenRepositoryModalProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { providers } = useUserProviders();
 
   const [selectedProvider, setSelectedProvider] = useState<Provider | null>(

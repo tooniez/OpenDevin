@@ -7,7 +7,7 @@ export const clientLoader = async () => null;
 export const handle = { hideTitle: true };
 
 export function AgentServerSettingsScreen() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div
@@ -24,7 +24,10 @@ export function AgentServerSettingsScreen() {
       </div>
 
       <div className="max-w-2xl">
-        <AgentServerConnectionForm variant="settings" showSectionHeader={false} />
+        <AgentServerConnectionForm
+          variant="settings"
+          showSectionHeader={false}
+        />
       </div>
     </div>
   );

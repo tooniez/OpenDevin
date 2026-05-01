@@ -25,7 +25,7 @@ export function ConfigureButton({
   text,
   "data-testid": dataTestId,
 }: ConfigureButtonProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   return (
     <BrandButton
       data-testid={dataTestId}
@@ -77,7 +77,7 @@ export function ConfigureModal({
   platform,
   integrationData,
 }: ConfigureModalProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const [workspace, setWorkspace] = useState("");
   const [webhookSecret, setWebhookSecret] = useState("");
   const [serviceAccountEmail, setServiceAccountEmail] = useState("");
@@ -279,6 +279,7 @@ export function ConfigureModal({
         <BaseModalDescription>
           {showConfigurationFields ? (
             <Trans
+              ns="openhands"
               i18nKey={
                 I18nKey.PROJECT_MANAGEMENT$CONFIGURE_MODAL_DESCRIPTION_STAGE_2
               }
@@ -298,6 +299,7 @@ export function ConfigureModal({
             />
           ) : (
             <Trans
+              ns="openhands"
               i18nKey={
                 I18nKey.PROJECT_MANAGEMENT$CONFIGURE_MODAL_DESCRIPTION_STAGE_1
               }

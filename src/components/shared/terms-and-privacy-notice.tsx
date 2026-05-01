@@ -10,7 +10,7 @@ interface TermsAndPrivacyNoticeProps {
 export function TermsAndPrivacyNotice({
   className,
 }: TermsAndPrivacyNoticeProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <p

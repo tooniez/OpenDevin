@@ -7,7 +7,7 @@ interface ProPillProps {
 }
 
 export function ProPill({ className }: ProPillProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <span

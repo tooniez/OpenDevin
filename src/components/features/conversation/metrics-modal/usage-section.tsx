@@ -12,7 +12,7 @@ interface UsageSectionProps {
 }
 
 export function UsageSection({ usage }: UsageSectionProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <>

@@ -17,7 +17,7 @@ interface UpdateRepositoryVariables {
 
 export const useUpdateConversationRepository = () => {
   const queryClient = useQueryClient();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return useMutation({
     mutationFn: (variables: UpdateRepositoryVariables) =>

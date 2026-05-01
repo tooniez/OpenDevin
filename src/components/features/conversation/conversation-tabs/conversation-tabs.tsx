@@ -64,7 +64,7 @@ export function ConversationTabs() {
     handlePanelVisibilityChange();
   }, [isRightPanelShown, selectedTab, onTabChange]);
 
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const tabs = [
     {

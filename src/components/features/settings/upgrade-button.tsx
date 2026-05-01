@@ -12,7 +12,7 @@ export function UpgradeButton({
   className,
   isDisabled,
 }: UpgradeButtonProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <button

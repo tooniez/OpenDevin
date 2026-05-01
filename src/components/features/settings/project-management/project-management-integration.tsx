@@ -5,7 +5,7 @@ import { IntegrationRow } from "./integration-row";
 import { useConfig } from "#/hooks/query/use-config";
 
 export function ProjectManagementIntegration() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { data: config } = useConfig();
 
   return (

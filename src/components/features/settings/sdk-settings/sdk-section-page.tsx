@@ -148,7 +148,7 @@ export function SdkSectionPage({
   allowAllView?: boolean;
   testId?: string;
 }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { mutate: saveSettings, isPending } = useSaveSettings(scope);
   const { data: settings, isLoading, isFetching } = useSettings(scope);
   const agentSchemaQuery = useAgentSettingsSchema(

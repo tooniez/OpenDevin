@@ -11,7 +11,7 @@ interface AutomationsButtonProps {
 export function AutomationsButton({
   disabled = false,
 }: AutomationsButtonProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const label = t(I18nKey.SIDEBAR$AUTOMATIONS);
 

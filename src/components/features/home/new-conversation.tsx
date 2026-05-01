@@ -7,7 +7,7 @@ import { useIsCreatingConversation } from "#/hooks/use-is-creating-conversation"
 import PlusIcon from "#/icons/u-plus.svg?react";
 
 export function NewConversation() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const { navigate } = useNavigation();
   const {

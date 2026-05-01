@@ -33,7 +33,7 @@ export const clientLoader = createPermissionGuard(
 
 export function AppSettingsScreen() {
   const posthog = usePostHog();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const { mutate: saveSettings, isPending } = useSaveSettings();
   const { data: settings, isLoading } = useSettings();

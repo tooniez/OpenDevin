@@ -9,7 +9,7 @@ import {
 
 export const useUpdateConversationPublicFlag = () => {
   const queryClient = useQueryClient();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return useMutation({
     mutationFn: (variables: { conversationId: string; isPublic: boolean }) =>

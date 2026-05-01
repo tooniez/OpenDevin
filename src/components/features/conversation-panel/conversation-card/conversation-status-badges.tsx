@@ -11,7 +11,7 @@ interface ConversationStatusBadgesProps {
 export function ConversationStatusBadges({
   conversationStatus,
 }: ConversationStatusBadgesProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   if (conversationStatus === "ARCHIVED") {
     return (

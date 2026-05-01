@@ -2,6 +2,9 @@ import { createInstance, type i18n as I18nInstance } from "i18next";
 import Backend from "i18next-http-backend";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
+import translationDefinitions from "./translation.json";
+
+export const OPENHANDS_I18N_NAMESPACE = "openhands";
 
 export const AvailableLanguages = [
   { label: "English", value: "en" },
@@ -19,20 +22,60 @@ export const AvailableLanguages = [
   { label: "Català", value: "ca" },
   { label: "Türkçe", value: "tr" },
   { label: "Українська", value: "uk" },
-];
+] as const;
+
+type TranslationDefinitionMap = Record<string, Partial<Record<string, string>>>;
+export type TranslationResources = Record<string, Record<string, string>>;
+
+const buildTranslationResources = (
+  definitions: TranslationDefinitionMap,
+): TranslationResources => {
+  const resources: TranslationResources = {};
+
+  Object.entries(definitions).forEach(([key, translations]) => {
+    Object.entries(translations).forEach(([language, value]) => {
+      if (typeof value !== "string") {
+        return;
+      }
+
+      if (!resources[language]) {
+        resources[language] = {};
+      }
+
+      resources[language][key] = value;
+    });
+  });
+
+  return resources;
+};
+
+export const translationResources = buildTranslationResources(
+  translationDefinitions as TranslationDefinitionMap,
+);
+
+const initializationPromises = new WeakMap<I18nInstance, Promise<unknown>>();
 
 const initializeI18n = (instance: I18nInstance) => {
-  instance
-    .use(Backend)
-    .use(LanguageDetector)
-    .use(initReactI18next)
-    .init({
-      fallbackLng: "en",
-      debug: import.meta.env.NODE_ENV === "development",
+  if (!initializationPromises.has(instance)) {
+    const initPromise = instance
+      .use(Backend)
+      .use(LanguageDetector)
+      .use(initReactI18next)
+      .init({
+        fallbackLng: "en",
+        debug: import.meta.env.NODE_ENV === "development",
+        supportedLngs: AvailableLanguages.map((lang) => lang.value),
+        nonExplicitSupportedLngs: false,
+        ns: [OPENHANDS_I18N_NAMESPACE],
+        defaultNS: OPENHANDS_I18N_NAMESPACE,
+        fallbackNS: OPENHANDS_I18N_NAMESPACE,
+        backend: {
+          loadPath: "/locales/{{lng}}/{{ns}}.json",
+        },
+      });
 
-      supportedLngs: AvailableLanguages.map((lang) => lang.value),
-      nonExplicitSupportedLngs: false,
-    });
+    initializationPromises.set(instance, initPromise);
+  }
 
   return instance;
 };
@@ -57,9 +100,40 @@ export const setI18n = (instance?: I18nInstance | null) => {
   return activeI18n;
 };
 
+export const waitForI18n = async (instance = getDefaultI18n()) => {
+  await initializationPromises.get(instance);
+  return instance;
+};
+
+const withNamespace = (options?: unknown) => {
+  if (!options) {
+    return { ns: OPENHANDS_I18N_NAMESPACE };
+  }
+
+  if (typeof options === "object" && !Array.isArray(options)) {
+    return {
+      ns: OPENHANDS_I18N_NAMESPACE,
+      ...(options as Record<string, unknown>),
+    };
+  }
+
+  return options;
+};
+
 const i18n = new Proxy({} as I18nInstance, {
   get: (_target, prop) => {
     const instance = getI18n();
+
+    if (prop === "t") {
+      return (key: string, options?: unknown) =>
+        instance.t(key, withNamespace(options) as never);
+    }
+
+    if (prop === "exists") {
+      return (key: string, options?: unknown) =>
+        instance.exists(key, withNamespace(options) as never);
+    }
+
     const value = Reflect.get(instance, prop, instance);
     return typeof value === "function" ? value.bind(instance) : value;
   },

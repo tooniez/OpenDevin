@@ -17,7 +17,7 @@ export function HooksModalHeader({
   isRefetching,
   onRefresh,
 }: HooksModalHeaderProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div className="flex flex-col gap-6 w-full">

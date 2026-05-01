@@ -7,7 +7,7 @@ import { I18nKey } from "#/i18n/declaration";
 
 export function ConnectToProviderMessage() {
   const { isLoading } = useSettings();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div className="flex flex-col gap-4 justify-between h-full">

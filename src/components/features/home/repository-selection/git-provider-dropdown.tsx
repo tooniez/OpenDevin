@@ -31,7 +31,7 @@ export function GitProviderDropdown({
   isClearable,
   isDisabled,
 }: GitProviderDropdownProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <SettingsDropdownInput

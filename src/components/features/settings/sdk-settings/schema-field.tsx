@@ -31,7 +31,7 @@ export const FIELD_HELP_LINKS: Record<
 };
 
 function FieldHelp({ field }: { field: SettingsFieldSchema }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const helpLink = FIELD_HELP_LINKS[field.key];
   const description = resolveSchemaFieldDescription(
     t,
@@ -102,7 +102,7 @@ export function SchemaField({
   isDisabled: boolean;
   onChange: (value: string | boolean) => void;
 }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const label = resolveSchemaFieldLabel(t, field.key, field.label);
   const constraints = getSettingsFieldConstraints(field.key);
 

@@ -7,7 +7,7 @@ import { Text } from "#/ui/typography";
 import { cn } from "#/utils/utils";
 
 function TaskListTab() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { taskList } = useTaskList();
 
   if (taskList.length === 0) {

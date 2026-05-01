@@ -4,7 +4,7 @@ import ArrowDownCurveIcon from "#/icons/arrow-down-curve.svg?react";
 import { I18nKey } from "#/i18n/declaration";
 
 export function DragOver() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div className="drag-over">

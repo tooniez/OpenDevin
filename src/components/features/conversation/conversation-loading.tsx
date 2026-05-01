@@ -8,7 +8,7 @@ type ConversationLoadingProps = {
 };
 
 export function ConversationLoading({ className }: ConversationLoadingProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div

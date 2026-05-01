@@ -24,7 +24,7 @@ export function SettingsForm({ settings, onClose }: SettingsFormProps) {
   const posthog = usePostHog();
   const { mutate: saveUserSettings } = useSaveSettings();
   const { currentPath } = useNavigation();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const formRef = React.useRef<HTMLFormElement>(null);
 

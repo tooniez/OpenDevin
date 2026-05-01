@@ -2,11 +2,12 @@ import { Trans, useTranslation } from "react-i18next";
 import { I18nKey } from "#/i18n/declaration";
 
 export function GitHubTokenHelpAnchor() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <p data-testid="github-token-help-anchor" className="text-xs">
       <Trans
+        ns="openhands"
         i18nKey={I18nKey.GITHUB$TOKEN_HELP_TEXT}
         components={[
           <a

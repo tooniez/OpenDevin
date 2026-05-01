@@ -126,7 +126,7 @@ export function SlashCommandMenu({
   selectedIndex,
   onSelect,
 }: SlashCommandMenuProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   // Keep refs array in sync with items length

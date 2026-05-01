@@ -8,7 +8,7 @@ export interface RepositoryErrorStateProps {
 export function RepositoryErrorState({
   wrapperClassName,
 }: RepositoryErrorStateProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   return (
     <div
       data-testid="repo-dropdown-error"

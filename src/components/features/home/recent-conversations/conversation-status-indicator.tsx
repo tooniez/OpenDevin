@@ -12,7 +12,7 @@ interface ConversationStatusIndicatorProps {
 export function ConversationStatusIndicator({
   conversationStatus,
 }: ConversationStatusIndicatorProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const conversationStatusBackgroundColor = useMemo(() => {
     switch (conversationStatus) {

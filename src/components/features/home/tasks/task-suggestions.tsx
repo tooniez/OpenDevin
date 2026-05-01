@@ -16,7 +16,7 @@ interface TaskSuggestionsProps {
 }
 
 export function TaskSuggestions({ filterFor }: TaskSuggestionsProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const [isExpanded, setIsExpanded] = useState(false);
 
   const { data: config } = useConfig();

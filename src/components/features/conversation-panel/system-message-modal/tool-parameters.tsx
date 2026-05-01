@@ -8,7 +8,7 @@ interface ToolParametersProps {
 }
 
 export function ToolParameters({ parameters }: ToolParametersProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div className="mt-2" data-testid="tool-parameters">

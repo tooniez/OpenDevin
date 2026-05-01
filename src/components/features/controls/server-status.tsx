@@ -20,7 +20,7 @@ export function ServerStatus({
 }: ServerStatusProps) {
   const { curAgentState } = useAgentState();
   const { isTask, taskStatus, taskDetail } = useTaskPolling();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { errorMessage } = useErrorMessageStore();
 
   const isStartingStatus =

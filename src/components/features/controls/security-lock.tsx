@@ -5,7 +5,7 @@ import { I18nKey } from "#/i18n/declaration";
 import { StyledTooltip } from "#/components/shared/buttons/styled-tooltip";
 
 export function SecurityLock() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <StyledTooltip

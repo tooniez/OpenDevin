@@ -52,7 +52,7 @@ const TAB_CONFIG = {
 export function ConversationTabContent() {
   const { selectedTab, shouldShownAgentLoading } = useConversationStore();
   const { conversationId } = useConversationId();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const activeTab = useMemo(
     () => TAB_CONFIG[selectedTab ?? "editor"],

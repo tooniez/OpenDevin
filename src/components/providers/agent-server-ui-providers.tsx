@@ -7,7 +7,12 @@ import {
   getQueryClient,
   setQueryClient,
 } from "#/query-client-config";
-import { getDefaultI18n, getI18n, setI18n } from "#/i18n";
+import {
+  OPENHANDS_I18N_NAMESPACE,
+  getDefaultI18n,
+  getI18n,
+  setI18n,
+} from "#/i18n";
 import { PostHogWrapper } from "./posthog-wrapper";
 
 export type AgentServerUIAnalyticsConfig =
@@ -72,7 +77,7 @@ export function AgentServerUIProviders({
     );
 
   return (
-    <I18nextProvider i18n={resolvedI18n} defaultNS="translation">
+    <I18nextProvider i18n={resolvedI18n} defaultNS={OPENHANDS_I18N_NAMESPACE}>
       <QueryClientProvider client={resolvedQueryClient}>
         {content}
       </QueryClientProvider>

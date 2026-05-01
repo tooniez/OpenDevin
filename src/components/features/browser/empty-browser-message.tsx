@@ -3,7 +3,7 @@ import { IoIosGlobe } from "react-icons/io";
 import { I18nKey } from "#/i18n/declaration";
 
 export function EmptyBrowserMessage() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full p-10 gap-4">

@@ -5,7 +5,7 @@ import { I18nKey } from "#/i18n/declaration";
 import { StyledTooltip } from "#/components/shared/buttons/styled-tooltip";
 
 export function OpenHandsLogoButton() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const tooltipText = t(I18nKey.BRANDING$OPENHANDS);
   const ariaLabel = t(I18nKey.BRANDING$OPENHANDS_LOGO);

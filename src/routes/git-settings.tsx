@@ -26,7 +26,7 @@ import { Provider, ProviderToken } from "#/types/settings";
 export const clientLoader = createPermissionGuard("manage_integrations");
 
 export function GitSettingsScreen() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const { mutate: saveGitProviders, isPending } = useAddGitProviders();
   const { mutate: disconnectGitTokens, isPending: isDisconnecting } =

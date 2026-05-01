@@ -10,7 +10,7 @@ interface SandboxStatusBadgesProps {
 export function SandboxStatusBadges({
   sandboxStatus,
 }: SandboxStatusBadgesProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   // Only show badge for MISSING (archived) status
   if (sandboxStatus !== "MISSING") {

@@ -15,7 +15,7 @@ export function ConversationPanelButton({
   onClick,
   disabled = false,
 }: ConversationPanelButtonProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const label = t(I18nKey.SIDEBAR$CONVERSATIONS);
 

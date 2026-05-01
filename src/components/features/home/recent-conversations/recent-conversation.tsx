@@ -15,7 +15,7 @@ interface RecentConversationProps {
 }
 
 export function RecentConversation({ conversation }: RecentConversationProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const hasRepository =
     conversation.selected_repository && conversation.selected_branch;

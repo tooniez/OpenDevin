@@ -6,7 +6,7 @@ interface AvatarProps {
 }
 
 export function Avatar({ src }: AvatarProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   return (
     <img
       src={src}

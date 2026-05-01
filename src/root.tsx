@@ -54,7 +54,7 @@ function AgentServerStatusCard({
   details?: string | null;
   version?: string | null;
 }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div className="mt-6 rounded-2xl border border-primary/20 bg-primary/10 p-4">
@@ -86,7 +86,6 @@ function AgentServerBootstrapLoading() {
   );
 }
 
-
 function AgentServerOnboardingLayout({
   testId,
   eyebrow,
@@ -106,7 +105,7 @@ function AgentServerOnboardingLayout({
   statusDetails?: string | null;
   version?: string | null;
 }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <main className="min-h-screen bg-base px-6 py-10 text-white">
@@ -161,7 +160,7 @@ function UnsupportedAgentServerNotice({
 }: {
   error: AgentServerIncompatibilityError;
 }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <AgentServerOnboardingLayout
@@ -181,7 +180,7 @@ function UnsupportedAgentServerNotice({
 }
 
 function UnknownAgentServerNotice() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <AgentServerOnboardingLayout
@@ -204,7 +203,7 @@ function MissingAgentServerNotice({
 }: {
   error: AgentServerUnavailableError;
 }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <AgentServerOnboardingLayout

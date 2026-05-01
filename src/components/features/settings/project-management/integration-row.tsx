@@ -23,7 +23,7 @@ export function IntegrationRow({
   "data-testid": dataTestId,
 }: IntegrationRowProps) {
   const [isConfigureModalOpen, setConfigureModalOpen] = React.useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const { data: integrationData, isLoading: isStatusLoading } =
     useIntegrationStatus(platform);

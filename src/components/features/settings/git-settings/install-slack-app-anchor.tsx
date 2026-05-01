@@ -3,7 +3,7 @@ import { I18nKey } from "#/i18n/declaration";
 import { BrandButton } from "../brand-button";
 
 export function InstallSlackAppAnchor() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div data-testid="install-slack-app-button" className="py-9">

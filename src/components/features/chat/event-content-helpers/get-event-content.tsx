@@ -34,6 +34,7 @@ export const getEventContent = (
     if (i18n.exists(actionKey)) {
       title = (
         <Trans
+          ns="openhands"
           i18nKey={actionKey}
           values={{
             path: hasPathProperty(event.args) && event.args.path,
@@ -62,6 +63,7 @@ export const getEventContent = (
     if (i18n.exists(observationKey)) {
       title = (
         <Trans
+          ns="openhands"
           i18nKey={observationKey}
           values={{
             path: hasPathProperty(event.extras) && event.extras.path,

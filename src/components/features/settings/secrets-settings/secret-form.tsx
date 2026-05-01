@@ -22,7 +22,7 @@ export function SecretForm({
   onCancel,
 }: SecretFormProps) {
   const queryClient = useQueryClient();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const { data: secrets } = useSearchSecrets();
   const { mutate: createSecret } = useCreateSecret();

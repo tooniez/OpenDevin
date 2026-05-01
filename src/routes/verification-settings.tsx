@@ -32,7 +32,7 @@ function VerificationSettingsHeader({
   onSecurityAnalyzerChange: (value: string | null) => void;
   renderTopContent?: () => React.ReactNode;
 }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const securityAnalyzerItems = React.useMemo(
     () => [

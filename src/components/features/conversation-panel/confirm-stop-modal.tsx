@@ -66,7 +66,7 @@ export function ConfirmStopModal({
   onCancel,
   sandboxId,
 }: ConfirmStopModalProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const {
     data: conversations,
     isLoading,

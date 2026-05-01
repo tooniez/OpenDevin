@@ -22,7 +22,7 @@ import { ReactRouterNavigationProvider } from "./react-router-navigation-provide
 
 export function ErrorBoundary() {
   const error = useRouteError();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   if (isRouteErrorResponse(error)) {
     return (

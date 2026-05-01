@@ -31,7 +31,7 @@ export function AgentServerConnectionForm({
   variant = "onboarding",
   showSectionHeader,
 }: AgentServerConnectionFormProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const defaults = React.useMemo(() => getAgentServerFormDefaults(), []);
   const [baseUrl, setBaseUrl] = React.useState(defaults.baseUrl);
   const [sessionApiKey, setSessionApiKey] = React.useState(
@@ -138,7 +138,7 @@ export function AgentServerChecklist({
   className,
   variant = "connect",
 }: AgentServerChecklistProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const steps =
     variant === "upgrade"

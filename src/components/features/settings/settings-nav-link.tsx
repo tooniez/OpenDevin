@@ -11,7 +11,7 @@ interface SettingsNavLinkProps {
 }
 
 export function SettingsNavLink({ item, onClick }: SettingsNavLinkProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { to, icon, text } = item;
 
   return (

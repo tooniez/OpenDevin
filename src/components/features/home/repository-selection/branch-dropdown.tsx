@@ -23,7 +23,7 @@ export function BranchDropdown({
   wrapperClassName,
   label,
 }: BranchDropdownProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <SettingsDropdownInput

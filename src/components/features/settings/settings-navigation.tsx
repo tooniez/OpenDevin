@@ -20,7 +20,7 @@ export function SettingsNavigation({
   onCloseMobileMenu,
   navigationItems,
 }: SettingsNavigationProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <>

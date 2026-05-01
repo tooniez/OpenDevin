@@ -25,7 +25,7 @@ interface ConversationPanelProps {
 }
 
 export function ConversationPanel({ onClose }: ConversationPanelProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { conversationId: currentConversationId, navigate } = useNavigation();
   const ref = useClickOutsideElement<HTMLDivElement>(onClose);
 

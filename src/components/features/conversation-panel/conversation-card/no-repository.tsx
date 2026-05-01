@@ -3,7 +3,7 @@ import { I18nKey } from "#/i18n/declaration";
 import RepoForkedIcon from "#/icons/repo-forked.svg?react";
 
 export function NoRepository() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div className="flex items-center gap-1 text-xs text-[#A3A3A3]">

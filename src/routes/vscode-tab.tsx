@@ -8,7 +8,7 @@ import { VSCODE_IN_NEW_TAB } from "#/utils/feature-flags";
 import { WaitingForRuntimeMessage } from "#/components/features/chat/waiting-for-runtime-message";
 
 function VSCodeTab() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { data, isLoading, error } = useUnifiedVSCodeUrl();
   const { curAgentState } = useAgentState();
   const isRuntimeStarting = RUNTIME_STARTING_STATES.includes(curAgentState);

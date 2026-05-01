@@ -11,7 +11,7 @@ interface ErrorMessageProps {
 }
 
 export function ErrorMessage({ errorId, defaultMessage }: ErrorMessageProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const [showDetails, setShowDetails] = React.useState(false);
 
   const hasValidTranslationId = !!errorId && i18n.exists(errorId);

@@ -6,7 +6,7 @@ import { I18nKey } from "#/i18n/declaration";
 import { H1 } from "#/ui/typography";
 
 export default function DeviceVerify() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const [searchParams] = useSearchParams();
   const { data: isAuthed, isLoading: isAuthLoading } = useIsAuthed();
   const [verificationResult, setVerificationResult] = useState<{

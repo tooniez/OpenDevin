@@ -18,7 +18,7 @@ export function useValidateIntegration(
     onError: (error: any) => void;
   },
 ) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return useMutation({
     mutationFn: (workspace?: string) => {

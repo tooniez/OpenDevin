@@ -54,7 +54,7 @@ function getStatusClassName(blocked: boolean, success: boolean): string {
 export function HookExecutionEventMessage({
   event,
 }: HookExecutionEventMessageProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   if (!isHookExecutionEvent(event)) {
     return null;

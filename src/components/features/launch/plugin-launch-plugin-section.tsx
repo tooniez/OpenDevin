@@ -26,7 +26,7 @@ export function PluginLaunchPluginSection({
   getPluginDisplayName,
   onParameterChange,
 }: PluginLaunchPluginSectionProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const hasParams =
     plugin.parameters && Object.keys(plugin.parameters).length > 0;
 

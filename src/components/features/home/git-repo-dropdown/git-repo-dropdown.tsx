@@ -45,7 +45,7 @@ export function GitRepoDropdown({
   disabled = false,
   onChange,
 }: GitRepoDropdownProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { data: config } = useConfig();
   const { recentRepositories: storedRecentRepositories } = useHomeStore();
   const [inputValue, setInputValue] = useState("");

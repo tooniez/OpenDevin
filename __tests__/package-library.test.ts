@@ -40,6 +40,11 @@ describe("package library metadata", () => {
         import: "./dist/components/terminal/index.js",
         require: "./dist/components/terminal/index.cjs",
       },
+      "./i18n": {
+        types: "./dist/i18n/index.d.ts",
+        import: "./dist/i18n/index.js",
+        require: "./dist/i18n/index.cjs",
+      },
     });
   });
 });

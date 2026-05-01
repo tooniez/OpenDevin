@@ -12,7 +12,7 @@ interface OrgWideSettingsBadgeProps {
 export function OrgWideSettingsBadge({
   variant = "org-wide",
 }: OrgWideSettingsBadgeProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const i18nKey =
     variant === "managed-by-admin"

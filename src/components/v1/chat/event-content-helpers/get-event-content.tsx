@@ -27,6 +27,7 @@ const createTitleFromKey = (
 
   return (
     <Trans
+      ns="openhands"
       i18nKey={key}
       values={values}
       components={{

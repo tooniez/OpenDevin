@@ -4,7 +4,7 @@ import { I18nKey } from "#/i18n/declaration";
 import { getRandomTip } from "#/utils/tips";
 
 export function RandomTip() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const [randomTip, setRandomTip] = React.useState(getRandomTip());
 
   // Update the random tip when the component mounts

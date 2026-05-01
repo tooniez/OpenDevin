@@ -15,7 +15,7 @@ export function GitControlBarPullButton({
   onSuggestionsClick,
   isConversationReady = true,
 }: GitControlBarPullButtonProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { trackPullButtonClick } = useTracking();
 
   const { data: conversation } = useActiveConversation();

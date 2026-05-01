@@ -25,7 +25,7 @@ export function MCPServerList({
   onEdit,
   onDelete,
 }: MCPServerListProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   if (servers.length === 0) {
     return (

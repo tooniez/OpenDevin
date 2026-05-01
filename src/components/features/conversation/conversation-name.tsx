@@ -17,7 +17,7 @@ import { MetricsModal } from "./metrics-modal/metrics-modal";
 import CircuitIcon from "#/icons/u-circuit.svg?react";
 
 export function ConversationName() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { conversationId } = useConversationId();
   const { data: conversation } = useActiveConversation();
   const { mutate: updateConversation } = useUpdateConversation();

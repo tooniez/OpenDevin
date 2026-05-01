@@ -21,7 +21,7 @@ function StatusMessage({ children }: React.PropsWithChildren) {
 }
 
 function GitChanges() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const {
     data: gitChanges,
     isSuccess,

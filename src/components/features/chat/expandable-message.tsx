@@ -36,7 +36,7 @@ export function ExpandableMessage({
   action,
 }: ExpandableMessageProps) {
   const { data: config } = useConfig();
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation("openhands");
   const [showDetails, setShowDetails] = useState(true);
   const [details, setDetails] = useState(message);
   const [translationId, setTranslationId] = useState<string | undefined>(id);
@@ -49,7 +49,7 @@ export function ExpandableMessage({
 
   useEffect(() => {
     // If we have a translation ID, process it
-    if (id && i18n.exists(id)) {
+    if (id && i18n.exists(id, { ns: "openhands" })) {
       let processedObservation = observation;
       let processedAction = action;
 
@@ -133,8 +133,10 @@ export function ExpandableMessage({
               type === "error" ? "text-danger" : "text-neutral-300",
             )}
           >
-            {translationId && i18n.exists(translationId) ? (
+            {translationId &&
+            i18n.exists(translationId, { ns: "openhands" }) ? (
               <Trans
+                ns="openhands"
                 i18nKey={translationId}
                 values={translationParams}
                 components={{

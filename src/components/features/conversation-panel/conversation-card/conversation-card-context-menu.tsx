@@ -43,7 +43,7 @@ export function ConversationCardContextMenu({
   onDownloadConversation,
   position = "bottom",
 }: ConversationCardContextMenuProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const ref = useClickOutsideElement<HTMLUListElement>(onClose);
 
   const generateSection = useCallback(

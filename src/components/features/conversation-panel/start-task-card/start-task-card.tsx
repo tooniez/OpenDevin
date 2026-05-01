@@ -11,7 +11,7 @@ interface StartTaskCardProps {
 }
 
 export function StartTaskCard({ task, onClick }: StartTaskCardProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const title =
     task.request.title ||
     task.detail ||

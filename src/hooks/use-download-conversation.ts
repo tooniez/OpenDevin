@@ -8,7 +8,7 @@ import { I18nKey } from "#/i18n/declaration";
 
 export const useDownloadConversation = () => {
   const posthog = usePostHog();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return useMutation({
     mutationKey: ["conversations", "download"],

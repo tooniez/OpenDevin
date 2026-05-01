@@ -9,7 +9,7 @@ export interface RepositoryLoadingStateProps {
 export function RepositoryLoadingState({
   wrapperClassName,
 }: RepositoryLoadingStateProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   return (
     <div
       data-testid="repo-dropdown-loading"

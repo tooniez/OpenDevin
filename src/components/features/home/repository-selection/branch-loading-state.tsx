@@ -9,7 +9,7 @@ interface BranchLoadingStateProps {
 export function BranchLoadingState({
   wrapperClassName,
 }: BranchLoadingStateProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   return (
     <div
       data-testid="branch-dropdown-loading"

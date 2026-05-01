@@ -5,7 +5,7 @@ import { useCreateConversation } from "#/hooks/mutation/use-create-conversation"
 import { useIsCreatingConversation } from "#/hooks/use-is-creating-conversation";
 
 export function CreateConversationButton() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { navigate } = useNavigation();
 
   const {

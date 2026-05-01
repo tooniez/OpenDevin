@@ -9,7 +9,7 @@ interface ConfigureGitHubRepositoriesAnchorProps {
 export function ConfigureGitHubRepositoriesAnchor({
   slug,
 }: ConfigureGitHubRepositoriesAnchorProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div data-testid="configure-github-repositories-button" className="py-9">

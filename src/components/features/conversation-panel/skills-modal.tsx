@@ -17,7 +17,7 @@ interface SkillsModalProps {
 }
 
 export function SkillsModal({ onClose }: SkillsModalProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { curAgentState } = useAgentState();
   const [expandedAgents, setExpandedAgents] = useState<Record<string, boolean>>(
     {},

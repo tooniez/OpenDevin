@@ -41,7 +41,7 @@ export function ToolsContextMenu({
   shouldShowAgentTools = true,
   shouldShowHooks = false,
 }: ToolsContextMenuProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { data: conversation } = useActiveConversation();
   const { providers } = useUserProviders();
 

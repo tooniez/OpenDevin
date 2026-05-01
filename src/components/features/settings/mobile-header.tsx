@@ -12,7 +12,7 @@ export function MobileHeader({
   isMobileMenuOpen,
   onToggleMenu,
 }: MobileHeaderProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div className="flex items-center justify-between mb-4 md:hidden">

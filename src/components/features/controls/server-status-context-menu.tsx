@@ -29,7 +29,7 @@ export function ServerStatusContextMenu({
   className = "",
   isPausing = false,
 }: ServerStatusContextMenuProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const ref = useClickOutsideElement<HTMLUListElement>(onClose);
 
   const shouldActionShown =

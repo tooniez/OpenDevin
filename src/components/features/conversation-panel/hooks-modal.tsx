@@ -17,7 +17,7 @@ interface HooksModalProps {
 }
 
 export function HooksModal({ onClose }: HooksModalProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { curAgentState } = useAgentState();
   const [expandedEvents, setExpandedEvents] = useState<Record<string, boolean>>(
     {},

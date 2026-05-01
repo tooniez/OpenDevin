@@ -14,7 +14,7 @@ import { useActiveConversation } from "#/hooks/query/use-active-conversation";
 export const useNewConversationCommand = () => {
   const queryClient = useQueryClient();
   const { navigate } = useNavigation();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { data: conversation } = useActiveConversation();
 
   const mutation = useMutation({

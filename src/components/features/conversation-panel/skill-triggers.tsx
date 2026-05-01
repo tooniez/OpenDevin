@@ -7,7 +7,7 @@ interface SkillTriggersProps {
 }
 
 export function SkillTriggers({ triggers }: SkillTriggersProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   if (!triggers || triggers.length === 0) {
     return null;

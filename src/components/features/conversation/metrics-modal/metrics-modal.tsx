@@ -18,7 +18,7 @@ interface MetricsModalProps {
 }
 
 export function MetricsModal({ isOpen, onOpenChange }: MetricsModalProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const storeMetrics = useMetricsStore();
   const { data: conversation } = useActiveConversation();
 

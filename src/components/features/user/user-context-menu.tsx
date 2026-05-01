@@ -18,7 +18,7 @@ interface UserContextMenuProps {
 }
 
 export function UserContextMenu({ onClose }: UserContextMenuProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const settingsNavItems = useSettingsNavItems();
 
   return (

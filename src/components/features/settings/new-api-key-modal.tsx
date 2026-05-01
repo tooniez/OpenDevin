@@ -17,7 +17,7 @@ export function NewApiKeyModal({
   newlyCreatedKey,
   onClose,
 }: NewApiKeyModalProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const handleCopyToClipboard = () => {
     if (newlyCreatedKey) {

@@ -24,7 +24,7 @@ export function TaskCard({ task }: TaskCardProps) {
   const { setOptimisticUserMessage } = useOptimisticUserMessageStore();
   const { mutate: createConversation } = useCreateConversation();
   const isCreatingConversation = useIsCreatingConversation();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { navigate } = useNavigation();
 
   const handleLaunchConversation = () => {

@@ -1,9 +1,4 @@
-import {
-  ComboBox,
-  Input,
-  ListBox,
-  type Key,
-} from "@heroui/react";
+import { ComboBox, Input, ListBox, type Key } from "@heroui/react";
 import React, { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { OptionalTag } from "./optional-tag";
@@ -41,7 +36,8 @@ const LIST_BOX_ITEM_CLASS =
   "px-3 py-2 text-sm text-content hover:bg-white/5 cursor-pointer rounded-md mx-1";
 const CLEAR_BUTTON_CLASS =
   "text-tertiary-light/80 hover:text-content transition-colors text-lg leading-none";
-const TRIGGER_CLASS = "text-tertiary-light/80 hover:text-content transition-colors";
+const TRIGGER_CLASS =
+  "text-tertiary-light/80 hover:text-content transition-colors";
 
 const normalizeKey = (key: React.Key | null | undefined) =>
   key === null || key === undefined ? null : String(key);
@@ -83,11 +79,10 @@ export function SettingsDropdownInput({
   inputWrapperClassName,
   inputClassName,
 }: SettingsDropdownInputProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const isControlled = selectedKey !== undefined;
-  const [internalSelectedKey, setInternalSelectedKey] = React.useState<Key | null>(
-    defaultSelectedKey ?? null,
-  );
+  const [internalSelectedKey, setInternalSelectedKey] =
+    React.useState<Key | null>(defaultSelectedKey ?? null);
   const [inputValue, setInputValue] = React.useState(() =>
     getItemLabel(items, defaultSelectedKey),
   );

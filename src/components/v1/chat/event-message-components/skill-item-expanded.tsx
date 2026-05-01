@@ -64,7 +64,7 @@ interface SkillItemExpandedProps {
 }
 
 export function SkillItemExpanded({ content }: SkillItemExpandedProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { matchInfo, filePath, body } = parseSkillContent(content);
   const hasMetadata = matchInfo || filePath;
 

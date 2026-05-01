@@ -45,7 +45,7 @@ export function useSandboxRecovery({
   onSuccess,
   onError,
 }: UseSandboxRecoveryOptions) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { providers } = useUserProviders();
   const { mutate: resumeSandbox, isPending: isResuming } =
     useUnifiedResumeConversationSandbox();

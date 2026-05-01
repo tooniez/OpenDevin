@@ -23,7 +23,7 @@ export function useConfigureIntegration(
   },
 ) {
   const queryClient = useQueryClient();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return useMutation({
     mutationFn: async (data: ConfigureIntegrationData) => {

@@ -18,7 +18,7 @@ import { cn } from "#/utils/utils";
 import { ENABLE_AUTOMATIONS } from "#/utils/feature-flags";
 
 export function Sidebar() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { currentPath } = useNavigation();
   const user = useGitUser();
   const { data: config } = useConfig();

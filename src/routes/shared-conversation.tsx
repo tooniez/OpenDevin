@@ -13,7 +13,7 @@ import OpenHandsLogo from "#/assets/branding/openhands-logo.svg?react";
 import { useInfiniteScroll } from "#/hooks/use-infinite-scroll";
 
 export default function SharedConversation() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { conversationId } = useParams<{ conversationId: string }>();
 
   const {

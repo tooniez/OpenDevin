@@ -9,7 +9,7 @@ interface ActionTooltipProps {
 }
 
 export function ActionTooltip({ type, onClick }: ActionTooltipProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   const isConfirm = type === "confirm";
 

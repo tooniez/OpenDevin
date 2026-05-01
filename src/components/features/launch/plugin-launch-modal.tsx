@@ -28,7 +28,7 @@ export function PluginLaunchModal({
   onStartConversation,
   onClose,
 }: PluginLaunchModalProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const [pluginConfigs, setPluginConfigs] =
     React.useState<PluginSpec[]>(plugins);
   const [expandedSections, setExpandedSections] = React.useState<ExpandedState>(

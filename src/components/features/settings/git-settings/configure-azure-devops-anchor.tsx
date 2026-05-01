@@ -5,7 +5,7 @@ import { useAuthUrl } from "#/hooks/use-auth-url";
 import { BrandButton } from "../brand-button";
 
 export function ConfigureAzureDevOpsAnchor() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { data: config } = useConfig();
 
   const authUrl = useAuthUrl({

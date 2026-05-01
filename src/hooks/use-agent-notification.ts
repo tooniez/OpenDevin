@@ -22,7 +22,7 @@ const NOTIFICATION_STATES: AgentState[] = [
  */
 export function useAgentNotification(curAgentState: AgentState) {
   const { data: settings } = useSettings();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const audioRef = useRef<HTMLAudioElement | undefined>(undefined);
   const prevStateRef = useRef<AgentState | undefined>(undefined);
 

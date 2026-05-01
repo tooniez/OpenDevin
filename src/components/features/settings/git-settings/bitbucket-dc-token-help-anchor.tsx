@@ -2,7 +2,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { I18nKey } from "#/i18n/declaration";
 
 export function BitbucketDCTokenHelpAnchor() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <p
@@ -10,6 +10,7 @@ export function BitbucketDCTokenHelpAnchor() {
       className="text-xs max-w-[680px]"
     >
       <Trans
+        ns="openhands"
         i18nKey={I18nKey.BITBUCKET_DATA_CENTER$TOKEN_HELP_TEXT}
         components={[
           <a

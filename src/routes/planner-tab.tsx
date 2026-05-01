@@ -10,7 +10,7 @@ import { useHandlePlanClick } from "#/hooks/use-handle-plan-click";
 import { cn } from "#/utils/utils";
 
 function PlannerTab() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const {
     scrollRef: scrollContainerRef,

@@ -30,7 +30,7 @@ export function useConversationNameContextMenu({
   showOptions = false,
   onContextMenuToggle,
 }: UseConversationNameContextMenuProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { conversationId: currentConversationId, navigate } = useNavigation();
   const events = useEventStore((state) => state.events);
   const { mutate: deleteConversation } = useDeleteConversation();

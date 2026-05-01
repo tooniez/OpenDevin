@@ -12,7 +12,7 @@ export function SystemMessageHeader({
   agentClass,
   openhandsVersion,
 }: SystemMessageHeaderProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div

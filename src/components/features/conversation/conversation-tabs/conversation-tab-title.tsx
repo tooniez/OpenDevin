@@ -19,7 +19,7 @@ export function ConversationTabTitle({
   title,
   conversationKey,
 }: ConversationTabTitleProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { refetch, isFetching } = useUnifiedGetGitChanges();
   const { handleBuildPlanClick } = useHandleBuildPlanClick();
   const { curAgentState } = useAgentState();

@@ -63,7 +63,7 @@ export function ChatInterface() {
   } = useFilteredEvents();
   const { setOptimisticUserMessage, getOptimisticUserMessage } =
     useOptimisticUserMessageStore();
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const {
     scrollDomToBottom,

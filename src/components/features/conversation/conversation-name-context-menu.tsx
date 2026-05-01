@@ -59,7 +59,7 @@ export function ConversationNameContextMenu({
 }: ConversationNameContextMenuProps) {
   const isMobile = useBreakpoint();
 
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const ref = useClickOutsideElement<HTMLUListElement>(onClose);
   const { data: conversation } = useActiveConversation();
   const { data: config } = useConfig();

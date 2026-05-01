@@ -17,7 +17,7 @@ import {
  * stopConversation({ conversationId: "some-id" });
  */
 export const useUnifiedPauseConversationSandbox = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const queryClient = useQueryClient();
   const { conversationId: currentConversationId, navigate } = useNavigation();
 

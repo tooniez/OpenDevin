@@ -20,7 +20,7 @@ export function GitControlBarRepoButton({
   onClick,
   disabled,
 }: GitControlBarRepoButtonProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const { data: settings } = useSettings();
 
   const hasRepository = selectedRepository && gitProvider;

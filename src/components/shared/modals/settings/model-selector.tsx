@@ -43,8 +43,10 @@ const POPOVER_CLASS =
   "bg-tertiary rounded-xl border border-[#717888] overflow-hidden";
 const LIST_BOX_ITEM_CLASS =
   "px-3 py-2 text-sm text-content hover:bg-white/5 cursor-pointer rounded-md mx-1";
-const TRIGGER_CLASS = "text-tertiary-light/80 hover:text-content transition-colors";
-const SECTION_HEADER_CLASS = "px-3 pt-2 pb-1 text-xs uppercase text-tertiary-light";
+const TRIGGER_CLASS =
+  "text-tertiary-light/80 hover:text-content transition-colors";
+const SECTION_HEADER_CLASS =
+  "px-3 pt-2 pb-1 text-xs uppercase text-tertiary-light";
 const SECTION_SEPARATOR_CLASS = "my-1 h-px bg-[#717888]/50";
 
 function SectionedComboBox({
@@ -317,7 +319,7 @@ export function ModelSelector({
     setLitellmId(null);
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
 
   return (
     <div

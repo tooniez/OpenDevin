@@ -24,7 +24,7 @@ export function SettingsSwitch({
   isBeta,
   isDisabled,
 }: React.PropsWithChildren<SettingsSwitchProps>) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("openhands");
   const [isToggled, setIsToggled] = React.useState(defaultIsToggled ?? false);
 
   const handleToggle = (value: boolean) => {
