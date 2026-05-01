@@ -1,4 +1,5 @@
 export const AGENT_SERVER_CONFIG_STORAGE_KEY = "openhands-agent-server-config";
+export const DEFAULT_WORKING_DIR = "workspace/project";
 
 interface StoredAgentServerConfig {
   baseUrl?: string | null;
@@ -153,7 +154,7 @@ export function getAgentServerWorkingDir(): string {
   const storedDir = readStoredConfig().workingDir?.trim();
   if (storedDir) return storedDir;
 
-  return "/workspace/project";
+  return DEFAULT_WORKING_DIR;
 }
 
 export function getConfiguredWorkerUrls(): string[] {

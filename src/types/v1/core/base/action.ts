@@ -219,7 +219,7 @@ export interface PlanningFileEditorAction extends ActionBase<"PlanningFileEditor
    */
   command: "view" | "create" | "str_replace" | "insert" | "undo_edit";
   /**
-   * Absolute path to file (typically /workspace/project/PLAN.md).
+   * File path (typically workspace/project/PLAN.md).
    */
   path: string;
   /**

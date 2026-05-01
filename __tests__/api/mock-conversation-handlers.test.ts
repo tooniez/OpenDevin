@@ -11,7 +11,7 @@ describe("mock conversation handlers", () => {
     expect(conversation?.id).toBe("1");
     expect(conversation?.title).toBe("My New Project");
     expect(conversation?.conversation_url).toContain("/api/conversations/1");
-    expect(conversation?.workspace?.working_dir).toBe("/workspace/project");
+    expect(conversation?.workspace?.working_dir).toBe("workspace/project");
   });
 
   it("returns adapted conversation pages for search", async () => {
@@ -26,7 +26,7 @@ describe("mock conversation handlers", () => {
     const changes = await V1GitService.getGitChanges(
       "http://localhost:3000/api/conversations/1",
       null,
-      "/workspace/project",
+      "workspace/project",
     );
 
     expect(changes).toEqual([]);

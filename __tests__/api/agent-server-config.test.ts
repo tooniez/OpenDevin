@@ -1,9 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   AGENT_SERVER_CONFIG_STORAGE_KEY,
+  DEFAULT_WORKING_DIR,
   getAgentServerBaseUrl,
   getAgentServerFormDefaults,
   getAgentServerSessionApiKey,
+  getAgentServerWorkingDir,
   saveAgentServerConfig,
 } from "#/api/agent-server-config";
 
@@ -55,6 +57,10 @@ describe("agent server config", () => {
       sessionApiKey: "env-session-key",
     });
     expect(getAgentServerSessionApiKey()).toBe("env-session-key");
+  });
+
+  it("defaults the working dir to the relative workspace path", () => {
+    expect(getAgentServerWorkingDir()).toBe(DEFAULT_WORKING_DIR);
   });
 
   it("lets saved interface settings override environment defaults", () => {

@@ -1,3 +1,5 @@
+import { DEFAULT_WORKING_DIR } from "#/api/agent-server-config";
+
 /**
  * Get the git repository path for a conversation.
  *
@@ -5,10 +7,10 @@
  * prefer that over frontend heuristics.
  *
  * Otherwise, when sandbox grouping is enabled (strategy != NO_GROUPING), each
- * conversation gets its own subdirectory: /workspace/project/{conversationId}[/{repoName}]
+ * conversation gets its own subdirectory: workspace/project/{conversationId}[/{repoName}]
  *
  * When sandbox grouping is disabled (NO_GROUPING), the path is simply:
- * /workspace/project[/{repoName}]
+ * workspace/project[/{repoName}]
  */
 export function getGitPath(
   conversationId: string,
@@ -22,8 +24,8 @@ export function getGitPath(
   }
 
   const basePath = useSandboxGrouping
-    ? `/workspace/project/${conversationId}`
-    : "/workspace/project";
+    ? `${DEFAULT_WORKING_DIR}/${conversationId}`
+    : DEFAULT_WORKING_DIR;
 
   if (!selectedRepository) {
     return basePath;

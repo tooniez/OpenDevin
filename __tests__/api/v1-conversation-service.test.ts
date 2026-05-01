@@ -1,4 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
+import { DEFAULT_WORKING_DIR } from "#/api/agent-server-config";
 import V1ConversationService from "#/api/conversation-service/v1-conversation-service.api";
 
 const {
@@ -22,6 +23,7 @@ vi.mock("#/api/typescript-client", () => ({
 }));
 
 vi.mock("#/api/agent-server-config", () => ({
+  DEFAULT_WORKING_DIR: "workspace/project",
   getAgentServerBaseUrl: vi.fn(() => "http://localhost:54928"),
   getAgentServerSessionApiKey: vi.fn(() => "test-api-key"),
   getAgentServerWorkingDir: vi.fn(() => "/workspace/project/agent-server-gui"),
@@ -58,7 +60,7 @@ describe("V1ConversationService", () => {
       expect(mockHttpGet).toHaveBeenCalledWith(
         "/api/file/download",
         expect.objectContaining({
-          params: { path: "/workspace/project/.agents_tmp/PLAN.md" },
+          params: { path: `${DEFAULT_WORKING_DIR}/.agents_tmp/PLAN.md` },
           responseType: "arrayBuffer",
         }),
       );

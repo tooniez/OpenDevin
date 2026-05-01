@@ -1,6 +1,7 @@
 import { Provider } from "#/types/settings";
 import { SuggestedTask } from "#/utils/types";
 import {
+  DEFAULT_WORKING_DIR,
   getAgentServerBaseUrl,
   getAgentServerWorkingDir,
 } from "../agent-server-config";
@@ -208,7 +209,7 @@ class V1ConversationService {
 
   static async readConversationFile(
     _conversationId: string,
-    filePath: string = "/workspace/project/.agents_tmp/PLAN.md",
+    filePath: string = `${DEFAULT_WORKING_DIR}/.agents_tmp/PLAN.md`,
   ): Promise<string> {
     return downloadTextFile(filePath);
   }

@@ -104,7 +104,7 @@ You can create a `.env` file in the project directory with these variables based
 | `VITE_BACKEND_BASE_URL`     | Full base URL for the agent server used by direct browser requests                 | current browser origin |
 | `VITE_BACKEND_HOST`         | Backend host used by the Vite dev proxy                                            | `127.0.0.1:8000`       |
 | `VITE_SESSION_API_KEY`      | Optional `X-Session-API-Key` header value for authenticated agent_server instances | -                      |
-| `VITE_WORKING_DIR`          | Workspace path sent when starting new conversations                                | `/workspace/project`   |
+| `VITE_WORKING_DIR`          | Workspace path sent when starting new conversations                                | `workspace/project`    |
 | `VITE_WORKER_URLS`          | Optional comma-separated worker/app URLs for the Browser tab                       | -                      |
 | `VITE_ENABLE_BROWSER_TOOLS` | Set to `false` to omit `BrowserToolSet` from new conversation payloads             | `true`                 |
 | `VITE_MOCK_API`             | Enable/disable API mocking with MSW                                                | `false`                |
