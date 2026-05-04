@@ -40,14 +40,19 @@ class ConversationService {
   }
 
   static async getVSCodeUrl(
-    _conversationId: string,
+    conversationId: string,
   ): Promise<GetVSCodeUrlResponse> {
+    const workspaceDir =
+      this.currentConversation?.id === conversationId
+        ? (this.currentConversation?.workspace?.working_dir ??
+          getAgentServerWorkingDir())
+        : getAgentServerWorkingDir();
     const vscode_url = await createVSCodeClient(
       this.getClientOverrides(),
     ).getUrl({
       baseUrl:
         typeof window !== "undefined" ? window.location.origin : undefined,
-      workspaceDir: getAgentServerWorkingDir(),
+      workspaceDir,
     });
 
     return { vscode_url };

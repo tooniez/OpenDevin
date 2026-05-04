@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   AGENT_SERVER_CONFIG_STORAGE_KEY,
   DEFAULT_WORKING_DIR,
+  buildConversationWorkingDir,
   getAgentServerBaseUrl,
   getAgentServerFormDefaults,
   getAgentServerSessionApiKey,
@@ -61,6 +62,14 @@ describe("agent server config", () => {
 
   it("defaults the working dir to the relative workspace path", () => {
     expect(getAgentServerWorkingDir()).toBe(DEFAULT_WORKING_DIR);
+  });
+
+  it("nests each conversation's working dir under the configured base using the hex id (matching the server's persistence dir name)", () => {
+    vi.stubEnv("VITE_WORKING_DIR", "/srv/workspaces/");
+
+    expect(
+      buildConversationWorkingDir("4a8dca37-3bf0-48de-a0af-949d711c3d48"),
+    ).toBe("/srv/workspaces/4a8dca373bf048dea0af949d711c3d48");
   });
 
   it("lets saved interface settings override environment defaults", () => {

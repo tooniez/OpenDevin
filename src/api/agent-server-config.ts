@@ -157,6 +157,12 @@ export function getAgentServerWorkingDir(): string {
   return DEFAULT_WORKING_DIR;
 }
 
+export function buildConversationWorkingDir(conversationId: string): string {
+  const base = getAgentServerWorkingDir().replace(/\/+$/, "");
+  const hex = conversationId.replace(/-/g, "");
+  return `${base}/${hex}`;
+}
+
 export function getConfiguredWorkerUrls(): string[] {
   const raw = import.meta.env.VITE_WORKER_URLS?.trim();
   if (!raw) return [];

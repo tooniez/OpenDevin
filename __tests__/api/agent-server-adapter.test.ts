@@ -109,6 +109,28 @@ describe("buildStartConversationRequest", () => {
     });
   });
 
+  it("uses the supplied conversationId and workingDir overrides", () => {
+    const conversationId = "11111111-1111-4111-8111-111111111111";
+    const workingDir = `/base/${conversationId}`;
+    const payload = buildStartConversationRequest({
+      settings: {
+        ...DEFAULT_SETTINGS,
+        agent_settings: {
+          ...DEFAULT_SETTINGS.agent_settings,
+          llm: { model: "nested-model" },
+        },
+      },
+      conversationId,
+      workingDir,
+    }) as {
+      conversation_id?: string;
+      workspace: { working_dir: string };
+    };
+
+    expect(payload.conversation_id).toBe(conversationId);
+    expect(payload.workspace.working_dir).toBe(workingDir);
+  });
+
   it("forwards supported conversation runtime fields from nested settings", () => {
     const payload = buildStartConversationRequest({
       settings: {

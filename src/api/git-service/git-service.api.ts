@@ -1,6 +1,6 @@
 import { RepositoryPage, BranchPage, InstallationPage } from "#/types/git";
 import { GitChange, GitChangeDiff } from "../open-hands.types";
-import { getAgentServerWorkingDir } from "../agent-server-config";
+import V1ConversationService from "../conversation-service/v1-conversation-service.api";
 import { createRemoteWorkspace } from "../typescript-client";
 import { mapAnyGitStatusToV0Status } from "#/utils/git-status-mapper";
 
@@ -68,9 +68,11 @@ class GitService {
     return { items: [], next_page_id: null };
   }
 
-  static async getGitChanges(_conversationId: string): Promise<GitChange[]> {
-    const changes = await createRemoteWorkspace().gitChanges(
-      getAgentServerWorkingDir(),
+  static async getGitChanges(conversationId: string): Promise<GitChange[]> {
+    const workingDir =
+      await V1ConversationService.resolveConversationWorkingDir(conversationId);
+    const changes = await createRemoteWorkspace({ workingDir }).gitChanges(
+      workingDir,
     );
 
     return changes.map((change) => ({

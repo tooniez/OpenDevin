@@ -1,7 +1,7 @@
 import { Provider } from "#/types/settings";
 import { SuggestedTask } from "#/utils/types";
 import {
-  DEFAULT_WORKING_DIR,
+  buildConversationWorkingDir,
   getAgentServerBaseUrl,
   getAgentServerWorkingDir,
 } from "../agent-server-config";
@@ -56,11 +56,15 @@ class V1ConversationService {
     plugins?: PluginSpec[],
   ): Promise<V1AppConversationStartTask> {
     const settings = await SettingsService.getSettings();
+    const conversationId = crypto.randomUUID();
+    const workingDir = buildConversationWorkingDir(conversationId);
     const payload = buildStartConversationRequest({
       settings,
       query: initialUserMsg,
       conversationInstructions,
       plugins,
+      conversationId,
+      workingDir,
     });
 
     const response = await createHttpClient().post<DirectConversationInfo>(
@@ -100,17 +104,28 @@ class V1ConversationService {
   }
 
   static async getVSCodeUrl(
-    _conversationId: string,
+    conversationId: string,
     _conversationUrl: string | null | undefined,
     sessionApiKey?: string | null,
   ): Promise<GetVSCodeUrlResponse> {
+    const workspaceDir =
+      await this.resolveConversationWorkingDir(conversationId);
     const vscode_url = await createVSCodeClient({ sessionApiKey }).getUrl({
       baseUrl:
         typeof window !== "undefined" ? window.location.origin : undefined,
-      workspaceDir: getAgentServerWorkingDir(),
+      workspaceDir,
     });
 
     return { vscode_url };
+  }
+
+  static async resolveConversationWorkingDir(
+    conversationId: string,
+  ): Promise<string> {
+    const [conversation] = await this.batchGetAppConversations([
+      conversationId,
+    ]);
+    return conversation?.workspace?.working_dir ?? getAgentServerWorkingDir();
   }
 
   static async pauseConversation(
@@ -199,10 +214,15 @@ class V1ConversationService {
   }
 
   static async readConversationFile(
-    _conversationId: string,
-    filePath: string = `${DEFAULT_WORKING_DIR}/.agents_tmp/PLAN.md`,
+    conversationId: string,
+    filePath?: string,
   ): Promise<string> {
-    return downloadTextFile(filePath);
+    if (filePath) {
+      return downloadTextFile(filePath);
+    }
+
+    const workingDir = await this.resolveConversationWorkingDir(conversationId);
+    return downloadTextFile(`${workingDir}/.agents_tmp/PLAN.md`);
   }
 
   static async downloadConversation(conversationId: string): Promise<Blob> {

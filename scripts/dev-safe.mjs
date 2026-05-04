@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
 import { mkdirSync } from "node:fs";
+import { homedir } from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { setTimeout as delay } from "node:timers/promises";
@@ -10,8 +11,11 @@ const DEFAULT_WAIT_TIMEOUT_MS = 30_000;
 
 function isEnoentError(error) {
   return Boolean(
-    (error && typeof error === "object" && "code" in error && error.code === "ENOENT") ||
-      /ENOENT/.test(String(error)),
+    (error &&
+      typeof error === "object" &&
+      "code" in error &&
+      error.code === "ENOENT") ||
+    /ENOENT/.test(String(error)),
   );
 }
 
@@ -52,12 +56,18 @@ function parsePort(value, fallback) {
 }
 
 export function buildSafeDevConfig(cwd = process.cwd(), env = process.env) {
-  const backendPort = parsePort(env.OH_GUI_SAFE_BACKEND_PORT, DEFAULT_BACKEND_PORT);
+  const backendPort = parsePort(
+    env.OH_GUI_SAFE_BACKEND_PORT,
+    DEFAULT_BACKEND_PORT,
+  );
   const vscodePort = parsePort(env.OH_GUI_SAFE_VSCODE_PORT, backendPort + 1);
   const stateDir = path.resolve(
     cwd,
-    env.OH_GUI_SAFE_STATE_DIR || path.join(".openhands-dev", `safe-dev-${backendPort}`),
+    env.OH_GUI_SAFE_STATE_DIR ||
+      path.join(homedir(), ".openhands", "agent-server-gui"),
   );
+  const conversationsPath = path.join(stateDir, "conversations");
+  const workspacesPath = path.join(stateDir, "workspaces");
 
   return {
     cwd,
@@ -65,11 +75,12 @@ export function buildSafeDevConfig(cwd = process.cwd(), env = process.env) {
     vscodePort,
     stateDir,
     tmuxTmpDir: path.join(stateDir, "tmux"),
-    conversationsPath: path.join(stateDir, "conversations"),
+    conversationsPath,
+    workspacesPath,
     bashEventsDir: path.join(stateDir, "bash_events"),
     backendBaseUrl: `http://127.0.0.1:${backendPort}`,
     backendHost: `127.0.0.1:${backendPort}`,
-    workingDir: env.VITE_WORKING_DIR || cwd,
+    workingDir: env.VITE_WORKING_DIR || workspacesPath,
   };
 }
 
@@ -125,7 +136,9 @@ function spawnProcess(command, args, options) {
     if (isEnoentError(error) && command === "agent-server") {
       console.error(formatMissingAgentServerGuidance(options?.cwd));
     } else if (isEnoentError(error)) {
-      console.error(`Failed to start ${command}. Make sure it is installed and on your PATH.`);
+      console.error(
+        `Failed to start ${command}. Make sure it is installed and on your PATH.`,
+      );
     } else {
       console.error(`Failed to start ${command}:`, error);
     }
@@ -141,6 +154,7 @@ async function main() {
     config.stateDir,
     config.tmuxTmpDir,
     config.conversationsPath,
+    config.workspacesPath,
     config.bashEventsDir,
   ]) {
     mkdirSync(dir, { recursive: true });
@@ -235,7 +249,10 @@ async function main() {
   });
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
   main().catch((error) => {
     console.error(error instanceof Error ? error.message : error);
     process.exit(1);

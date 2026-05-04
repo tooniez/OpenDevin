@@ -283,8 +283,10 @@ function buildConfiguredConversationSettings(options: {
   query?: string;
   conversationInstructions?: string;
   plugins?: PluginSpec[];
+  workingDir?: string;
 }): SettingsRecord {
-  const { settings, query, conversationInstructions, plugins } = options;
+  const { settings, query, conversationInstructions, plugins, workingDir } =
+    options;
   const conversationSettings = toRecord(settings.conversation_settings);
   const initialMessage = buildInitialMessage(query, conversationInstructions);
 
@@ -296,7 +298,7 @@ function buildConfiguredConversationSettings(options: {
     ...conversationSettings,
     workspace: {
       kind: "LocalWorkspace",
-      working_dir: getAgentServerWorkingDir(),
+      working_dir: workingDir ?? getAgentServerWorkingDir(),
     },
     ...(initialMessage ? { initial_message: initialMessage } : {}),
     ...(plugins?.length
@@ -316,6 +318,8 @@ export function buildStartConversationRequest(options: {
   query?: string;
   conversationInstructions?: string;
   plugins?: PluginSpec[];
+  conversationId?: string;
+  workingDir?: string;
 }) {
   const agentSettings = buildConfiguredAgentSettings(options.settings);
   const agent = createAgentFromSettings(agentSettings);
@@ -333,6 +337,10 @@ export function buildStartConversationRequest(options: {
     stuck_detection: true,
     autotitle: true,
   };
+
+  if (options.conversationId) {
+    payload.conversation_id = options.conversationId;
+  }
 
   const securityAnalyzer =
     getConversationSecurityAnalyzer(conversationSettings);

@@ -1,5 +1,4 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { DEFAULT_WORKING_DIR } from "#/api/agent-server-config";
 import V1ConversationService from "#/api/conversation-service/v1-conversation-service.api";
 
 const {
@@ -8,12 +7,14 @@ const {
   mockFileUpload,
   mockCreateHttpClient,
   mockCreateRemoteWorkspace,
+  mockGetSettings,
 } = vi.hoisted(() => ({
   mockHttpGet: vi.fn(),
   mockHttpPost: vi.fn(),
   mockFileUpload: vi.fn(),
   mockCreateHttpClient: vi.fn(),
   mockCreateRemoteWorkspace: vi.fn(),
+  mockGetSettings: vi.fn(),
 }));
 
 vi.mock("#/api/typescript-client", () => ({
@@ -27,7 +28,16 @@ vi.mock("#/api/agent-server-config", () => ({
   getAgentServerBaseUrl: vi.fn(() => "http://localhost:54928"),
   getAgentServerSessionApiKey: vi.fn(() => "test-api-key"),
   getAgentServerWorkingDir: vi.fn(() => "/workspace/project/agent-server-gui"),
+  buildConversationWorkingDir: vi.fn(
+    (id: string) => `/state/workspaces/${id.replace(/-/g, "")}`,
+  ),
   getConfiguredWorkerUrls: vi.fn(() => []),
+}));
+
+vi.mock("#/api/settings-service/settings-service.api", () => ({
+  default: {
+    getSettings: mockGetSettings,
+  },
 }));
 
 describe("V1ConversationService", () => {
@@ -49,27 +59,91 @@ describe("V1ConversationService", () => {
   });
 
   describe("readConversationFile", () => {
-    it("downloads the default plan path when filePath is not provided", async () => {
+    it("downloads the plan from the conversation's own working_dir when no filePath is provided", async () => {
       const encodedPlan = new TextEncoder().encode("# PLAN content").buffer;
-      mockHttpGet.mockResolvedValue({ data: encodedPlan });
+      mockHttpGet.mockImplementation((url: string) => {
+        if (url === "/api/conversations") {
+          return Promise.resolve({
+            data: [
+              {
+                id: "conv-123",
+                created_at: "2024-01-01",
+                updated_at: "2024-01-01",
+                workspace: {
+                  working_dir: "/workspace/project/agent-server-gui/conv-123",
+                },
+              },
+            ],
+          });
+        }
+        return Promise.resolve({ data: encodedPlan });
+      });
 
-      const content = await V1ConversationService.readConversationFile("conv-123");
+      const content =
+        await V1ConversationService.readConversationFile("conv-123");
 
       expect(content).toBe("# PLAN content");
-      expect(mockCreateHttpClient).toHaveBeenCalledTimes(1);
       expect(mockHttpGet).toHaveBeenCalledWith(
         "/api/file/download",
         expect.objectContaining({
-          params: { path: `${DEFAULT_WORKING_DIR}/.agents_tmp/PLAN.md` },
+          params: {
+            path: "/workspace/project/agent-server-gui/conv-123/.agents_tmp/PLAN.md",
+          },
           responseType: "arrayBuffer",
         }),
       );
     });
   });
 
+  describe("createConversation", () => {
+    it("generates a unique conversation_id and isolated working_dir per call", async () => {
+      mockGetSettings.mockResolvedValue({
+        agent_settings: { llm: { model: "gpt-4o" } },
+        conversation_settings: {},
+      });
+      mockHttpPost.mockResolvedValue({
+        data: {
+          id: "ignored-server-id",
+          created_at: "2024-01-01",
+          updated_at: "2024-01-01",
+        },
+      });
+
+      await V1ConversationService.createConversation();
+      await V1ConversationService.createConversation();
+
+      expect(mockHttpPost).toHaveBeenCalledTimes(2);
+      const [firstCall, secondCall] = mockHttpPost.mock.calls;
+      const firstPayload = firstCall[1] as {
+        conversation_id: string;
+        workspace: { working_dir: string };
+      };
+      const secondPayload = secondCall[1] as {
+        conversation_id: string;
+        workspace: { working_dir: string };
+      };
+
+      expect(firstPayload.conversation_id).toBeTruthy();
+      expect(secondPayload.conversation_id).toBeTruthy();
+      expect(firstPayload.conversation_id).not.toBe(
+        secondPayload.conversation_id,
+      );
+      const firstHex = firstPayload.conversation_id.replace(/-/g, "");
+      const secondHex = secondPayload.conversation_id.replace(/-/g, "");
+      expect(firstPayload.workspace.working_dir).toBe(
+        `/state/workspaces/${firstHex}`,
+      );
+      expect(secondPayload.workspace.working_dir).toBe(
+        `/state/workspaces/${secondHex}`,
+      );
+    });
+  });
+
   describe("uploadFile", () => {
     it("uses query params for file upload path", async () => {
-      const file = new File(["test content"], "test.txt", { type: "text/plain" });
+      const file = new File(["test content"], "test.txt", {
+        type: "text/plain",
+      });
       const uploadPath = "/workspace/custom/path.txt";
 
       await V1ConversationService.uploadFile(
@@ -86,7 +160,9 @@ describe("V1ConversationService", () => {
     });
 
     it("uses default workspace path when no path provided", async () => {
-      const file = new File(["test content"], "myfile.txt", { type: "text/plain" });
+      const file = new File(["test content"], "myfile.txt", {
+        type: "text/plain",
+      });
 
       await V1ConversationService.uploadFile(
         "http://localhost:54928/api/conversations/conv-123",
@@ -94,11 +170,16 @@ describe("V1ConversationService", () => {
         file,
       );
 
-      expect(mockFileUpload).toHaveBeenCalledWith(file, "/workspace/myfile.txt");
+      expect(mockFileUpload).toHaveBeenCalledWith(
+        file,
+        "/workspace/myfile.txt",
+      );
     });
 
     it("passes through the selected session key for uploads", async () => {
-      const file = new File(["test content"], "test.txt", { type: "text/plain" });
+      const file = new File(["test content"], "test.txt", {
+        type: "text/plain",
+      });
 
       await V1ConversationService.uploadFile(
         "http://localhost:54928/api/conversations/conv-123",
