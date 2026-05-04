@@ -83,7 +83,6 @@ export function useRepositoryData(
   ]);
 
   // Auto-load more repositories when there aren't enough items to create a scrollable dropdown
-  // This is particularly important for SaaS mode with installations that might have very few repos
   useEffect(() => {
     const shouldAutoLoad =
       !disabled &&

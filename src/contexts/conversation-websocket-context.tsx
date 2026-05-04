@@ -46,11 +46,9 @@ import type {
 import EventService from "#/api/event-service/event-service.api";
 import PendingMessageService from "#/api/pending-message-service/pending-message-service.api";
 import { useConversationStore } from "#/stores/conversation-store";
-import { isBudgetOrCreditError, trackError } from "#/utils/error-handler";
-import { useTracking } from "#/hooks/use-tracking";
+import { trackError } from "#/utils/error-handler";
 import { useReadConversationFile } from "#/hooks/mutation/use-read-conversation-file";
 import useMetricsStore from "#/stores/metrics-store";
-import { I18nKey } from "#/i18n/declaration";
 import { useConversationHistory } from "#/hooks/query/use-conversation-history";
 import { setConversationState } from "#/utils/conversation-local-storage";
 
@@ -108,7 +106,6 @@ export function ConversationWebSocketProvider({
   const { removeOptimisticUserMessage } = useOptimisticUserMessageStore();
   const { setExecutionStatus } = useV1ConversationStateStore();
   const { appendInput, appendOutput } = useCommandStore();
-  const { trackCreditLimitReached } = useTracking();
 
   // History loading state - separate per connection
   const [isLoadingHistoryMain, setIsLoadingHistoryMain] = useState(true);
@@ -139,24 +136,9 @@ export function ConversationWebSocketProvider({
   const isPlanFilePath = (path: string | null): boolean =>
     path?.toUpperCase().endsWith("PLAN.MD") ?? false;
 
-  // Helper to handle error clearing logic for non-error events.
-  // Budget/credit errors persist until an agent event proves the LLM is working.
-  const handleNonErrorEvent = useCallback(
-    (event: { source?: string }) => {
-      const currentError = useErrorMessageStore.getState().errorMessage;
-      const isBudgetError =
-        currentError === I18nKey.STATUS$ERROR_LLM_OUT_OF_CREDITS;
-      const isAgentEvent = event.source === "agent";
-
-      // Budget errors persist until agent proves LLM is working
-      if (isBudgetError && !isAgentEvent) {
-        return; // Keep budget error visible
-      }
-
-      removeErrorMessage();
-    },
-    [removeErrorMessage],
-  );
+  const handleNonErrorEvent = useCallback(() => {
+    removeErrorMessage();
+  }, [removeErrorMessage]);
 
   // Helper function to update metrics from stats event
   const updateMetricsFromStats = useCallback(
@@ -390,16 +372,9 @@ export function ConversationWebSocketProvider({
               },
               posthog,
             });
-            if (isBudgetOrCreditError(errorEvent.detail)) {
-              setErrorMessage(I18nKey.STATUS$ERROR_LLM_OUT_OF_CREDITS);
-              trackCreditLimitReached({
-                conversationId: conversationId || "unknown",
-              });
-            } else {
-              setErrorMessage(errorEvent.detail);
-            }
+            setErrorMessage(errorEvent.detail);
           } else {
-            handleNonErrorEvent(event);
+            handleNonErrorEvent();
           }
 
           // Track credit limit reached if AgentErrorEvent has budget-related error
@@ -492,7 +467,6 @@ export function ConversationWebSocketProvider({
       isLoadingHistoryMain,
       expectedEventCountMain,
       setErrorMessage,
-      removeErrorMessage,
       removeOptimisticUserMessage,
       queryClient,
       conversationId,
@@ -500,7 +474,7 @@ export function ConversationWebSocketProvider({
       appendInput,
       appendOutput,
       updateMetricsFromStats,
-      trackCreditLimitReached,
+      handleNonErrorEvent,
       posthog,
     ],
   );
@@ -547,16 +521,9 @@ export function ConversationWebSocketProvider({
               },
               posthog,
             });
-            if (isBudgetOrCreditError(errorEvent.detail)) {
-              setErrorMessage(I18nKey.STATUS$ERROR_LLM_OUT_OF_CREDITS);
-              trackCreditLimitReached({
-                conversationId: conversationId || "unknown",
-              });
-            } else {
-              setErrorMessage(errorEvent.detail);
-            }
+            setErrorMessage(errorEvent.detail);
           } else {
-            handleNonErrorEvent(event);
+            handleNonErrorEvent();
           }
 
           // Handle AgentErrorEvent specifically
@@ -672,7 +639,6 @@ export function ConversationWebSocketProvider({
       isLoadingHistoryPlanning,
       expectedEventCountPlanning,
       setErrorMessage,
-      removeErrorMessage,
       removeOptimisticUserMessage,
       queryClient,
       subConversations,
@@ -683,7 +649,7 @@ export function ConversationWebSocketProvider({
       readConversationFile,
       setPlanContent,
       updateMetricsFromStats,
-      trackCreditLimitReached,
+      handleNonErrorEvent,
       posthog,
     ],
   );

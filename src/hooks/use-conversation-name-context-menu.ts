@@ -1,15 +1,10 @@
-import { useTranslation } from "react-i18next";
 import React from "react";
 import { useNavigation } from "#/context/navigation-context";
 import useMetricsStore from "#/stores/metrics-store";
 import { useDeleteConversation } from "./mutation/use-delete-conversation";
 import { useUnifiedPauseConversationSandbox } from "./mutation/use-unified-stop-conversation";
-import { useUpdateConversationPublicFlag } from "./mutation/use-update-conversation-public-flag";
-import { displaySuccessToast } from "#/utils/custom-toast-handlers";
-import { I18nKey } from "#/i18n/declaration";
 import { useEventStore } from "#/stores/use-event-store";
 
-import { useActiveConversation } from "./query/use-active-conversation";
 import { useDownloadConversation } from "./use-download-conversation";
 import {
   adaptSystemMessage,
@@ -30,13 +25,10 @@ export function useConversationNameContextMenu({
   showOptions = false,
   onContextMenuToggle,
 }: UseConversationNameContextMenuProps) {
-  const { t } = useTranslation("openhands");
   const { conversationId: currentConversationId, navigate } = useNavigation();
   const events = useEventStore((state) => state.events);
   const { mutate: deleteConversation } = useDeleteConversation();
   const { mutate: stopConversation } = useUnifiedPauseConversationSandbox();
-  const { mutate: updatePublicFlag } = useUpdateConversationPublicFlag();
-  const { data: conversation } = useActiveConversation();
   const metrics = useMetricsStore();
 
   const [metricsModalVisible, setMetricsModalVisible] = React.useState(false);
@@ -131,41 +123,6 @@ export function useConversationNameContextMenu({
     onContextMenuToggle?.(false);
   };
 
-  const handleTogglePublic = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    if (conversationId && conversation) {
-      // Toggle the current public state
-      const newPublicState = !conversation.public;
-      updatePublicFlag({
-        conversationId,
-        isPublic: newPublicState,
-      });
-    }
-    // Don't close menu - let user see the toggle state change
-  };
-
-  const shareUrl = React.useMemo(() => {
-    if (conversationId) {
-      return `${window.location.origin}/shared/conversations/${conversationId}`;
-    }
-    return "";
-  }, [conversationId]);
-
-  const handleCopyShareLink = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    if (!shareUrl) {
-      onContextMenuToggle?.(false);
-      return;
-    }
-
-    navigator.clipboard.writeText(shareUrl);
-    displaySuccessToast(t(I18nKey.CONVERSATION$LINK_COPIED));
-  };
-
   return {
     // Handlers
     handleDelete,
@@ -176,9 +133,6 @@ export function useConversationNameContextMenu({
     handleShowAgentTools,
     handleShowSkills,
     handleShowHooks,
-    handleTogglePublic,
-    handleCopyShareLink,
-    shareUrl,
     handleConfirmDelete,
     handleConfirmStop,
 

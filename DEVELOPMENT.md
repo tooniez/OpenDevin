@@ -49,8 +49,6 @@ If you want to run the frontend without a live backend, use:
 
 ```sh
 npm run dev:mock
-# or
-npm run dev:mock:saas
 ```
 
 ## Build and test
@@ -108,7 +106,6 @@ You can create a `.env` file in the project directory with these variables based
 | `VITE_WORKER_URLS`          | Optional comma-separated worker/app URLs for the Browser tab                       | -                      |
 | `VITE_ENABLE_BROWSER_TOOLS` | Set to `false` to omit `BrowserToolSet` from new conversation payloads             | `true`                 |
 | `VITE_MOCK_API`             | Enable/disable API mocking with MSW                                                | `false`                |
-| `VITE_MOCK_SAAS`            | Simulate SaaS mode in development                                                  | `false`                |
 | `VITE_USE_TLS`              | Use HTTPS/WSS for the Vite proxy target                                            | `false`                |
 | `VITE_FRONTEND_PORT`        | Port to run the frontend application                                               | `3001`                 |
 | `VITE_INSECURE_SKIP_VERIFY` | Skip TLS certificate verification for proxied backend requests                     | `false`                |

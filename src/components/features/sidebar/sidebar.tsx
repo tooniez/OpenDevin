@@ -49,7 +49,6 @@ export function Sidebar() {
         "Something went wrong while fetching settings. Please reload the page.",
       );
     } else if (
-      config?.app_mode === "oss" &&
       settingsErrorStatus === 404 &&
       !config?.feature_flags?.hide_llm_settings
     ) {
@@ -60,7 +59,6 @@ export function Sidebar() {
     isFetchingSettings,
     settingsIsError,
     settingsErrorStatus,
-    config?.app_mode,
     config?.feature_flags?.hide_llm_settings,
   ]);
 

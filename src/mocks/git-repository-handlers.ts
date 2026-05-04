@@ -232,8 +232,7 @@ export const GIT_REPOSITORY_HANDLERS = [
 
   http.get("/api/git/changes", async () => HttpResponse.json([])),
 
-  http.get(
-    "/api/git/diff",
-    async () => HttpResponse.json({ original: "", modified: "" }),
+  http.get("/api/git/diff", async () =>
+    HttpResponse.json({ original: "", modified: "" }),
   ),
 ];

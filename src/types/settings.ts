@@ -5,7 +5,6 @@ export const ProviderOptions = {
   bitbucket_data_center: "bitbucket_data_center",
   azure_devops: "azure_devops",
   forgejo: "forgejo",
-  enterprise_sso: "enterprise_sso",
 } as const;
 
 export const SandboxGroupingStrategyOptions = {

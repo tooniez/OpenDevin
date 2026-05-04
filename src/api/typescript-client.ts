@@ -5,7 +5,6 @@ import {
   SkillsClient,
   VSCodeClient,
 } from "@openhands/typescript-client/clients";
-export type { ServerInfo } from "@openhands/typescript-client";
 import { HttpClient } from "@openhands/typescript-client/client/http-client";
 import { RemoteEventsList } from "@openhands/typescript-client/events/remote-events-list";
 import { RemoteWorkspace } from "@openhands/typescript-client/workspace/remote-workspace";
@@ -15,6 +14,8 @@ import {
   getAgentServerSessionApiKey,
   getAgentServerWorkingDir,
 } from "./agent-server-config";
+
+export type { ServerInfo } from "@openhands/typescript-client";
 
 interface TypeScriptClientOverrides {
   host?: string;

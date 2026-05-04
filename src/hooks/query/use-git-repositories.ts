@@ -1,5 +1,4 @@
 import { useInfiniteQuery, InfiniteData } from "@tanstack/react-query";
-import { useConfig } from "./use-config";
 import { useUserProviders } from "../use-user-providers";
 import { useAppInstallations } from "./use-app-installations";
 import { RepositoryPage } from "../../types/git";
@@ -20,12 +19,11 @@ type Cursor = InstallationCursor | UserCursor;
 export function useGitRepositories(options: UseGitRepositoriesOptions) {
   const { provider, pageSize = 30, enabled = true } = options;
   const { providers } = useUserProviders();
-  const { data: config } = useConfig();
   const { data: page } = useAppInstallations(provider);
   const installations = page?.items;
 
   const useInstallationRepos = provider
-    ? shouldUseInstallationRepos(provider, config?.app_mode)
+    ? shouldUseInstallationRepos(provider)
     : false;
 
   const repos = useInfiniteQuery<

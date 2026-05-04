@@ -55,8 +55,6 @@ export function GitProviderDropdown({
         return "Bitbucket Data Center";
       case "azure_devops":
         return "Azure DevOps";
-      case "enterprise_sso":
-        return "Enterprise SSO";
       default:
         // Fallback for any future provider types
         return (

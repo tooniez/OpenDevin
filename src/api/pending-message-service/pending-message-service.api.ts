@@ -9,11 +9,14 @@ class PendingMessageService {
     conversationId: string,
     message: QueuePendingMessageRequest,
   ): Promise<PendingMessageResponse> {
-    await createHttpClient().post(`/api/conversations/${conversationId}/events`, {
-      ...message,
-      role: "user",
-      run: true,
-    });
+    await createHttpClient().post(
+      `/api/conversations/${conversationId}/events`,
+      {
+        ...message,
+        role: "user",
+        run: true,
+      },
+    );
 
     return {
       id: `${conversationId}:${Date.now()}`,

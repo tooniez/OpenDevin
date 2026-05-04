@@ -14,7 +14,8 @@ export class SandboxService {
   static async batchGetSandboxes(
     ids: string[],
   ): Promise<(V1SandboxInfo | null)[]> {
-    const conversations = await V1ConversationService.batchGetAppConversations(ids);
+    const conversations =
+      await V1ConversationService.batchGetAppConversations(ids);
     return conversations.map((conversation) =>
       conversation ? createSandboxInfo(conversation) : null,
     );

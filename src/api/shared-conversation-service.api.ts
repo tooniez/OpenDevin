@@ -27,10 +27,9 @@ export const sharedConversationService = {
   async getSharedConversation(
     conversationId: string,
   ): Promise<SharedConversation | null> {
-    const response = await createHttpClient().get<(SharedConversation | null)[]>(
-      "/api/shared-conversations",
-      { params: { ids: conversationId } },
-    );
+    const response = await createHttpClient().get<
+      (SharedConversation | null)[]
+    >("/api/shared-conversations", { params: { ids: conversationId } });
 
     return response.data[0] || null;
   },

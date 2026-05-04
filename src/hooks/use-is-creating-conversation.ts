@@ -7,7 +7,7 @@ export const useIsCreatingConversation = () => {
     mutationKey: ["create-conversation"],
   });
 
-  const isNavigating = navigation.isNavigating;
+  const { isNavigating } = navigation;
   const hasPendingMutations = numberOfPendingMutations > 0;
 
   return hasPendingMutations || isNavigating;

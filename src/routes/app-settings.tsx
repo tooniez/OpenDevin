@@ -18,7 +18,6 @@ import {
 } from "#/utils/custom-toast-handlers";
 import { retrieveAxiosErrorMessage } from "#/utils/retrieve-axios-error-message";
 import { AppSettingsInputsSkeleton } from "#/components/features/settings/app-settings/app-settings-inputs-skeleton";
-import { useConfig } from "#/hooks/query/use-config";
 import { parseMaxBudgetPerTask } from "#/utils/settings-utils";
 import {
   SandboxGroupingStrategy,
@@ -32,7 +31,6 @@ export function AppSettingsScreen() {
 
   const { mutate: saveSettings, isPending } = useSaveSettings();
   const { data: settings, isLoading } = useSettings();
-  const { data: config } = useConfig();
 
   const [languageInputHasChanged, setLanguageInputHasChanged] =
     React.useState(false);
@@ -41,14 +39,6 @@ export function AppSettingsScreen() {
   const [
     soundNotificationsSwitchHasChanged,
     setSoundNotificationsSwitchHasChanged,
-  ] = React.useState(false);
-  const [
-    proactiveConversationsSwitchHasChanged,
-    setProactiveConversationsSwitchHasChanged,
-  ] = React.useState(false);
-  const [
-    solvabilityAnalysisSwitchHasChanged,
-    setSolvabilityAnalysisSwitchHasChanged,
   ] = React.useState(false);
   const [
     sandboxGroupingStrategyHasChanged,
@@ -75,13 +65,6 @@ export function AppSettingsScreen() {
     const enableSoundNotifications =
       formData.get("enable-sound-notifications-switch")?.toString() === "on";
 
-    const enableProactiveConversations =
-      formData.get("enable-proactive-conversations-switch")?.toString() ===
-      "on";
-
-    const enableSolvabilityAnalysis =
-      formData.get("enable-solvability-analysis-switch")?.toString() === "on";
-
     const sandboxGroupingStrategy =
       selectedSandboxGroupingStrategy ||
       settings?.sandbox_grouping_strategy ||
@@ -104,8 +87,6 @@ export function AppSettingsScreen() {
         language,
         user_consents_to_analytics: enableAnalytics,
         enable_sound_notifications: enableSoundNotifications,
-        enable_proactive_conversation_starters: enableProactiveConversations,
-        enable_solvability_analysis: enableSolvabilityAnalysis,
         sandbox_grouping_strategy: sandboxGroupingStrategy,
         max_budget_per_task: maxBudgetPerTask,
         git_user_name: gitUserName,
@@ -124,7 +105,6 @@ export function AppSettingsScreen() {
           setLanguageInputHasChanged(false);
           setAnalyticsSwitchHasChanged(false);
           setSoundNotificationsSwitchHasChanged(false);
-          setProactiveConversationsSwitchHasChanged(false);
           setSandboxGroupingStrategyHasChanged(false);
           setSelectedSandboxGroupingStrategy(null);
           setMaxBudgetPerTaskHasChanged(false);
@@ -159,21 +139,6 @@ export function AppSettingsScreen() {
     );
   };
 
-  const checkIfProactiveConversationsSwitchHasChanged = (checked: boolean) => {
-    const currentProactiveConversations =
-      !!settings?.enable_proactive_conversation_starters;
-    setProactiveConversationsSwitchHasChanged(
-      checked !== currentProactiveConversations,
-    );
-  };
-
-  const checkIfSolvabilityAnalysisSwitchHasChanged = (checked: boolean) => {
-    const currentSolvabilityAnalysis = !!settings?.enable_solvability_analysis;
-    setSolvabilityAnalysisSwitchHasChanged(
-      checked !== currentSolvabilityAnalysis,
-    );
-  };
-
   const handleSandboxGroupingStrategyChange = (key: React.Key | null) => {
     const newStrategy = key?.toString() as SandboxGroupingStrategy | undefined;
     setSelectedSandboxGroupingStrategy(newStrategy || null);
@@ -203,8 +168,6 @@ export function AppSettingsScreen() {
     !languageInputHasChanged &&
     !analyticsSwitchHasChanged &&
     !soundNotificationsSwitchHasChanged &&
-    !proactiveConversationsSwitchHasChanged &&
-    !solvabilityAnalysisSwitchHasChanged &&
     !sandboxGroupingStrategyHasChanged &&
     !maxBudgetPerTaskHasChanged &&
     !gitUserNameHasChanged &&
@@ -244,30 +207,6 @@ export function AppSettingsScreen() {
           >
             {t(I18nKey.SETTINGS$SOUND_NOTIFICATIONS)}
           </SettingsSwitch>
-
-          {config?.app_mode === "saas" && (
-            <SettingsSwitch
-              testId="enable-proactive-conversations-switch"
-              name="enable-proactive-conversations-switch"
-              defaultIsToggled={
-                !!settings.enable_proactive_conversation_starters
-              }
-              onToggle={checkIfProactiveConversationsSwitchHasChanged}
-            >
-              {t(I18nKey.SETTINGS$PROACTIVE_CONVERSATION_STARTERS)}
-            </SettingsSwitch>
-          )}
-
-          {config?.app_mode === "saas" && (
-            <SettingsSwitch
-              testId="enable-solvability-analysis-switch"
-              name="enable-solvability-analysis-switch"
-              defaultIsToggled={!!settings.enable_solvability_analysis}
-              onToggle={checkIfSolvabilityAnalysisSwitchHasChanged}
-            >
-              {t(I18nKey.SETTINGS$SOLVABILITY_ANALYSIS)}
-            </SettingsSwitch>
-          )}
 
           {ENABLE_SANDBOX_GROUPING() && (
             <SettingsDropdownInput

@@ -22,42 +22,33 @@ describe("settings route", () => {
   it("prefers OSS fallback routes only", () => {
     expect(
       getFirstAvailablePath({
-        enable_billing: false,
         hide_llm_settings: true,
         enable_jira: false,
         enable_jira_dc: false,
         enable_linear: false,
         hide_users_page: true,
-        hide_billing_page: true,
         hide_integrations_page: false,
-        deployment_mode: "self_hosted",
       }),
     ).toBe("/settings/mcp");
   });
 
   it("redirects hidden OSS settings pages to the first available route", async () => {
     vi.spyOn(OptionService, "getConfig").mockResolvedValue({
-      app_mode: "oss",
       posthog_client_key: null,
       feature_flags: {
-        enable_billing: false,
         hide_llm_settings: true,
         enable_jira: false,
         enable_jira_dc: false,
         enable_linear: false,
         hide_users_page: true,
-        hide_billing_page: true,
         hide_integrations_page: false,
-        deployment_mode: "self_hosted",
       },
       providers_configured: [],
       maintenance_start_time: null,
-      auth_url: null,
       recaptcha_site_key: null,
       faulty_models: [],
       error_message: null,
       updated_at: new Date().toISOString(),
-      github_app_slug: null,
     });
 
     const response = (await clientLoader({

@@ -7,7 +7,6 @@ import { TaskSuggestionsSkeleton } from "./task-suggestions-skeleton";
 import { cn, getDisplayedTaskGroups, getTotalTaskCount } from "#/utils/utils";
 import { I18nKey } from "#/i18n/declaration";
 import { GitRepository } from "#/types/git";
-import { useConfig } from "#/hooks/query/use-config";
 import { useUserProviders } from "#/hooks/use-user-providers";
 import { Typography } from "#/ui/typography";
 
@@ -19,12 +18,10 @@ export function TaskSuggestions({ filterFor }: TaskSuggestionsProps) {
   const { t } = useTranslation("openhands");
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const { data: config } = useConfig();
   const { data: tasks, isLoading } = useSuggestedTasks();
   const { providers } = useUserProviders();
 
-  const isOSS = config?.app_mode === "oss";
-  const hasNoProviders = isOSS && providers.length === 0;
+  const hasNoProviders = providers.length === 0;
 
   const suggestedTasks = filterFor
     ? tasks?.filter(

@@ -61,8 +61,7 @@ export const useCreateConversation = () => {
       );
 
       return {
-        conversation_id:
-          conversation.app_conversation_id || conversation.id,
+        conversation_id: conversation.app_conversation_id || conversation.id,
         session_api_key: null,
         url: conversation.agent_server_url,
         is_v1: true,

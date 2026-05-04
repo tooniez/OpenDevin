@@ -12,7 +12,7 @@ import { parseMcpConfig } from "#/utils/mcp-config";
 
 export const getErrorStatus = (error: unknown): number | undefined => {
   if (typeof error === "object" && error !== null && "status" in error) {
-    const status = (error as { status?: unknown }).status;
+    const { status } = error as { status?: unknown };
     if (typeof status === "number") {
       return status;
     }

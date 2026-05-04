@@ -4,7 +4,11 @@ import {
   GetTrajectoryResponse,
   FileUploadSuccessResponse,
 } from "../open-hands.types";
-import { createRemoteEventsList, createRemoteWorkspace, createVSCodeClient } from "../typescript-client";
+import {
+  createRemoteEventsList,
+  createRemoteWorkspace,
+  createVSCodeClient,
+} from "../typescript-client";
 import { V1AppConversation } from "./v1-conversation-service.types";
 
 class ConversationService {
@@ -38,8 +42,11 @@ class ConversationService {
   static async getVSCodeUrl(
     _conversationId: string,
   ): Promise<GetVSCodeUrlResponse> {
-    const vscode_url = await createVSCodeClient(this.getClientOverrides()).getUrl({
-      baseUrl: typeof window !== "undefined" ? window.location.origin : undefined,
+    const vscode_url = await createVSCodeClient(
+      this.getClientOverrides(),
+    ).getUrl({
+      baseUrl:
+        typeof window !== "undefined" ? window.location.origin : undefined,
       workspaceDir: getAgentServerWorkingDir(),
     });
 

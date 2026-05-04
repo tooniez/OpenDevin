@@ -7,7 +7,9 @@ type ClientGitChangeStatus = "added" | "modified" | "deleted" | "renamed";
 
 type SupportedGitStatus = V1GitChangeStatus | ClientGitChangeStatus;
 
-export function mapAnyGitStatusToV0Status(status: SupportedGitStatus): GitChangeStatus {
+export function mapAnyGitStatusToV0Status(
+  status: SupportedGitStatus,
+): GitChangeStatus {
   switch (status) {
     case "ADDED":
     case "added":

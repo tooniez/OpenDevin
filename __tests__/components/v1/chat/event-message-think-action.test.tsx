@@ -10,7 +10,7 @@ import { renderWithProviders } from "test-utils";
 // Mock useConfig
 vi.mock("#/hooks/query/use-config", () => ({
   useConfig: () => ({
-    data: { APP_MODE: "saas" },
+    data: {},
   }),
 }));
 

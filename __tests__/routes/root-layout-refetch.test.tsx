@@ -21,13 +21,11 @@ vi.mock("#/hooks/query/use-config", () => ({
 }));
 
 const DEFAULT_FEATURE_FLAGS = {
-  enable_billing: false,
   hide_llm_settings: false,
   enable_jira: false,
   enable_jira_dc: false,
   enable_linear: false,
   hide_users_page: false,
-  hide_billing_page: false,
   hide_integrations_page: false,
 };
 
@@ -64,7 +62,6 @@ describe("MainApp - Auth refetch behavior", () => {
     });
     useConfigMock.mockReturnValue({
       data: {
-        app_mode: "saas",
         github_client_id: "test-client-id",
         feature_flags: DEFAULT_FEATURE_FLAGS,
       },

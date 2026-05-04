@@ -161,22 +161,13 @@ export const getFileExtension = (fileName: string): string => {
   return extension || "FILE";
 };
 
-export const shouldUseInstallationRepos = (
-  provider: Provider,
-  app_mode: "saas" | "oss" | undefined,
-) => {
+export const shouldUseInstallationRepos = (provider: Provider) => {
   if (!provider) return false;
 
   switch (provider) {
     case "bitbucket":
     case "bitbucket_data_center":
       return true;
-    case "gitlab":
-      return false;
-    case "azure_devops":
-      return false;
-    case "github":
-      return app_mode === "saas";
     default:
       return false;
   }

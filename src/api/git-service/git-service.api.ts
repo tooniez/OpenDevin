@@ -51,7 +51,13 @@ class GitService {
     pageId?: string,
     limit = 30,
   ): Promise<BranchPage> {
-    return this.getRepositoryBranches(repository, provider, query, pageId, limit);
+    return this.getRepositoryBranches(
+      repository,
+      provider,
+      query,
+      pageId,
+      limit,
+    );
   }
 
   static async getUserInstallations(
@@ -63,12 +69,16 @@ class GitService {
   }
 
   static async getGitChanges(_conversationId: string): Promise<GitChange[]> {
-    const changes = await createRemoteWorkspace().gitChanges(getAgentServerWorkingDir());
+    const changes = await createRemoteWorkspace().gitChanges(
+      getAgentServerWorkingDir(),
+    );
 
     return changes.map((change) => ({
       path: change.path,
       status: mapAnyGitStatusToV0Status(
-        String(change.status) as Parameters<typeof mapAnyGitStatusToV0Status>[0],
+        String(change.status) as Parameters<
+          typeof mapAnyGitStatusToV0Status
+        >[0],
       ),
     }));
   }

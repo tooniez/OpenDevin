@@ -1,5 +1,5 @@
-import { createServerClient, type ServerInfo } from "#/api/typescript-client";
 import { HttpError } from "@openhands/typescript-client/client/http-client";
+import { createServerClient, type ServerInfo } from "#/api/typescript-client";
 
 export const MINIMUM_SUPPORTED_AGENT_SERVER_VERSION = "1.17.0";
 const AGENT_SERVER_INFO_TIMEOUT_MS = 5000;

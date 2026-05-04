@@ -83,7 +83,7 @@ function renderSdkSectionPage(
   });
 
   mockUseConfig.mockReturnValue({
-    data: { app_mode: "oss" },
+    data: {},
     isLoading: false,
   });
   mockUseSearchParams.mockReturnValue([{ get: () => null }, vi.fn()]);
@@ -98,7 +98,7 @@ function renderSdkSectionPage(
 beforeEach(() => {
   vi.restoreAllMocks();
   mockUseConfig.mockReturnValue({
-    data: { app_mode: "oss" },
+    data: {},
     isLoading: false,
   });
   mockUseSearchParams.mockReturnValue([{ get: () => null }, vi.fn()]);

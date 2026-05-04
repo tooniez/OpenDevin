@@ -14,12 +14,16 @@ class V1GitService {
     }).gitChanges(path);
 
     if (!Array.isArray(changes)) {
-      throw new Error("Invalid response from runtime - runtime may be unavailable");
+      throw new Error(
+        "Invalid response from runtime - runtime may be unavailable",
+      );
     }
 
     return changes.map((change) => ({
       status: mapAnyGitStatusToV0Status(
-        String(change.status) as Parameters<typeof mapAnyGitStatusToV0Status>[0],
+        String(change.status) as Parameters<
+          typeof mapAnyGitStatusToV0Status
+        >[0],
       ),
       path: change.path,
     }));

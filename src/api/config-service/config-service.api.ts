@@ -8,13 +8,18 @@ import type {
   SearchProvidersParams,
 } from "./config-service.types";
 
-function filterByQuery<T extends { name: string }>(items: T[], query?: string): T[] {
+function filterByQuery<T extends { name: string }>(
+  items: T[],
+  query?: string,
+): T[] {
   if (!query) {
     return items;
   }
 
   const normalizedQuery = query.toLowerCase();
-  return items.filter((item) => item.name.toLowerCase().includes(normalizedQuery));
+  return items.filter((item) =>
+    item.name.toLowerCase().includes(normalizedQuery),
+  );
 }
 
 function filterByVerified<T extends { verified: boolean }>(
@@ -47,7 +52,9 @@ class ConfigService {
     ]);
 
     const provider = params.provider__eq ?? null;
-    const verifiedNames = new Set(provider ? (verifiedByProvider?.[provider] ?? []) : []);
+    const verifiedNames = new Set(
+      provider ? (verifiedByProvider?.[provider] ?? []) : [],
+    );
     const verifiedItems: LLMModel[] = [...verifiedNames].map((name) => ({
       provider,
       name,
@@ -96,7 +103,10 @@ class ConfigService {
     }));
 
     const items = limitItems(
-      filterByVerified(filterByQuery(providerItems, params.query), params.verified__eq),
+      filterByVerified(
+        filterByQuery(providerItems, params.query),
+        params.verified__eq,
+      ),
       params.limit,
     );
 

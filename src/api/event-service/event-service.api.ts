@@ -12,7 +12,9 @@ class EventService {
     request: ConfirmationResponseRequest,
     sessionApiKey?: string | null,
   ): Promise<ConfirmationResponseResponse> {
-    const response = await createHttpClient({ sessionApiKey }).post<ConfirmationResponseResponse>(
+    const response = await createHttpClient({
+      sessionApiKey,
+    }).post<ConfirmationResponseResponse>(
       `/api/conversations/${conversationId}/events/respond_to_confirmation`,
       request,
     );
@@ -33,7 +35,9 @@ class EventService {
     limit = 100,
     sessionApiKey?: string | null,
   ) {
-    const page = await createRemoteEventsList(conversationId, { sessionApiKey }).search({
+    const page = await createRemoteEventsList(conversationId, {
+      sessionApiKey,
+    }).search({
       limit,
     });
 

@@ -1,13 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { usePostHog } from "posthog-js/react";
-import { useConfig } from "./use-config";
 import UserService from "#/api/user-service/user-service.api";
 import { useShouldShowUserFeatures } from "#/hooks/use-should-show-user-features";
 
 export const useGitUser = () => {
   const posthog = usePostHog();
-  const { data: config } = useConfig();
   const shouldFetchUser = useShouldShowUserFeatures();
 
   const user = useQuery({
@@ -26,10 +24,9 @@ export const useGitUser = () => {
         name: user.data.name,
         email: user.data.email,
         user: user.data.login,
-        mode: config?.app_mode || "oss",
       });
     }
-  }, [config?.app_mode, posthog, user.data]);
+  }, [posthog, user.data]);
 
   return user;
 };

@@ -35,7 +35,11 @@ const readStoredGitProviders = (): StoredGitProviderTokens => {
 
     return Object.fromEntries(
       Object.entries(parsed).flatMap(([provider, value]) => {
-        if (!(provider in ProviderOptions) || !value || typeof value !== "object") {
+        if (
+          !(provider in ProviderOptions) ||
+          !value ||
+          typeof value !== "object"
+        ) {
           return [];
         }
 
@@ -74,14 +78,20 @@ const writeStoredGitProviders = (providers: StoredGitProviderTokens) => {
     return;
   }
 
-  window.localStorage.setItem(GIT_PROVIDER_STORAGE_KEY, JSON.stringify(providers));
+  window.localStorage.setItem(
+    GIT_PROVIDER_STORAGE_KEY,
+    JSON.stringify(providers),
+  );
 };
 
 const buildProviderTokensSet = (
   providers: StoredGitProviderTokens,
 ): Partial<Record<Provider, string | null>> =>
   Object.fromEntries(
-    Object.entries(providers).map(([provider, value]) => [provider, value?.host ?? null]),
+    Object.entries(providers).map(([provider, value]) => [
+      provider,
+      value?.host ?? null,
+    ]),
   ) as Partial<Record<Provider, string | null>>;
 
 export class SecretsService {

@@ -110,23 +110,26 @@ export const CONVERSATION_HANDLERS = [
     });
   }),
 
-  http.patch("/api/conversations/:conversationId", async ({ params, request }) => {
-    const conversationId = params.conversationId as string;
-    const conversation = CONVERSATIONS.get(conversationId);
+  http.patch(
+    "/api/conversations/:conversationId",
+    async ({ params, request }) => {
+      const conversationId = params.conversationId as string;
+      const conversation = CONVERSATIONS.get(conversationId);
 
-    if (conversation) {
-      const body = (await request.json()) as { title?: string } | null;
-      if (body?.title) {
-        CONVERSATIONS.set(conversationId, {
-          ...conversation,
-          title: body.title,
-          updated_at: new Date().toISOString(),
-        });
-        return HttpResponse.json(null, { status: 200 });
+      if (conversation) {
+        const body = (await request.json()) as { title?: string } | null;
+        if (body?.title) {
+          CONVERSATIONS.set(conversationId, {
+            ...conversation,
+            title: body.title,
+            updated_at: new Date().toISOString(),
+          });
+          return HttpResponse.json(null, { status: 200 });
+        }
       }
-    }
-    return HttpResponse.json(null, { status: 404 });
-  }),
+      return HttpResponse.json(null, { status: 404 });
+    },
+  ),
 
   http.delete("/api/conversations/:conversationId", async ({ params }) => {
     const conversationId = params.conversationId as string;

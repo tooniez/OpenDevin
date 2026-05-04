@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "#/hooks/query/use-settings";
-import { useConfig } from "#/hooks/query/use-config";
 import { useSaveSettings } from "#/hooks/mutation/use-save-settings";
 import { useDeleteMcpServer } from "#/hooks/mutation/use-delete-mcp-server";
 import { useAddMcpServer } from "#/hooks/mutation/use-add-mcp-server";
@@ -44,7 +43,6 @@ interface MCPServerConfig {
 export function MCPSettingsScreen() {
   const { t } = useTranslation("openhands");
   const { data: settings, isLoading } = useSettings();
-  const { data: config } = useConfig();
   const { mutate: saveSettings, isPending: isSavingSearchApiKey } =
     useSaveSettings();
   const { mutate: deleteMcpServer } = useDeleteMcpServer();
@@ -60,8 +58,6 @@ export function MCPSettingsScreen() {
   const [confirmationModalIsVisible, setConfirmationModalIsVisible] =
     useState(false);
   const [serverToDelete, setServerToDelete] = useState<string | null>(null);
-
-  const isSaasMode = config?.app_mode === "saas";
 
   const mcpConfig: MCPConfig = parseMcpConfig(
     settings?.agent_settings?.mcp_config,
@@ -219,62 +215,58 @@ export function MCPSettingsScreen() {
         onDelete={handleDeleteClick}
       />
 
-      {!isSaasMode ? (
-        <section
-          data-testid="mcp-search-settings-section"
-          className="flex flex-col gap-4 rounded-2xl border border-tertiary p-5"
-        >
-          <div className="flex flex-col gap-2">
-            <Typography.H3>
-              {t(I18nKey.SETTINGS$MCP_SEARCH_TITLE)}
-            </Typography.H3>
-            <Typography.Paragraph className="text-sm text-[#A3A3A3]">
-              {t(I18nKey.SETTINGS$MCP_SEARCH_DESCRIPTION)}
-            </Typography.Paragraph>
+      <section
+        data-testid="mcp-search-settings-section"
+        className="flex flex-col gap-4 rounded-2xl border border-tertiary p-5"
+      >
+        <div className="flex flex-col gap-2">
+          <Typography.H3>{t(I18nKey.SETTINGS$MCP_SEARCH_TITLE)}</Typography.H3>
+          <Typography.Paragraph className="text-sm text-[#A3A3A3]">
+            {t(I18nKey.SETTINGS$MCP_SEARCH_DESCRIPTION)}
+          </Typography.Paragraph>
+        </div>
+
+        <div className="max-w-xl flex flex-col gap-4">
+          <SettingsInput
+            testId="search-api-key-input"
+            label={t(I18nKey.SETTINGS$SEARCH_API_KEY)}
+            type="password"
+            className="w-full"
+            value={searchApiKey}
+            placeholder={t(I18nKey.API$TVLY_KEY_EXAMPLE)}
+            onChange={(value) => {
+              setSearchApiKey(value);
+              setSearchApiKeyDirty(value !== (settings.search_api_key ?? ""));
+            }}
+            startContent={
+              settings.search_api_key_set ? (
+                <KeyStatusIcon isSet={settings.search_api_key_set} />
+              ) : undefined
+            }
+          />
+
+          <HelpLink
+            testId="search-api-key-help-anchor"
+            text={t(I18nKey.SETTINGS$SEARCH_API_KEY_OPTIONAL)}
+            linkText={t(I18nKey.SETTINGS$SEARCH_API_KEY_INSTRUCTIONS)}
+            href="https://tavily.com/"
+          />
+
+          <div>
+            <BrandButton
+              testId="save-search-api-key-button"
+              type="button"
+              variant="primary"
+              isDisabled={isSavingSearchApiKey || !searchApiKeyDirty}
+              onClick={handleSaveSearchApiKey}
+            >
+              {isSavingSearchApiKey
+                ? t(I18nKey.SETTINGS$SAVING)
+                : t(I18nKey.SETTINGS$SAVE_CHANGES)}
+            </BrandButton>
           </div>
-
-          <div className="max-w-xl flex flex-col gap-4">
-            <SettingsInput
-              testId="search-api-key-input"
-              label={t(I18nKey.SETTINGS$SEARCH_API_KEY)}
-              type="password"
-              className="w-full"
-              value={searchApiKey}
-              placeholder={t(I18nKey.API$TVLY_KEY_EXAMPLE)}
-              onChange={(value) => {
-                setSearchApiKey(value);
-                setSearchApiKeyDirty(value !== (settings.search_api_key ?? ""));
-              }}
-              startContent={
-                settings.search_api_key_set ? (
-                  <KeyStatusIcon isSet={settings.search_api_key_set} />
-                ) : undefined
-              }
-            />
-
-            <HelpLink
-              testId="search-api-key-help-anchor"
-              text={t(I18nKey.SETTINGS$SEARCH_API_KEY_OPTIONAL)}
-              linkText={t(I18nKey.SETTINGS$SEARCH_API_KEY_INSTRUCTIONS)}
-              href="https://tavily.com/"
-            />
-
-            <div>
-              <BrandButton
-                testId="save-search-api-key-button"
-                type="button"
-                variant="primary"
-                isDisabled={isSavingSearchApiKey || !searchApiKeyDirty}
-                onClick={handleSaveSearchApiKey}
-              >
-                {isSavingSearchApiKey
-                  ? t(I18nKey.SETTINGS$SAVING)
-                  : t(I18nKey.SETTINGS$SAVE_CHANGES)}
-              </BrandButton>
-            </div>
-          </div>
-        </section>
-      ) : null}
+        </div>
+      </section>
 
       {confirmationModalIsVisible && serverToDelete && (
         <ConfirmationModal

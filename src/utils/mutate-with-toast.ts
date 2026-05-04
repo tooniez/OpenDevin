@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
-import i18n from "#/i18n";
 import { UseMutationResult } from "@tanstack/react-query";
+import i18n from "#/i18n";
 import {
   TOAST_OPTIONS,
   displaySuccessToast,

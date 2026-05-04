@@ -1,7 +1,16 @@
-import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
-import { getAgentServerBaseUrl, getAgentServerHeaders } from "./agent-server-config";
+import axios, {
+  AxiosError,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from "axios";
+import {
+  getAgentServerBaseUrl,
+  getAgentServerHeaders,
+} from "./agent-server-config";
 
-function serializeParams(params: Record<string, unknown> | URLSearchParams): string {
+function serializeParams(
+  params: Record<string, unknown> | URLSearchParams,
+): string {
   if (params instanceof URLSearchParams) {
     return params.toString();
   }

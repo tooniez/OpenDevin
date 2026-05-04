@@ -127,7 +127,7 @@ describe("ChatInterface - Chat Suggestions", () => {
     });
 
     (useConfig as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: { app_mode: "local" },
+      data: {},
     });
     (useGetTrajectory as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       mutate: vi.fn(),

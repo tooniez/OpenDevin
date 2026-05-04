@@ -1,9 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithProviders } from "test-utils";
-import { createRoutesStub } from "react-router";
 import { ExpandableMessage } from "#/components/features/chat/expandable-message";
-import OptionService from "#/api/option-service/option-service.api";
 
 vi.mock("react-i18next", async () => {
   const actual = await vi.importActual("react-i18next");
@@ -111,36 +109,4 @@ describe("ExpandableMessage", () => {
     expect(screen.queryByTestId("status-icon")).not.toBeInTheDocument();
   });
 
-  it("should render the out of credits message when the user is out of credits", async () => {
-    const getConfigSpy = vi.spyOn(OptionService, "getConfig");
-    // @ts-expect-error - partial mock for testing
-    getConfigSpy.mockResolvedValue({
-      app_mode: "saas",
-      feature_flags: {
-        enable_billing: true,
-        hide_llm_settings: false,
-        enable_jira: false,
-        enable_jira_dc: false,
-        enable_linear: false,
-        hide_users_page: false,
-        hide_billing_page: false,
-        hide_integrations_page: false,
-      },
-    });
-    const RouterStub = createRoutesStub([
-      {
-        Component: () => (
-          <ExpandableMessage
-            id="STATUS$ERROR_LLM_OUT_OF_CREDITS"
-            message=""
-            type=""
-          />
-        ),
-        path: "/",
-      },
-    ]);
-
-    renderWithProviders(<RouterStub />);
-    await screen.findByTestId("out-of-credits");
-  });
 });

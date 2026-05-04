@@ -241,7 +241,7 @@ describe("sdk settings schema helpers", () => {
         "critic.enabled": true,
         "llm.api_key": "new-key",
         "llm.litellm_extra_body": JSON.stringify(
-          { metadata: { tier: "enterprise" } },
+          { metadata: { tier: "sample" } },
           null,
           2,
         ),
@@ -258,7 +258,7 @@ describe("sdk settings schema helpers", () => {
       critic: { enabled: true },
       llm: {
         api_key: "new-key",
-        litellm_extra_body: { metadata: { tier: "enterprise" } },
+        litellm_extra_body: { metadata: { tier: "sample" } },
       },
     });
   });
@@ -289,7 +289,7 @@ describe("sdk settings schema helpers", () => {
       "critic.enabled": true,
       "critic.mode": "all_actions",
       "llm.litellm_extra_body": JSON.stringify(
-        { metadata: { tier: "enterprise" } },
+        { metadata: { tier: "sample" } },
         null,
         2,
       ),
@@ -329,7 +329,7 @@ describe("sdk settings schema helpers", () => {
       llm: {
         model: "anthropic/claude-sonnet-4-20250514",
         timeout: 90,
-        litellm_extra_body: { metadata: { tier: "enterprise" } },
+        litellm_extra_body: { metadata: { tier: "sample" } },
       },
       critic: { enabled: true, mode: "all_actions" },
     });

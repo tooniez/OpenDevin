@@ -12,8 +12,6 @@ describe("OptionService", () => {
   it("returns config in mock mode without a live backend", async () => {
     const config = await OptionService.getConfig();
 
-    expect(config.app_mode).toBe("oss");
-    expect(config.feature_flags.deployment_mode).toBe("self_hosted");
     expect(config.feature_flags.hide_integrations_page).toBe(false);
     expect(config.updated_at).toBeTruthy();
   });
@@ -60,9 +58,8 @@ describe("OptionService", () => {
     );
 
     await expect(OptionService.getConfig()).resolves.toMatchObject({
-      app_mode: "oss",
       feature_flags: expect.objectContaining({
-        deployment_mode: "self_hosted",
+        hide_integrations_page: false,
       }),
     });
   });

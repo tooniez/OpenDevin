@@ -1,22 +1,16 @@
 import React from "react";
-import { useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { ModelSelector } from "#/components/shared/modals/settings/model-selector";
 import { useAgentSettingsSchema } from "#/hooks/query/use-agent-settings-schema";
 import { useSettings } from "#/hooks/query/use-settings";
 import { SettingsInput } from "#/components/features/settings/settings-input";
 import { HelpLink } from "#/ui/help-link";
-import { useConfig } from "#/hooks/query/use-config";
 import { KeyStatusIcon } from "#/components/features/settings/key-status-icon";
 import {
   SdkSectionHeaderProps,
   SdkSectionPage,
 } from "#/components/features/settings/sdk-settings/sdk-section-page";
 import { I18nKey } from "#/i18n/declaration";
-import {
-  displayErrorToast,
-  displaySuccessToast,
-} from "#/utils/custom-toast-handlers";
 import { Settings, SettingsSchema, SettingsScope } from "#/types/settings";
 import { extractModelAndProvider } from "#/utils/extract-model-and-provider";
 import {
@@ -86,26 +80,13 @@ function OpenHandsApiKeyHelp({ testId }: OpenHandsApiKeyHelpProps) {
   const { t } = useTranslation("openhands");
 
   return (
-    <>
-      <HelpLink
-        testId={testId}
-        text={t(I18nKey.SETTINGS$OPENHANDS_API_KEY_HELP_TEXT)}
-        linkText={t(I18nKey.SETTINGS$NAV_API_KEYS)}
-        href="https://app.all-hands.dev/settings/api-keys"
-        suffix={` ${t(I18nKey.SETTINGS$OPENHANDS_API_KEY_HELP_SUFFIX)}`}
-      />
-      <p className="text-xs">
-        {t(I18nKey.SETTINGS$LLM_BILLING_INFO)}{" "}
-        <a
-          href="https://docs.openhands.dev/usage/llms/openhands-llms"
-          rel="noreferrer noopener"
-          target="_blank"
-          className="underline underline-offset-2"
-        >
-          {t(I18nKey.SETTINGS$SEE_PRICING_DETAILS)}
-        </a>
-      </p>
-    </>
+    <HelpLink
+      testId={testId}
+      text={t(I18nKey.SETTINGS$OPENHANDS_API_KEY_HELP_TEXT)}
+      linkText={t(I18nKey.SETTINGS$NAV_API_KEYS)}
+      href="https://app.all-hands.dev/settings/api-keys"
+      suffix={` ${t(I18nKey.SETTINGS$OPENHANDS_API_KEY_HELP_SUFFIX)}`}
+    />
   );
 }
 
@@ -115,60 +96,22 @@ export function LlmSettingsScreen({
   scope?: SettingsScope;
 }) {
   const { t } = useTranslation("openhands");
-  const [searchParams, setSearchParams] = useSearchParams();
 
   const { data: settings } = useSettings(scope);
   const { data: schema } = useAgentSettingsSchema(
     settings?.agent_settings_schema,
   );
-  const { data: config } = useConfig();
-
-  const [selectedProvider, setSelectedProvider] = React.useState<string | null>(
-    null,
-  );
-  const hasHydratedInitialPersonalSaasViewRef = React.useRef(false);
 
   const defaultModel = String(
     (DEFAULT_SETTINGS.agent_settings?.llm as Record<string, unknown>)?.model ??
       "",
   );
 
-  const isSaasMode = config?.app_mode === "saas";
-
-  React.useEffect(() => {
-    if (settings?.llm_model) {
-      const { provider } = extractModelAndProvider(settings.llm_model);
-      setSelectedProvider(provider || null);
-    }
-  }, [settings?.llm_model]);
-
-  React.useEffect(() => {
-    if (settings && isSaasMode) {
-      hasHydratedInitialPersonalSaasViewRef.current = true;
-    }
-  }, [isSaasMode, settings]);
-
-  React.useEffect(() => {
-    const checkout = searchParams.get("checkout");
-
-    if (checkout === "success") {
-      displaySuccessToast(t(I18nKey.SUBSCRIPTION$SUCCESS));
-      setSearchParams({});
-    } else if (checkout === "cancel") {
-      displayErrorToast(t(I18nKey.SUBSCRIPTION$FAILURE));
-      setSearchParams({});
-    }
-  }, [searchParams, setSearchParams, t]);
-
   const getInitialView = React.useCallback(
     (
       currentSettings: Settings,
       filteredSchema: SettingsSchema,
     ): SettingsView => {
-      if (isSaasMode && !hasHydratedInitialPersonalSaasViewRef.current) {
-        return "basic";
-      }
-
       const schemaView = inferInitialView(currentSettings, filteredSchema);
       if (schemaView !== "basic") {
         return schemaView;
@@ -182,7 +125,7 @@ export function LlmSettingsScreen({
 
       return hasCustomBaseUrl ? "all" : "basic";
     },
-    [isSaasMode],
+    [],
   );
 
   const buildHeader = React.useCallback(
@@ -193,53 +136,38 @@ export function LlmSettingsScreen({
         typeof values["llm.base_url"] === "string"
           ? values["llm.base_url"]
           : "";
-      const derivedProvider = modelValue
-        ? extractModelAndProvider(modelValue).provider || null
-        : null;
-      const activeProvider =
-        view === "basic"
-          ? (selectedProvider ?? derivedProvider)
-          : derivedProvider;
-      const shouldUseOpenHandsKey =
-        isSaasMode && activeProvider === "openhands";
       const showOpenHandsApiKeyHelp = modelValue.startsWith("openhands/");
 
-      const renderApiKeyInput = (testId: string, helpTestId: string) => {
-        if (shouldUseOpenHandsKey) {
-          return null;
-        }
+      const renderApiKeyInput = (testId: string, helpTestId: string) => (
+        <>
+          <SettingsInput
+            testId={testId}
+            label={t(I18nKey.SETTINGS_FORM$API_KEY)}
+            type="password"
+            className="w-full"
+            value={
+              typeof values["llm.api_key"] === "string"
+                ? values["llm.api_key"]
+                : ""
+            }
+            placeholder={settings?.llm_api_key_set ? "<hidden>" : ""}
+            onChange={(value) => onChange("llm.api_key", value)}
+            isDisabled={isDisabled}
+            startContent={
+              settings?.llm_api_key_set ? (
+                <KeyStatusIcon isSet={settings.llm_api_key_set} />
+              ) : undefined
+            }
+          />
 
-        return (
-          <>
-            <SettingsInput
-              testId={testId}
-              label={t(I18nKey.SETTINGS_FORM$API_KEY)}
-              type="password"
-              className="w-full"
-              value={
-                typeof values["llm.api_key"] === "string"
-                  ? values["llm.api_key"]
-                  : ""
-              }
-              placeholder={settings?.llm_api_key_set ? "<hidden>" : ""}
-              onChange={(value) => onChange("llm.api_key", value)}
-              isDisabled={isDisabled}
-              startContent={
-                settings?.llm_api_key_set ? (
-                  <KeyStatusIcon isSet={settings.llm_api_key_set} />
-                ) : undefined
-              }
-            />
-
-            <HelpLink
-              testId={helpTestId}
-              text={t(I18nKey.SETTINGS$DONT_KNOW_API_KEY)}
-              linkText={t(I18nKey.SETTINGS$CLICK_FOR_INSTRUCTIONS)}
-              href="https://docs.openhands.dev/usage/local-setup#getting-an-api-key"
-            />
-          </>
-        );
-      };
+          <HelpLink
+            testId={helpTestId}
+            text={t(I18nKey.SETTINGS$DONT_KNOW_API_KEY)}
+            linkText={t(I18nKey.SETTINGS$CLICK_FOR_INSTRUCTIONS)}
+            href="https://docs.openhands.dev/usage/local-setup#getting-an-api-key"
+          />
+        </>
+      );
 
       return (
         <div className="flex flex-col gap-6">
@@ -251,7 +179,6 @@ export function LlmSettingsScreen({
               <ModelSelector
                 currentModel={modelValue || undefined}
                 onChange={(provider, model) => {
-                  setSelectedProvider(provider);
                   const nextModel = buildModelId(provider, model);
                   if (nextModel) {
                     onChange("llm.model", nextModel);
@@ -310,7 +237,7 @@ export function LlmSettingsScreen({
         </div>
       );
     },
-    [isSaasMode, defaultModel, selectedProvider, settings?.llm_api_key_set, t],
+    [defaultModel, settings?.llm_api_key_set, t],
   );
 
   const buildPayload = React.useCallback(
@@ -324,25 +251,7 @@ export function LlmSettingsScreen({
       // basePayload is a nested dict (e.g. {llm: {model: "gpt-4"}})
       const agentSettings = structuredClone(basePayload);
 
-      const modelValue =
-        typeof context.values["llm.model"] === "string"
-          ? context.values["llm.model"]
-          : "";
-      const derivedProvider = modelValue
-        ? extractModelAndProvider(modelValue).provider || null
-        : null;
-      const activeProvider =
-        context.view === "basic"
-          ? (selectedProvider ?? derivedProvider)
-          : derivedProvider;
-      const shouldUseOpenHandsKey =
-        isSaasMode && activeProvider === "openhands";
-
       const llm = (agentSettings.llm ?? {}) as Record<string, unknown>;
-      if (shouldUseOpenHandsKey && llm.model !== undefined) {
-        llm.api_key = "";
-        agentSettings.llm = llm;
-      }
 
       if (context.view === "basic") {
         llm.base_url = getSchemaFieldDefaultValue(schema, "llm.base_url");
@@ -351,7 +260,7 @@ export function LlmSettingsScreen({
 
       return { agent_settings_diff: agentSettings };
     },
-    [isSaasMode, schema, selectedProvider],
+    [schema],
   );
 
   return (
@@ -363,7 +272,7 @@ export function LlmSettingsScreen({
       buildPayload={buildPayload}
       getInitialView={getInitialView}
       forceShowAdvancedView
-      allowAllView={!isSaasMode}
+      allowAllView
       testId="llm-settings-screen"
     />
   );

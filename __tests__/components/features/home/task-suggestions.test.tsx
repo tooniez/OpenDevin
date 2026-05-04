@@ -30,7 +30,7 @@ vi.mock("#/hooks/query/use-is-authed", () => ({
 
 vi.mock("#/hooks/query/use-config", () => ({
   useConfig: () => ({
-    data: { app_mode: "saas" },
+    data: {},
     isLoading: false,
   }),
 }));

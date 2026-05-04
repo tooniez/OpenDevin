@@ -13,7 +13,7 @@ The same mock handlers work in both environments, so you write them once and reu
 ## Relevant Files
 
 - `src/mocks/handlers.ts` - Main handler registry that combines all domain handlers
-- `src/mocks/*-handlers.ts` - Domain-specific handlers (auth, billing, conversation, etc.)
+- `src/mocks/*-handlers.ts` - Domain-specific handlers (auth, conversation, etc.)
 - `src/mocks/browser.ts` - Browser setup for development mode
 - `src/mocks/node.ts` - Node.js setup for tests
 - `vitest.setup.ts` - Global test setup with MSW lifecycle hooks
@@ -25,21 +25,9 @@ The same mock handlers work in both environments, so you write them once and reu
 ```sh
 # Run with API mocking enabled
 npm run dev:mock
-
-# Run with API mocking + SaaS mode simulation
-npm run dev:mock:saas
 ```
 
-These commands set `VITE_MOCK_API=true` which activates the MSW Service Worker to intercept requests.
-
-> [!NOTE]
-> **OpenHands vs SaaS Mode**
->
-> OpenHands runs in two modes:
-> - **OpenHands mode**: For local/self-hosted deployments where users provide their own LLM API keys and configure git providers manually
-> - **SaaS mode**: For the cloud offering with billing, managed API keys, and OAuth-based GitHub integration
->
-> Use `dev:mock:saas` when working on SaaS-specific features like billing, API key management, or subscription flows.
+This command sets `VITE_MOCK_API=true` which activates the MSW Service Worker to intercept requests.
 
 
 ## Writing Tests

@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { useCombobox } from "downshift";
 import { useTranslation } from "react-i18next";
-import { Provider, ProviderOptions } from "#/types/settings";
+import { Provider } from "#/types/settings";
 import { GitRepository } from "#/types/git";
 import { useDebounce } from "#/hooks/use-debounce";
 import { cn } from "#/utils/utils";
@@ -20,7 +20,6 @@ import { EmptyState } from "../shared/empty-state";
 import { useUrlSearch } from "./use-url-search";
 import { useRepositoryData } from "./use-repository-data";
 import { GenericDropdownMenu } from "../shared/generic-dropdown-menu";
-import { useConfig } from "#/hooks/query/use-config";
 import { I18nKey } from "#/i18n/declaration";
 import RepoIcon from "#/icons/repo.svg?react";
 import { useHomeStore } from "#/stores/home-store";
@@ -46,7 +45,6 @@ export function GitRepoDropdown({
   onChange,
 }: GitRepoDropdownProps) {
   const { t } = useTranslation("openhands");
-  const { data: config } = useConfig();
   const { recentRepositories: storedRecentRepositories } = useHomeStore();
   const [inputValue, setInputValue] = useState("");
   const [localSelectedItem, setLocalSelectedItem] =
@@ -289,34 +287,6 @@ export function GitRepoDropdown({
     );
   }, [recentRepositories, localSelectedItem, getItemProps, t]);
 
-  // Create sticky footer item for GitHub provider
-  const stickyFooterItem = useMemo(() => {
-    if (
-      !config?.github_app_slug ||
-      provider !== ProviderOptions.github ||
-      config.app_mode !== "saas"
-    )
-      return null;
-
-    const githubHref = `https://github.com/apps/${config.github_app_slug}/installations/new`;
-
-    return (
-      <a
-        href={githubHref}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center w-full px-2 py-2 text-sm text-white hover:bg-[#5C5D62] rounded-md transition-colors duration-150 font-normal"
-        onMouseDown={(e) => {
-          // Prevent downshift from closing the menu when clicking the sticky footer
-          e.preventDefault();
-          e.stopPropagation();
-        }}
-      >
-        {t(I18nKey.HOME$ADD_GITHUB_REPOS)}
-      </a>
-    );
-  }, [provider, config, t]);
-
   return (
     <div className={cn("relative", className)}>
       <div className="relative">
@@ -374,7 +344,6 @@ export function GitRepoDropdown({
         renderItem={renderItem}
         renderEmptyState={renderEmptyState}
         stickyTopItem={stickyTopItem}
-        stickyFooterItem={stickyFooterItem}
         testId="git-repo-dropdown-menu"
         numberOfRecentItems={recentRepositories.length}
         itemKey={(repo) => repo.id}

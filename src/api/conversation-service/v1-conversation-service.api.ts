@@ -29,7 +29,6 @@ import type {
   V1AppConversationPage,
   V1AppConversationStartRequest,
   V1AppConversationStartTask,
-  V1AppConversationStartTaskPage,
   V1RuntimeConversationInfo,
   V1SendMessageRequest,
   V1SendMessageResponse,
@@ -40,10 +39,13 @@ class V1ConversationService {
     conversationId: string,
     message: V1SendMessageRequest,
   ): Promise<V1SendMessageResponse> {
-    await createHttpClient().post(`/api/conversations/${conversationId}/events`, {
-      ...message,
-      run: true,
-    });
+    await createHttpClient().post(
+      `/api/conversations/${conversationId}/events`,
+      {
+        ...message,
+        run: true,
+      },
+    );
 
     return message;
   }
@@ -74,7 +76,7 @@ class V1ConversationService {
       "/api/conversations",
       payload,
     );
-    const data = response.data;
+    const { data } = response;
 
     return {
       id: data.id,
@@ -113,7 +115,8 @@ class V1ConversationService {
     sessionApiKey?: string | null,
   ): Promise<GetVSCodeUrlResponse> {
     const vscode_url = await createVSCodeClient({ sessionApiKey }).getUrl({
-      baseUrl: typeof window !== "undefined" ? window.location.origin : undefined,
+      baseUrl:
+        typeof window !== "undefined" ? window.location.origin : undefined,
       workspaceDir: getAgentServerWorkingDir(),
     });
 
@@ -125,10 +128,9 @@ class V1ConversationService {
     _conversationUrl: string | null | undefined,
     sessionApiKey?: string | null,
   ): Promise<{ success: boolean }> {
-    const response = await createHttpClient({ sessionApiKey }).post<{ success: boolean }>(
-      `/api/conversations/${conversationId}/pause`,
-      {},
-    );
+    const response = await createHttpClient({ sessionApiKey }).post<{
+      success: boolean;
+    }>(`/api/conversations/${conversationId}/pause`, {});
 
     return response.data;
   }
@@ -139,10 +141,9 @@ class V1ConversationService {
     question: string,
     sessionApiKey?: string | null,
   ): Promise<{ response: string }> {
-    const response = await createHttpClient({ sessionApiKey }).post<{ response: string }>(
-      `/api/conversations/${conversationId}/ask_agent`,
-      { question },
-    );
+    const response = await createHttpClient({ sessionApiKey }).post<{
+      response: string;
+    }>(`/api/conversations/${conversationId}/ask_agent`, { question });
 
     return response.data;
   }
@@ -152,10 +153,9 @@ class V1ConversationService {
     _conversationUrl: string | null | undefined,
     sessionApiKey?: string | null,
   ): Promise<{ success: boolean }> {
-    const response = await createHttpClient({ sessionApiKey }).post<{ success: boolean }>(
-      `/api/conversations/${conversationId}/run`,
-      {},
-    );
+    const response = await createHttpClient({ sessionApiKey }).post<{
+      success: boolean;
+    }>(`/api/conversations/${conversationId}/run`, {});
 
     return response.data;
   }
@@ -165,12 +165,13 @@ class V1ConversationService {
   ): Promise<(V1AppConversation | null)[]> {
     if (ids.length === 0) return [];
 
-    const response = await createHttpClient().get<(DirectConversationInfo | null)[]>(
-      "/api/conversations",
-      { params: { ids } },
-    );
+    const response = await createHttpClient().get<
+      (DirectConversationInfo | null)[]
+    >("/api/conversations", { params: { ids } });
 
-    return response.data.map((item) => (item ? toV1AppConversation(item) : null));
+    return response.data.map((item) =>
+      item ? toV1AppConversation(item) : null,
+    );
   }
 
   static async uploadFile(
@@ -226,7 +227,9 @@ class V1ConversationService {
   }
 
   static async getSkills(conversationId: string): Promise<GetSkillsResponse> {
-    const [conversation] = await this.batchGetAppConversations([conversationId]);
+    const [conversation] = await this.batchGetAppConversations([
+      conversationId,
+    ]);
     return loadSkillsForConversation(conversation);
   }
 
@@ -242,7 +245,7 @@ class V1ConversationService {
     const response = await createHttpClient({ sessionApiKey }).get<
       DirectConversationInfo & { stats?: V1RuntimeConversationInfo["stats"] }
     >(`/api/conversations/${conversationId}`);
-    const data = response.data;
+    const { data } = response;
 
     return {
       id: data.id,
@@ -260,7 +263,8 @@ class V1ConversationService {
                   cache_read_tokens:
                     data.metrics.accumulated_token_usage.cache_read_tokens ?? 0,
                   cache_write_tokens:
-                    data.metrics.accumulated_token_usage.cache_write_tokens ?? 0,
+                    data.metrics.accumulated_token_usage.cache_write_tokens ??
+                    0,
                   context_window:
                     data.metrics.accumulated_token_usage.context_window ?? 0,
                   per_turn_token:
@@ -271,7 +275,9 @@ class V1ConversationService {
         : null,
       created_at: data.created_at,
       updated_at: data.updated_at,
-      status: (data.execution_status as V1RuntimeConversationInfo["status"]) ?? "idle",
+      status:
+        (data.execution_status as V1RuntimeConversationInfo["status"]) ??
+        "idle",
       stats: data.stats ?? { usage_to_metrics: {} },
     };
   }
@@ -310,8 +316,12 @@ class V1ConversationService {
     conversationId: string,
     title: string,
   ): Promise<V1AppConversation> {
-    await createHttpClient().patch(`/api/conversations/${conversationId}`, { title });
-    const [conversation] = await this.batchGetAppConversations([conversationId]);
+    await createHttpClient().patch(`/api/conversations/${conversationId}`, {
+      title,
+    });
+    const [conversation] = await this.batchGetAppConversations([
+      conversationId,
+    ]);
     return conversation as V1AppConversation;
   }
 }

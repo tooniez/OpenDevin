@@ -12,7 +12,6 @@ const buildProviders = (
   bitbucket_data_center: { token: "", host: null },
   azure_devops: { token: "", host: null },
   forgejo: { token: "", host: null },
-  enterprise_sso: { token: "", host: null },
   ...overrides,
 });
 

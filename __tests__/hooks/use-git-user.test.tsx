@@ -5,11 +5,9 @@ import React from "react";
 import { useGitUser } from "#/hooks/query/use-git-user";
 import UserService from "#/api/user-service/user-service.api";
 import * as useShouldShowUserFeaturesModule from "#/hooks/use-should-show-user-features";
-import * as useConfigModule from "#/hooks/query/use-config";
 import { AxiosError } from "axios";
 
 vi.mock("#/hooks/use-should-show-user-features");
-vi.mock("#/hooks/query/use-config");
 vi.mock("#/api/user-service/user-service.api");
 
 const identifyMock = vi.fn();
@@ -25,11 +23,6 @@ describe("useGitUser", () => {
     vi.clearAllMocks();
 
     vi.mocked(useShouldShowUserFeaturesModule.useShouldShowUserFeatures).mockReturnValue(true);
-    vi.mocked(useConfigModule.useConfig).mockReturnValue({
-      data: { app_mode: "oss" },
-      isLoading: false,
-      error: null,
-    } as any);
   });
 
   const createWrapper = () => {
@@ -88,7 +81,6 @@ describe("useGitUser", () => {
       name: "The Octocat",
       email: "octocat@example.com",
       user: "octocat",
-      mode: "oss",
     });
   });
 });

@@ -93,7 +93,7 @@ export const useFeature = (id: string) => {
 
 | Item | Convention | Example |
 |------|------------|---------|
-| Directory | `feature-service/` | `billing-service/` |
-| Service file | `feature-service.api.ts` | `billing-service.api.ts` |
-| Types file | `feature.types.ts` | `billing.types.ts` |
-| Export name | `featureService` | `billingService` |
+| Directory | `feature-service/` | `secrets-service/` |
+| Service file | `feature-service.api.ts` | `secrets-service.api.ts` |
+| Types file | `feature.types.ts` | `secrets.types.ts` |
+| Export name | `featureService` | `secretsService` |

@@ -41,27 +41,22 @@ const DEFAULT_MODEL =
 export const createMockWebClientConfig = (
   overrides: Partial<WebClientConfig> = {},
 ): WebClientConfig => ({
-  app_mode: "oss",
   posthog_client_key: "test-posthog-key",
   feature_flags: {
-    enable_billing: false,
     hide_llm_settings: false,
     enable_jira: false,
     enable_jira_dc: false,
     enable_linear: false,
     hide_users_page: false,
-    hide_billing_page: false,
     hide_integrations_page: false,
     ...overrides.feature_flags,
   },
   providers_configured: [],
   maintenance_start_time: null,
-  auth_url: null,
   recaptcha_site_key: null,
   faulty_models: [],
   error_message: null,
   updated_at: new Date().toISOString(),
-  github_app_slug: null,
   ...overrides,
 });
 
@@ -447,29 +442,22 @@ export const SETTINGS_HANDLERS = [
   ),
 
   http.get("/api/v1/web-client/config", () => {
-    const mockSaas = import.meta.env.VITE_MOCK_SAAS === "true";
-
     const config: WebClientConfig = {
-      app_mode: mockSaas ? "saas" : "oss",
       posthog_client_key: "fake-posthog-client-key",
       feature_flags: {
-        enable_billing: mockSaas,
         hide_llm_settings: false,
         enable_jira: false,
         enable_jira_dc: false,
         enable_linear: false,
         hide_users_page: false,
-        hide_billing_page: false,
         hide_integrations_page: false,
       },
       providers_configured: [],
       maintenance_start_time: null,
-      auth_url: null,
       recaptcha_site_key: null,
       faulty_models: [],
       error_message: null,
       updated_at: new Date().toISOString(),
-      github_app_slug: mockSaas ? "openhands" : null,
     };
 
     return HttpResponse.json(config);
@@ -566,5 +554,4 @@ export const SETTINGS_HANDLERS = [
 
     return HttpResponse.json(null, { status: 400 });
   }),
-
 ];

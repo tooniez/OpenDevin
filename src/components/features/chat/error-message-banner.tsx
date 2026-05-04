@@ -1,7 +1,6 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { X } from "lucide-react";
-import { NavigationLink } from "#/components/shared/navigation-link";
 import { I18nKey } from "#/i18n/declaration";
 import { cn } from "#/utils/utils";
 
@@ -39,24 +38,7 @@ export function ErrorMessageBanner({
           )}
           data-testid="error-message-banner-content"
         >
-          {isI18nKey ? (
-            <Trans
-              ns="openhands"
-              i18nKey={message}
-              components={{
-                a: (
-                  <NavigationLink
-                    className="underline font-bold cursor-pointer"
-                    to="/settings/billing"
-                  >
-                    link
-                  </NavigationLink>
-                ),
-              }}
-            />
-          ) : (
-            message
-          )}
+          {isI18nKey ? <Trans ns="openhands" i18nKey={message} /> : message}
         </div>
 
         {shouldShowToggle && (

@@ -54,7 +54,10 @@ export function isSettingsPageHidden(
   featureFlags: WebClientFeatureFlags | undefined,
 ): boolean {
   if (featureFlags?.hide_llm_settings && path === "/settings") return true;
-  if (featureFlags?.hide_integrations_page && path === "/settings/integrations") {
+  if (
+    featureFlags?.hide_integrations_page &&
+    path === "/settings/integrations"
+  ) {
     return true;
   }
   return false;

@@ -14,7 +14,7 @@ vi.mock("#/hooks/use-settings-nav-items", () => ({
 }));
 
 describe("UserActions", () => {
-  it("shows the OSS user menu on hover without SaaS-only actions", async () => {
+  it("shows the OSS user menu on hover without hosted-only actions", async () => {
     const user = userEvent.setup();
 
     render(
