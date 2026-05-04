@@ -6,7 +6,7 @@ import { usePaginatedConversations } from "#/hooks/query/use-paginated-conversat
 import { useStartTasks } from "#/hooks/query/use-start-tasks";
 import { useInfiniteScroll } from "#/hooks/use-infinite-scroll";
 import { useDeleteConversation } from "#/hooks/mutation/use-delete-conversation";
-import { useUnifiedPauseConversationSandbox } from "#/hooks/mutation/use-unified-stop-conversation";
+import { useUnifiedPauseConversation } from "#/hooks/mutation/use-unified-stop-conversation";
 import { ConfirmDeleteModal } from "./confirm-delete-modal";
 import { ConfirmStopModal } from "./confirm-stop-modal";
 import { LoadingSpinner } from "#/components/shared/loading-spinner";
@@ -42,9 +42,6 @@ export function ConversationPanel({ onClose }: ConversationPanelProps) {
   >(null);
   const [selectedConversationTitle, setSelectedConversationTitle] =
     React.useState<string | null>(null);
-  const [selectedSandboxId, setSelectedSandboxId] = React.useState<
-    string | null
-  >(null);
   const [openContextMenuId, setOpenContextMenuId] = React.useState<
     string | null
   >(null);
@@ -65,8 +62,7 @@ export function ConversationPanel({ onClose }: ConversationPanelProps) {
   const conversations = data?.pages.flatMap((page) => page.items) ?? [];
 
   const { mutate: deleteConversation } = useDeleteConversation();
-  const { mutate: pauseConversationSandbox } =
-    useUnifiedPauseConversationSandbox();
+  const { mutate: pauseConversation } = useUnifiedPauseConversation();
   const { mutate: updateConversation } = useUpdateConversation();
 
   // Set up infinite scroll
@@ -83,13 +79,9 @@ export function ConversationPanel({ onClose }: ConversationPanelProps) {
     setSelectedConversationTitle(title);
   };
 
-  const handleStopConversation = (
-    conversationId: string,
-    sandboxId?: string | null,
-  ) => {
+  const handleStopConversation = (conversationId: string) => {
     setConfirmStopModalVisible(true);
     setSelectedConversationId(conversationId);
-    setSelectedSandboxId(sandboxId ?? null);
   };
 
   const handleConversationTitleChange = async (
@@ -123,7 +115,7 @@ export function ConversationPanel({ onClose }: ConversationPanelProps) {
 
   const handleConfirmStop = () => {
     if (selectedConversationId) {
-      pauseConversationSandbox({
+      pauseConversation({
         conversationId: selectedConversationId,
       });
     }
@@ -181,9 +173,7 @@ export function ConversationPanel({ onClose }: ConversationPanelProps) {
             onDelete={() =>
               handleDeleteProject(conversation.id, conversation.title ?? "")
             }
-            onStop={() =>
-              handleStopConversation(conversation.id, conversation.sandbox_id)
-            }
+            onStop={() => handleStopConversation(conversation.id)}
             onChangeTitle={(title) =>
               handleConversationTitleChange(conversation.id, title)
             }
@@ -195,7 +185,7 @@ export function ConversationPanel({ onClose }: ConversationPanelProps) {
             }}
             lastUpdatedAt={conversation.updated_at}
             createdAt={conversation.created_at}
-            sandboxStatus={conversation.sandbox_status}
+            executionStatus={conversation.execution_status}
             conversationId={conversation.id}
             contextMenuOpen={openContextMenuId === conversation.id}
             onContextMenuToggle={(isOpen) =>
@@ -235,7 +225,6 @@ export function ConversationPanel({ onClose }: ConversationPanelProps) {
             setConfirmStopModalVisible(false);
           }}
           onCancel={() => setConfirmStopModalVisible(false)}
-          sandboxId={selectedSandboxId}
         />
       )}
 

@@ -31,8 +31,8 @@ export function Tools() {
     shouldShowHooks,
   } = useConversationNameContextMenu({
     conversationId,
-    sandboxStatus: conversation?.sandbox_status,
-    showOptions: true, // Enable all options for conversation name
+    executionStatus: conversation?.execution_status,
+    showOptions: true,
     onContextMenuToggle: setContextMenuOpen,
   });
 

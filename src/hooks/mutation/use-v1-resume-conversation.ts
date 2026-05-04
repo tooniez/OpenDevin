@@ -25,19 +25,13 @@ export const useV1ResumeConversation = () => {
       }
     },
     onSettled: (_, __, variables) => {
-      // Invalidate the specific conversation query to trigger automatic refetch
       queryClient.invalidateQueries({
         queryKey: ["user", "conversation", variables.conversationId],
       });
-      // Also invalidate the conversations list for consistency
       queryClient.invalidateQueries({ queryKey: ["user", "conversations"] });
-      // Invalidate V1 batch get queries
       queryClient.invalidateQueries({
         queryKey: ["v1-batch-get-app-conversations"],
       });
-      // Invalidate sandbox data so new runtime URLs are picked up after resume
-      queryClient.invalidateQueries({ queryKey: ["sandboxes"] });
-      // Invalidate VS Code URL cache so it refetches with the new sandbox data
       queryClient.invalidateQueries({ queryKey: ["unified", "vscode_url"] });
     },
   });

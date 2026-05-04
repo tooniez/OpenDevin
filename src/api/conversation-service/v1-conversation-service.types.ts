@@ -1,5 +1,4 @@
 import { ConversationTrigger } from "../open-hands.types";
-import { V1SandboxStatus } from "../sandbox-service/sandbox-service.types";
 import { Provider } from "#/types/settings";
 import { SuggestedTask } from "#/utils/types";
 import { V1ExecutionStatus } from "#/types/v1/core";
@@ -50,7 +49,6 @@ export interface V1SendMessageRequest {
 }
 
 export interface V1AppConversationStartRequest {
-  sandbox_id?: string | null;
   initial_message?: V1SendMessageRequest | null;
   processors?: unknown[]; // EventCallbackProcessor - keeping as unknown for now
   llm_model?: string | null;
@@ -68,7 +66,6 @@ export interface V1AppConversationStartRequest {
 
 export type V1AppConversationStartTaskStatus =
   | "WORKING"
-  | "WAITING_FOR_SANDBOX"
   | "PREPARING_REPOSITORY"
   | "RUNNING_SETUP_SCRIPT"
   | "SETTING_UP_GIT_HOOKS"
@@ -83,7 +80,6 @@ export interface V1AppConversationStartTask {
   status: V1AppConversationStartTaskStatus;
   detail: string | null;
   app_conversation_id: string | null;
-  sandbox_id: string | null;
   agent_server_url: string | null;
   request: V1AppConversationStartRequest;
   created_at: string;
@@ -107,7 +103,6 @@ export interface V1ConversationWorkspace {
 export interface V1AppConversation {
   id: string;
   created_by_user_id: string | null;
-  sandbox_id: string;
   selected_repository: string | null;
   selected_branch: string | null;
   git_provider: Provider | null;
@@ -118,7 +113,6 @@ export interface V1AppConversation {
   metrics: V1MetricsSnapshot | null;
   created_at: string;
   updated_at: string;
-  sandbox_status: V1SandboxStatus;
   execution_status: V1ExecutionStatus | null;
   conversation_url: string | null;
   session_api_key: string | null;

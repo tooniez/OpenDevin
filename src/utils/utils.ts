@@ -783,12 +783,12 @@ interface GetStatusTextArgs {
  * getStatusText({
  *   isPausing: false,
  *   isTask: true,
- *   taskStatus: "WAITING_FOR_SANDBOX",
+ *   taskStatus: "STARTING_CONVERSATION",
  *   taskDetail: null,
  *   isStartingStatus: false,
  *   isStopStatus: false,
  *   curAgentState: AgentState.RUNNING
- * }) // Returns "Waiting for sandbox"
+ * }) // Returns "Starting conversation"
  */
 export function getStatusText({
   isPausing = false,
@@ -816,7 +816,6 @@ export function getStatusText({
       return t(I18nKey.CONVERSATION$READY);
     }
 
-    // Format status text with sentence case: "WAITING_FOR_SANDBOX" -> "Waiting for sandbox"
     return (
       taskDetail ||
       taskStatus

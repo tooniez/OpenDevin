@@ -3,10 +3,8 @@ import { getStatusText } from "#/utils/utils";
 import { AgentState } from "#/types/agent-state";
 import { I18nKey } from "#/i18n/declaration";
 
-// Mock translations
 const t = (key: string) => {
   const translations: { [key: string]: string } = {
-    COMMON$WAITING_FOR_SANDBOX: "Waiting for sandbox",
     COMMON$STOPPING: "Stopping",
     COMMON$STARTING: "Starting",
     COMMON$SERVER_STOPPED: "Server stopped",
@@ -37,7 +35,7 @@ describe("getStatusText", () => {
     const result = getStatusText({
       isPausing: false,
       isTask: true,
-      taskStatus: "WAITING_FOR_SANDBOX",
+      taskStatus: "STARTING_CONVERSATION",
       taskDetail: null,
       isStartingStatus: false,
       isStopStatus: false,
@@ -45,7 +43,7 @@ describe("getStatusText", () => {
       t,
     });
 
-    expect(result).toBe("Waiting for sandbox");
+    expect(result).toBe("Starting conversation");
   });
 
   it("returns task detail when task status is ERROR and detail exists", () => {
@@ -53,14 +51,14 @@ describe("getStatusText", () => {
       isPausing: false,
       isTask: true,
       taskStatus: "ERROR",
-      taskDetail: "Sandbox failed",
+      taskDetail: "Setup failed",
       isStartingStatus: false,
       isStopStatus: false,
       curAgentState: AgentState.RUNNING,
       t,
     });
 
-    expect(result).toBe("Sandbox failed");
+    expect(result).toBe("Setup failed");
   });
 
   it("returns translated error when task status is ERROR and no detail", () => {

@@ -1,24 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Provider } from "#/types/settings";
 import { useErrorMessageStore } from "#/stores/error-message-store";
+import { V1ExecutionStatus } from "#/types/v1/core";
 import {
-  resumeV1ConversationSandbox,
-  updateConversationSandboxStatusInCache,
+  resumeV1Conversation,
+  updateConversationExecutionStatusInCache,
   invalidateConversationQueries,
 } from "./conversation-mutation-utils";
 
-/**
- * Unified hook that automatically routes to the correct resume conversation sandbox implementation
- * based on the conversation version (V0 or V1).
- *
- * This hook checks the cached conversation data to determine the version, then calls
- * the appropriate API directly. Returns a single useMutation instance that all components share.
- *
- * Usage is the same as useStartConversation:
- * const { mutate: startConversation } = useUnifiedResumeConversationSandbox();
- * startConversation({ conversationId: "some-id", providers: [...] });
- */
-export const useUnifiedResumeConversationSandbox = () => {
+export const useUnifiedResumeConversation = () => {
   const queryClient = useQueryClient();
   const removeErrorMessage = useErrorMessageStore(
     (state) => state.removeErrorMessage,
@@ -29,7 +19,7 @@ export const useUnifiedResumeConversationSandbox = () => {
     mutationFn: async (variables: {
       conversationId: string;
       providers?: Provider[];
-    }) => resumeV1ConversationSandbox(variables.conversationId),
+    }) => resumeV1Conversation(variables.conversationId),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["user", "conversations"] });
       const previousConversations = queryClient.getQueryData([
@@ -51,13 +41,12 @@ export const useUnifiedResumeConversationSandbox = () => {
       invalidateConversationQueries(queryClient, variables.conversationId);
     },
     onSuccess: (_, variables) => {
-      // Clear error messages when starting/resuming conversation
       removeErrorMessage();
 
-      updateConversationSandboxStatusInCache(
+      updateConversationExecutionStatusInCache(
         queryClient,
         variables.conversationId,
-        "STARTING",
+        V1ExecutionStatus.RUNNING,
       );
     },
   });

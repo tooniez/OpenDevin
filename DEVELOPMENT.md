@@ -21,14 +21,6 @@ Useful overrides:
 - `OH_GUI_SAFE_STATE_DIR` — base directory for isolated server state
 - `VITE_WORKING_DIR` — repo root used for new conversations (defaults to the current checkout)
 
-## OpenHands Cloud sandbox warning
-
-If you are editing this repo from an OpenHands Cloud sandbox: **do not point this frontend at the sandbox's existing agent-server**.
-
-Current `agent-server` releases share the default `openhands` tmux socket and `workspace/conversations` persistence directory, so a naive second server in the same sandbox can break the OpenHands conversation that is powering your cloud session (for example with errors like `no server running on /tmp/tmux-*/openhands`).
-
-Use `npm run dev` / `npm run dev:safe` so this repo launches its own isolated backend.
-
 ## Alternative development workflows
 
 ### Frontend against an existing backend

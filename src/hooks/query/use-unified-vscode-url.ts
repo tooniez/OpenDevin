@@ -12,13 +12,6 @@ interface VSCodeUrlResult {
   error: string | null;
 }
 
-/**
- * Unified hook to get a VSCode URL.
- *
- * In direct agent_server mode we ask `/api/vscode/url` directly instead of
- * relying on sandbox `exposed_urls`, because newer agent_server-compatible
- * clients expose VSCode as a dedicated API.
- */
 export const useUnifiedVSCodeUrl = () => {
   const { t } = useTranslation("openhands");
   const { conversationId } = useConversationId();

@@ -8,13 +8,14 @@ import { ServerStatusContextMenuIconText } from "./server-status-context-menu-ic
 import { ServerStatus } from "./server-status";
 import { Divider } from "#/ui/divider";
 import { cn } from "#/utils/utils";
-import { V1SandboxStatus } from "#/api/sandbox-service/sandbox-service.types";
+import { V1ExecutionStatus } from "#/types/v1/core/base/common";
+import { isExecutionActive, isExecutionPaused } from "#/utils/status";
 
 interface ServerStatusContextMenuProps {
   onClose: () => void;
   onStopServer?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onStartServer?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  sandboxStatus: V1SandboxStatus | null;
+  executionStatus: V1ExecutionStatus | null;
   position?: "top" | "bottom";
   className?: string;
   isPausing?: boolean;
@@ -24,7 +25,7 @@ export function ServerStatusContextMenu({
   onClose,
   onStopServer,
   onStartServer,
-  sandboxStatus,
+  executionStatus,
   position = "top",
   className = "",
   isPausing = false,
@@ -32,8 +33,9 @@ export function ServerStatusContextMenu({
   const { t } = useTranslation("openhands");
   const ref = useClickOutsideElement<HTMLUListElement>(onClose);
 
-  const shouldActionShown =
-    sandboxStatus === "RUNNING" || sandboxStatus === "MISSING";
+  const isActive = isExecutionActive(executionStatus);
+  const isPaused = isExecutionPaused(executionStatus);
+  const shouldActionShown = isActive || isPaused;
 
   return (
     <ContextMenu
@@ -45,7 +47,7 @@ export function ServerStatusContextMenu({
       className={cn("left-2 w-fit min-w-42", className)}
     >
       <ServerStatus
-        sandboxStatus={sandboxStatus}
+        executionStatus={executionStatus}
         isPausing={isPausing}
         className="py-1"
       />
@@ -54,7 +56,7 @@ export function ServerStatusContextMenu({
         <>
           <Divider />
 
-          {sandboxStatus === "RUNNING" && onStopServer && (
+          {isActive && onStopServer && (
             <ServerStatusContextMenuIconText
               icon={<StopCircleIcon width={18} height={18} />}
               text={t(I18nKey.COMMON$STOP_RUNTIME)}
@@ -63,7 +65,7 @@ export function ServerStatusContextMenu({
             />
           )}
 
-          {sandboxStatus === "MISSING" && onStartServer && (
+          {isPaused && onStartServer && (
             <ServerStatusContextMenuIconText
               icon={<PlayCircleIcon width={18} height={18} />}
               text={t(I18nKey.COMMON$START_RUNTIME)}

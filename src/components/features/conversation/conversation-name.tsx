@@ -58,8 +58,8 @@ export function ConversationName() {
     shouldShowHooks,
   } = useConversationNameContextMenu({
     conversationId,
-    sandboxStatus: conversation?.sandbox_status,
-    showOptions: true, // Enable all options for conversation name
+    executionStatus: conversation?.execution_status,
+    showOptions: true,
     onContextMenuToggle: setContextMenuOpen,
   });
 
@@ -228,12 +228,10 @@ export function ConversationName() {
         />
       )}
 
-      {/* Confirm Stop Modal */}
       {confirmStopModalVisible && (
         <ConfirmStopModal
           onConfirm={handleConfirmStop}
           onCancel={() => setConfirmStopModalVisible(false)}
-          sandboxId={conversation?.sandbox_id ?? null}
         />
       )}
     </>

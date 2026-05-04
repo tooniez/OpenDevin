@@ -5,17 +5,18 @@ import { useAgentState } from "#/hooks/use-agent-state";
 import { useTaskPolling } from "#/hooks/query/use-task-polling";
 import { getStatusColor, getStatusText } from "#/utils/utils";
 import { useErrorMessageStore } from "#/stores/error-message-store";
-import { V1SandboxStatus } from "#/api/sandbox-service/sandbox-service.types";
+import { V1ExecutionStatus } from "#/types/v1/core/base/common";
+import { isExecutionErrored, isExecutionPaused } from "#/utils/status";
 
 export interface ServerStatusProps {
   className?: string;
-  sandboxStatus: V1SandboxStatus | null;
+  executionStatus: V1ExecutionStatus | null;
   isPausing?: boolean;
 }
 
 export function ServerStatus({
   className = "",
-  sandboxStatus,
+  executionStatus,
   isPausing = false,
 }: ServerStatusProps) {
   const { curAgentState } = useAgentState();
@@ -25,7 +26,8 @@ export function ServerStatus({
 
   const isStartingStatus =
     curAgentState === AgentState.LOADING || curAgentState === AgentState.INIT;
-  const isStopStatus = sandboxStatus === "MISSING";
+  const isStopStatus =
+    isExecutionErrored(executionStatus) || isExecutionPaused(executionStatus);
 
   const statusColor = getStatusColor({
     isPausing,

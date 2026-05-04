@@ -52,10 +52,8 @@ describe("NewConversation", () => {
         status: "READY",
         detail: null,
         app_conversation_id: "conv-123",
-        sandbox_id: null,
         agent_server_url: "http://agent-server.local",
         request: {
-          sandbox_id: null,
           initial_message: null,
           processors: [],
           llm_model: null,

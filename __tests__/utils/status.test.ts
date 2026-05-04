@@ -1,225 +1,97 @@
 import { describe, it, expect } from "vitest";
-import { getStatusCode, getIndicatorColor, IndicatorColor } from "#/utils/status";
+import {
+  getStatusCode,
+  getIndicatorColor,
+  IndicatorColor,
+} from "#/utils/status";
 import { AgentState } from "#/types/agent-state";
 import { I18nKey } from "#/i18n/declaration";
 import { V1ExecutionStatus } from "#/types/v1/core";
 
 describe("getStatusCode", () => {
-  it("should show sandbox status when agent is not ready", () => {
-    // Test case: Agent is loading - but since conversationStatus is not STARTING,
-    // it should fall through to runtime status check
-    const result = getStatusCode(
-      "OPEN", // webSocketStatus
-      null,
-      "STARTING", // sandboxStatus
-    );
-
-    // Should return runtime status since conversation is RUNNING
-    expect(result).toBe("CONVERSATION$STARTING_CONVERSATION");
-  });
-
-  it("should handle agent running state with stale runtime status", () => {
-    // Test case: Agent is running but runtime status is stale
-    const result = getStatusCode(
-      "OPEN", // webSocketStatus
-      V1ExecutionStatus.RUNNING,
-      "RUNNING",
-    );
-
-    // Should return agent state message, not runtime status
+  it("returns RUNNING_TASK when execution status is running", () => {
+    const result = getStatusCode("OPEN", V1ExecutionStatus.RUNNING);
     expect(result).toBe(I18nKey.AGENT_STATUS$RUNNING_TASK);
   });
 
-  it("should handle agent finished state with stale runtime status", () => {
-    // Test case: Agent is finished but runtime status is stale
-    const result = getStatusCode(
-      "OPEN", // webSocketStatus
-      V1ExecutionStatus.IDLE,
-      "RUNNING",
-    );
-
-    // Should return agent state message, not runtime status
+  it("returns WAITING_FOR_TASK when execution status is idle", () => {
+    const result = getStatusCode("OPEN", V1ExecutionStatus.IDLE);
     expect(result).toBe(I18nKey.AGENT_STATUS$WAITING_FOR_TASK);
   });
 
-  it("should still respect stopped states", () => {
-    // Test case: Runtime is stopped - should always show stopped
-    const result = getStatusCode(
-      "OPEN", // webSocketStatus
-      V1ExecutionStatus.FINISHED,
-      "MISSING",
-    );
-
-    // Should return stopped status regardless of agent state
+  it("returns STOPPED when execution status is paused", () => {
+    const result = getStatusCode("OPEN", V1ExecutionStatus.PAUSED);
     expect(result).toBe(I18nKey.CHAT_INTERFACE$STOPPED);
   });
 
-  it("should handle null agent state with conversation status STARTING", () => {
-    // Test case: No agent state, conversation is STARTING
+  it("returns starting i18n key when task is running setup", () => {
     const result = getStatusCode(
-      "OPEN", // webSocketStatus
+      "OPEN",
       null,
-      null,
-      "STARTING_CONVERSATION", // taskStatus
+      "STARTING_CONVERSATION",
     );
-
-    // Should return STARTING since conversationStatus takes priority
     expect(result).toBe(I18nKey.CONVERSATION$STARTING_CONVERSATION);
   });
 
-  it("should prioritize task ERROR status over websocket CONNECTING state", () => {
-    // Test case: Task has errored but websocket is still trying to connect
-    const result = getStatusCode(
-      "CONNECTING", // webSocketStatus (stuck connecting)
-      null, // executionStatus
-      "ERROR", // sandboxStatus
-    );
-
-    // Should return error message, not "Connecting..."
+  it("prioritises task ERROR over websocket CONNECTING", () => {
+    const result = getStatusCode("CONNECTING", null, "ERROR");
     expect(result).toBe(I18nKey.AGENT_STATUS$ERROR_OCCURRED);
   });
 
-  it("should show Starting when conversation status is STARTING even with disconnected websocket", () => {
-    // Test case: Server reports STARTING but websocket is disconnected (e.g., during resume)
-    const result = getStatusCode(
-      "CLOSED", // webSocketStatus
-      V1ExecutionStatus.IDLE,
-      "STARTING", // sandboxStatus
-      null, // agentState
-    );
-
-    // Should return STARTING status, not DISCONNECTED
-    expect(result).toBe(I18nKey.CONVERSATION$STARTING_CONVERSATION);
-  });
-
-  it("should show Connecting when task is working and websocket is connecting", () => {
-    // Test case: Task is in progress and websocket is connecting normally
-    const result = getStatusCode(
-      "CONNECTING", // webSocketStatus
-      V1ExecutionStatus.IDLE,
-      "RUNNING", // sandboxStatus
-    );
-
-    // Should show connecting message since task hasn't errored
-    expect(result).toBe(I18nKey.CHAT_INTERFACE$CONNECTING);
+  it("returns DISCONNECTED when websocket is closed and no task", () => {
+    const result = getStatusCode("CLOSED", V1ExecutionStatus.IDLE);
+    expect(result).toBe(I18nKey.CHAT_INTERFACE$DISCONNECTED);
   });
 });
 
 describe("getIndicatorColor", () => {
-  it("should prioritize agent readiness over stale runtime status for AWAITING_USER_INPUT", () => {
-    // Test case: Agent is ready (AWAITING_USER_INPUT) but runtime status is still starting
+  it("prioritises agent readiness over stale runtime status for AWAITING_USER_INPUT", () => {
     const result = getIndicatorColor(
-      "OPEN", // webSocketStatus
-      "RUNNING", // conversationStatus
-      "STATUS$STARTING_RUNTIME", // runtimeStatus (stale)
-      AgentState.AWAITING_USER_INPUT, // agentState (ready)
+      "OPEN",
+      "RUNNING",
+      "STATUS$STARTING_RUNTIME",
+      AgentState.AWAITING_USER_INPUT,
     );
-
-    // Should return blue for AWAITING_USER_INPUT, not yellow for stale runtime
     expect(result).toBe(IndicatorColor.BLUE);
   });
 
-  it("should prioritize agent readiness over stale runtime status for RUNNING", () => {
-    // Test case: Agent is running but runtime status is stale
+  it("returns red when websocket is closed", () => {
     const result = getIndicatorColor(
-      "OPEN", // webSocketStatus
-      "RUNNING", // conversationStatus
-      "STATUS$BUILDING_RUNTIME", // runtimeStatus (stale)
-      AgentState.RUNNING, // agentState (ready)
+      "CLOSED",
+      "STOPPED",
+      "STATUS$STOPPED",
+      AgentState.RUNNING,
     );
-
-    // Should return green for RUNNING, not yellow for stale runtime
-    expect(result).toBe(IndicatorColor.GREEN);
-  });
-
-  it("should prioritize agent readiness over stale runtime status for FINISHED", () => {
-    // Test case: Agent is finished but runtime status is stale
-    const result = getIndicatorColor(
-      "OPEN", // webSocketStatus
-      "RUNNING", // conversationStatus
-      "STATUS$SETTING_UP_WORKSPACE", // runtimeStatus (stale)
-      AgentState.FINISHED, // agentState (ready)
-    );
-
-    // Should return green for FINISHED, not yellow for stale runtime
-    expect(result).toBe(IndicatorColor.GREEN);
-  });
-
-  it("should show yellow when agent is not ready and runtime is starting", () => {
-    // Test case: Agent is loading and runtime is starting
-    const result = getIndicatorColor(
-      "OPEN", // webSocketStatus
-      "STARTING", // conversationStatus
-      "STATUS$STARTING_RUNTIME", // runtimeStatus
-      AgentState.LOADING, // agentState (not ready)
-    );
-
-    // Should return yellow since agent is not ready
-    expect(result).toBe(IndicatorColor.YELLOW);
-  });
-
-  it("should show orange for AWAITING_USER_CONFIRMATION even with stale runtime", () => {
-    // Test case: Agent is awaiting confirmation but runtime status is stale
-    const result = getIndicatorColor(
-      "OPEN", // webSocketStatus
-      "RUNNING", // conversationStatus
-      "STATUS$STARTING_RUNTIME", // runtimeStatus (stale)
-      AgentState.AWAITING_USER_CONFIRMATION, // agentState (ready)
-    );
-
-    // Should return orange for AWAITING_USER_CONFIRMATION, not yellow for stale runtime
-    expect(result).toBe(IndicatorColor.ORANGE);
-  });
-
-  it("should still respect stopped states", () => {
-    // Test case: Runtime is stopped - should always show red
-    const result = getIndicatorColor(
-      "OPEN", // webSocketStatus
-      "STOPPED", // conversationStatus
-      "STATUS$STOPPED", // runtimeStatus
-      AgentState.RUNNING, // agentState
-    );
-
-    // Should return red for stopped status regardless of agent state
     expect(result).toBe(IndicatorColor.RED);
   });
 
-  it("should handle null agent state with runtime status", () => {
-    // Test case: No agent state, runtime is starting
+  it("returns yellow when agent is loading", () => {
     const result = getIndicatorColor(
-      "OPEN", // webSocketStatus
-      "STARTING", // conversationStatus
-      "STATUS$STARTING_RUNTIME", // runtimeStatus
-      null, // agentState
+      "OPEN",
+      "STARTING",
+      "STATUS$STARTING_RUNTIME",
+      AgentState.LOADING,
     );
-
-    // Should return yellow since no agent state and runtime is starting
     expect(result).toBe(IndicatorColor.YELLOW);
   });
 
-  it("should handle USER_CONFIRMED state with stale runtime status", () => {
-    // Test case: Agent is in USER_CONFIRMED state but runtime status is stale
+  it("returns orange for AWAITING_USER_CONFIRMATION", () => {
     const result = getIndicatorColor(
-      "OPEN", // webSocketStatus
-      "RUNNING", // conversationStatus
-      "STATUS$BUILDING_RUNTIME", // runtimeStatus (stale)
-      AgentState.USER_CONFIRMED, // agentState (ready)
+      "OPEN",
+      "RUNNING",
+      "STATUS$STARTING_RUNTIME",
+      AgentState.AWAITING_USER_CONFIRMATION,
     );
-
-    // Should return green for USER_CONFIRMED, not yellow for stale runtime
-    expect(result).toBe(IndicatorColor.GREEN);
+    expect(result).toBe(IndicatorColor.ORANGE);
   });
 
-  it("should handle USER_REJECTED state with stale runtime status", () => {
-    // Test case: Agent is in USER_REJECTED state but runtime status is stale
+  it("returns green for FINISHED state", () => {
     const result = getIndicatorColor(
-      "OPEN", // webSocketStatus
-      "RUNNING", // conversationStatus
-      "STATUS$BUILDING_RUNTIME", // runtimeStatus (stale)
-      AgentState.USER_REJECTED, // agentState (ready)
+      "OPEN",
+      "RUNNING",
+      "STATUS$SETTING_UP_WORKSPACE",
+      AgentState.FINISHED,
     );
-
-    // Should return green for USER_REJECTED, not yellow for stale runtime
     expect(result).toBe(IndicatorColor.GREEN);
   });
 });

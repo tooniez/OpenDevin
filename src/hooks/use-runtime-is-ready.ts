@@ -4,16 +4,12 @@ import {
   RUNTIME_STARTING_STATES,
 } from "#/types/agent-state";
 import { useActiveConversation } from "./query/use-active-conversation";
+import { isExecutionActive } from "#/utils/status";
 
 interface UseRuntimeIsReadyOptions {
   allowAgentError?: boolean;
 }
 
-/**
- * Hook to determine if the runtime is ready for operations
- *
- * @returns boolean indicating if the runtime is ready
- */
 export const useRuntimeIsReady = ({
   allowAgentError = false,
 }: UseRuntimeIsReadyOptions = {}): boolean => {
@@ -24,7 +20,7 @@ export const useRuntimeIsReady = ({
     : RUNTIME_INACTIVE_STATES;
 
   return (
-    conversation?.sandbox_status === "RUNNING" &&
+    isExecutionActive(conversation?.execution_status) &&
     !inactiveStates.includes(curAgentState)
   );
 };

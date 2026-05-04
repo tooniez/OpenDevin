@@ -2,8 +2,8 @@ import React from "react";
 import { useAgentState } from "#/hooks/use-agent-state";
 import { useTaskPolling } from "#/hooks/query/use-task-polling";
 import { useActiveConversation } from "#/hooks/query/use-active-conversation";
-import { useUnifiedPauseConversationSandbox } from "#/hooks/mutation/use-unified-stop-conversation";
-import { useUnifiedResumeConversationSandbox } from "#/hooks/mutation/use-unified-start-conversation";
+import { useUnifiedPauseConversation } from "#/hooks/mutation/use-unified-stop-conversation";
+import { useUnifiedResumeConversation } from "#/hooks/mutation/use-unified-start-conversation";
 import { useConversationId } from "#/hooks/use-conversation-id";
 import { useUserProviders } from "#/hooks/use-user-providers";
 import { getStatusColor } from "#/utils/utils";
@@ -11,21 +11,25 @@ import { AgentState } from "#/types/agent-state";
 import DebugStackframeDot from "#/icons/debug-stackframe-dot.svg?react";
 import { ServerStatusContextMenu } from "../controls/server-status-context-menu";
 import { ConversationName } from "./conversation-name";
+import {
+  isExecutionActive,
+  isExecutionErrored,
+  isExecutionPaused,
+} from "#/utils/status";
 
 export function ConversationNameWithStatus() {
   const { conversationId } = useConversationId();
   const { data: conversation } = useActiveConversation();
   const { curAgentState } = useAgentState();
   const { isTask, taskStatus } = useTaskPolling();
-  const { mutate: pauseConversationSandbox } =
-    useUnifiedPauseConversationSandbox();
-  const { mutate: resumeConversationSandbox } =
-    useUnifiedResumeConversationSandbox();
+  const { mutate: pauseConversation } = useUnifiedPauseConversation();
+  const { mutate: resumeConversation } = useUnifiedResumeConversation();
   const { providers } = useUserProviders();
 
+  const executionStatus = conversation?.execution_status ?? null;
   const isStartingStatus =
     curAgentState === AgentState.LOADING || curAgentState === AgentState.INIT;
-  const isStopStatus = conversation?.sandbox_status === "MISSING";
+  const isStopStatus = isExecutionErrored(executionStatus);
 
   const statusColor = getStatusColor({
     isPausing: false,
@@ -40,7 +44,7 @@ export function ConversationNameWithStatus() {
     event.preventDefault();
     event.stopPropagation();
     if (conversationId) {
-      pauseConversationSandbox({ conversationId });
+      pauseConversation({ conversationId });
     }
   };
 
@@ -48,7 +52,7 @@ export function ConversationNameWithStatus() {
     event.preventDefault();
     event.stopPropagation();
     if (conversationId) {
-      resumeConversationSandbox({ conversationId, providers });
+      resumeConversation({ conversationId, providers });
     }
   };
 
@@ -62,16 +66,12 @@ export function ConversationNameWithStatus() {
         <ServerStatusContextMenu
           onClose={() => {}}
           onStopServer={
-            conversation?.sandbox_status === "RUNNING"
-              ? handleStopServer
-              : undefined
+            isExecutionActive(executionStatus) ? handleStopServer : undefined
           }
           onStartServer={
-            conversation?.sandbox_status === "MISSING"
-              ? handleStartServer
-              : undefined
+            isExecutionPaused(executionStatus) ? handleStartServer : undefined
           }
-          sandboxStatus={conversation?.sandbox_status ?? null}
+          executionStatus={executionStatus}
           position="bottom"
           className="opacity-0 invisible pointer-events-none group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto bottom-full left-0 mt-0 min-h-fit"
           isPausing={false}

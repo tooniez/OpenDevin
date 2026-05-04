@@ -7,17 +7,6 @@ export const ProviderOptions = {
   forgejo: "forgejo",
 } as const;
 
-export const SandboxGroupingStrategyOptions = {
-  NO_GROUPING: "NO_GROUPING",
-  GROUP_BY_NEWEST: "GROUP_BY_NEWEST",
-  LEAST_RECENTLY_USED: "LEAST_RECENTLY_USED",
-  FEWEST_CONVERSATIONS: "FEWEST_CONVERSATIONS",
-  ADD_TO_ANY: "ADD_TO_ANY",
-} as const;
-
-export type SandboxGroupingStrategy =
-  keyof typeof SandboxGroupingStrategyOptions;
-
 export type Provider = keyof typeof ProviderOptions;
 
 export type ProviderToken = {
@@ -142,5 +131,4 @@ export type Settings = {
   agent_settings?: Record<string, SettingsValue> | null;
   conversation_settings_schema?: SettingsSchema | null;
   conversation_settings?: Record<string, SettingsValue> | null;
-  sandbox_grouping_strategy?: SandboxGroupingStrategy;
 };

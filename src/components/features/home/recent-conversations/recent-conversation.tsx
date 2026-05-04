@@ -6,7 +6,7 @@ import { GitProviderIcon } from "#/components/shared/git-provider-icon";
 import { Provider } from "#/types/settings";
 import { formatTimeDelta } from "#/utils/format-time-delta";
 import { I18nKey } from "#/i18n/declaration";
-import { SandboxStatusIndicator } from "./sandbox-status-indicator";
+import { ConversationStatusDot } from "./conversation-status-dot";
 import RepoForkedIcon from "#/icons/repo-forked.svg?react";
 import CircuitIcon from "#/icons/u-circuit.svg?react";
 
@@ -26,7 +26,9 @@ export function RecentConversation({ conversation }: RecentConversationProps) {
       className="flex flex-col gap-1 p-[14px] cursor-pointer w-full rounded-lg hover:bg-[#5C5D62] transition-all duration-300 text-left"
     >
       <div className="flex items-center gap-2 pl-1">
-        <SandboxStatusIndicator sandboxStatus={conversation.sandbox_status} />
+        <ConversationStatusDot
+          executionStatus={conversation.execution_status}
+        />
         <span className="text-xs text-white leading-6 font-normal">
           {conversation.title}
         </span>

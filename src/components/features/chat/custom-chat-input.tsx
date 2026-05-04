@@ -9,13 +9,14 @@ import { ChatInputGrip } from "./components/chat-input-grip";
 import { ChatInputContainer } from "./components/chat-input-container";
 import { HiddenFileInput } from "./components/hidden-file-input";
 import { useConversationStore } from "#/stores/conversation-store";
-import { V1SandboxStatus } from "#/api/sandbox-service/sandbox-service.types";
+import { V1ExecutionStatus } from "#/types/v1/core/base/common";
+import { isExecutionErrored } from "#/utils/status";
 
 export interface CustomChatInputProps {
   disabled?: boolean;
   isNewConversationPending?: boolean;
   showButton?: boolean;
-  sandboxStatus?: V1SandboxStatus | null;
+  executionStatus?: V1ExecutionStatus | null;
   onSubmit: (message: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -28,7 +29,7 @@ export function CustomChatInput({
   disabled = false,
   isNewConversationPending = false,
   showButton = true,
-  sandboxStatus = null,
+  executionStatus = null,
   onSubmit,
   onFocus,
   onBlur,
@@ -43,9 +44,7 @@ export function CustomChatInput({
     setSubmittedMessage,
   } = useConversationStore();
 
-  // Disable input when conversation is stopped
-  const isConversationStopped = sandboxStatus === "MISSING";
-  const isDisabled = disabled || isConversationStopped;
+  const isDisabled = disabled || isExecutionErrored(executionStatus);
 
   // Listen to submittedMessage state changes
   useEffect(() => {

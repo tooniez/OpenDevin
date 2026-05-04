@@ -6,21 +6,13 @@ import ConversationService from "#/api/conversation-service/conversation-service
 export const useActiveConversation = () => {
   const { conversationId } = useConversationId();
 
-  // Don't poll if this is a task ID (format: "task-{uuid}")
   // Task polling is handled by useTaskPolling hook
   const isTaskId = conversationId.startsWith("task-");
   const actualConversationId = isTaskId ? null : conversationId;
 
   const userConversation = useUserConversation(
     actualConversationId,
-    (query) => {
-      if (query.state.data?.sandbox_status === "STARTING") {
-        return 3000; // 3 seconds
-      }
-      // TODO: Return conversation title as a WS event to avoid polling
-      // This was changed from 5 minutes to 30 seconds to poll for updated conversation title after an auto update
-      return 30000; // 30 seconds
-    },
+    () => 30000,
   );
 
   useEffect(() => {
@@ -29,7 +21,7 @@ export const useActiveConversation = () => {
   }, [
     conversationId,
     userConversation.isFetched,
-    userConversation?.data?.sandbox_status,
+    userConversation?.data?.execution_status,
   ]);
   return userConversation;
 };

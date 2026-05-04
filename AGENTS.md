@@ -4,7 +4,7 @@
 - Frontend API adaptation lives mainly in `src/api/`:
   - `option-service` fabricates an OSS web-client config and reads models/providers from `agent_server` LLM endpoints.
   - `settings-service` stores settings locally in browser localStorage and reads schemas from `agent_server` `/api/settings/*` endpoints.
-  - `v1-conversation-service`, `event-service`, `sandbox-service`, `git-service`, and `skills-service` are mapped directly to `agent_server` REST endpoints.
+  - `v1-conversation-service`, `event-service`, `git-service`, and `skills-service` are mapped directly to `agent_server` REST endpoints.
   - `open-hands-axios` injects the optional `X-Session-API-Key` from env/local config for all requests.
 - Supported env vars for deployment:
   - `VITE_BACKEND_BASE_URL` for the agent server base URL.
@@ -59,7 +59,6 @@
       Using `TerminalTool` / `FileEditorTool` / `TaskTrackerTool` / `BrowserToolSet` caused live `/api/conversations/{id}/events` runs to fail with `ToolDefinition '<name>' is not registered`.
   - The root compatibility bootstrap now treats `/server_info` network/timeout failures as a first-class `AgentServerUnavailableError`, uses a short 5s timeout for that probe, and disables React Query retries/toasts for the initial config fetch so missing backends fail fast with an explicit full-screen notice.
   - For local verification in this repo, setting `VITE_WORKING_DIR=/workspace/project/agent-server-gui` avoids initial Changes-tab 500s from pointing conversations at the non-repo parent `/workspace/project`.
-  - OpenHands Cloud sandbox development note: do **not** reuse the sandbox's existing agent-server for this frontend. Current agent-server releases use a shared `openhands` tmux socket and default `workspace/conversations`, so a naive second server in the same sandbox can kill the cloud session's tmux state or attach to the same persisted conversations. `npm run dev` is now the recommended local workflow and starts an isolated local agent-server for the checkout by overriding `TMUX_TMPDIR`, `OH_CONVERSATIONS_PATH`, `OH_BASH_EVENTS_DIR`, and `OH_VSCODE_PORT` under `.openhands-dev/`; use `npm run dev:frontend` only when intentionally pointing at a separately managed backend, or `npm run dev:mock` for mock mode.
   - A successful end-to-end live run in this environment required a real LLM config (`LLM_MODEL` + `LLM_API_KEY`). The default `litellm_proxy/...` model with no `llm_api_key` failed at runtime with a `litellm.AuthenticationError`.
 
 - Agent-server recovery UX gotchas:
@@ -72,12 +71,12 @@
 - Agent server connection settings now live at `Settings > Agent Server` (`/settings/agent-server`). The page reads deployment defaults from `VITE_BACKEND_BASE_URL` / `VITE_SESSION_API_KEY`, saves user overrides in the `openhands-agent-server-config` localStorage key, and must stay reachable even when the backend compatibility probe fails so users can recover from missing or wrong backend configuration.
 
 - README expectation: keep the first section as a concrete, chronological from-scratch quickstart for running this frontend against a real `openhands-agent-server` (clone, install backend, optional `.env`, run `npm run dev`).
-- Keep README user-focused and move contributor/developer-specific workflows (Cloud sandbox debugging, `dev:safe`, mock mode, detailed env vars/build-test notes) into `DEVELOPMENT.md`.
+- Keep README user-focused and move contributor/developer-specific workflows (`dev:safe`, mock mode, detailed env vars/build-test notes) into `DEVELOPMENT.md`.
 - `scripts/dev-safe.mjs` should fail fast if `agent-server` cannot be spawned (for example missing PATH entries).
 - Vite dev mode can black-screen on first load with `504 Outdated Optimize Dep` if core client-entry deps are not prebundled; keep `react`, `react/jsx-runtime`, `react-dom/client`, and `react-router/dom` in `optimizeDeps.include`.
 - Vercel deployment note: React Router builds for this repo must keep `build/client` intact on actual Vercel builds and include `presets: [vercelPreset()]` from `@vercel/react-router/vite`; flattening `build/client` during a Vercel build produces deployments with empty outputs (`routes: null`, no static files) and a production 404.
 
-- As an OpenHands incubator **Sandbox** project, the repo should carry the standard sandbox warning badge in `README.md` and include a root `LICENSE` file to satisfy the incubator-program requirements.
+- The repo should include a root `LICENSE` file to satisfy the incubator-program requirements.
 - OpenHands repo bootstrap files live under `.openhands/`:
   - `.openhands/setup.sh` installs frontend dependencies with `npm ci` when needed, creates `.env` from `.env.sample` if missing, appends `VITE_WORKING_DIR` for this repo when unset, and generates `src/i18n/declaration.ts` via `npm run make-i18n`.
   - `.openhands/pre-commit.sh` mirrors the repo's local quality gate with `npm run lint && npm run test`.

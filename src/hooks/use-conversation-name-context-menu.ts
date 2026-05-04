@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigation } from "#/context/navigation-context";
 import useMetricsStore from "#/stores/metrics-store";
 import { useDeleteConversation } from "./mutation/use-delete-conversation";
-import { useUnifiedPauseConversationSandbox } from "./mutation/use-unified-stop-conversation";
+import { useUnifiedPauseConversation } from "./mutation/use-unified-stop-conversation";
 import { useEventStore } from "#/stores/use-event-store";
 
 import { useDownloadConversation } from "./use-download-conversation";
@@ -10,25 +10,26 @@ import {
   adaptSystemMessage,
   SystemMessageForModal,
 } from "#/utils/system-message-adapter";
-import { V1SandboxStatus } from "#/api/sandbox-service/sandbox-service.types";
+import { V1ExecutionStatus } from "#/types/v1/core/base/common";
+import { isExecutionActive } from "#/utils/status";
 
 interface UseConversationNameContextMenuProps {
   conversationId?: string;
-  sandboxStatus?: V1SandboxStatus;
+  executionStatus?: V1ExecutionStatus | null;
   showOptions?: boolean;
   onContextMenuToggle?: (isOpen: boolean) => void;
 }
 
 export function useConversationNameContextMenu({
   conversationId,
-  sandboxStatus = "MISSING",
+  executionStatus,
   showOptions = false,
   onContextMenuToggle,
 }: UseConversationNameContextMenuProps) {
   const { conversationId: currentConversationId, navigate } = useNavigation();
   const events = useEventStore((state) => state.events);
   const { mutate: deleteConversation } = useDeleteConversation();
-  const { mutate: stopConversation } = useUnifiedPauseConversationSandbox();
+  const { mutate: stopConversation } = useUnifiedPauseConversation();
   const metrics = useMetricsStore();
 
   const [metricsModalVisible, setMetricsModalVisible] = React.useState(false);
@@ -154,14 +155,13 @@ export function useConversationNameContextMenu({
     metrics,
     systemMessage,
 
-    // Computed values for conditional rendering
-    shouldShowStop: sandboxStatus !== "MISSING",
+    shouldShowStop: isExecutionActive(executionStatus),
     shouldShowDownloadConversation: Boolean(conversationId && showOptions),
     shouldShowDisplayCost: showOptions,
     shouldShowAgentTools: Boolean(showOptions && systemMessage),
     shouldShowSkills: Boolean(showOptions && conversationId),
     shouldShowHooks: Boolean(
-      showOptions && conversationId && sandboxStatus === "RUNNING",
+      showOptions && conversationId && isExecutionActive(executionStatus),
     ),
   };
 }

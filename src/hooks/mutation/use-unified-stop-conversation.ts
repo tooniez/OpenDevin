@@ -4,19 +4,13 @@ import { useTranslation } from "react-i18next";
 import { TOAST_OPTIONS } from "#/utils/custom-toast-handlers";
 import { useNavigation } from "#/context/navigation-context";
 import { I18nKey } from "#/i18n/declaration";
+import { V1ExecutionStatus } from "#/types/v1/core";
 import {
-  pauseV1ConversationSandbox,
-  updateConversationSandboxStatusInCache,
+  pauseV1Conversation,
+  updateConversationExecutionStatusInCache,
 } from "./conversation-mutation-utils";
 
-/**
- * Hook to pause a conversation sandbox.
- *
- * Usage:
- * const { mutate: stopConversation } = useUnifiedPauseConversationSandbox();
- * stopConversation({ conversationId: "some-id" });
- */
-export const useUnifiedPauseConversationSandbox = () => {
+export const useUnifiedPauseConversation = () => {
   const { t } = useTranslation("openhands");
   const queryClient = useQueryClient();
   const { conversationId: currentConversationId, navigate } = useNavigation();
@@ -24,7 +18,7 @@ export const useUnifiedPauseConversationSandbox = () => {
   return useMutation({
     mutationKey: ["stop-conversation"],
     mutationFn: async (variables: { conversationId: string }) =>
-      pauseV1ConversationSandbox(variables.conversationId),
+      pauseV1Conversation(variables.conversationId),
     onMutate: async () => {
       const toastId = toast.loading(
         t(I18nKey.TOAST$STOPPING_CONVERSATION),
@@ -58,13 +52,12 @@ export const useUnifiedPauseConversationSandbox = () => {
       }
       toast.success(t(I18nKey.TOAST$CONVERSATION_STOPPED), TOAST_OPTIONS);
 
-      updateConversationSandboxStatusInCache(
+      updateConversationExecutionStatusInCache(
         queryClient,
         variables.conversationId,
-        "PAUSED",
+        V1ExecutionStatus.PAUSED,
       );
 
-      // Only redirect if we're stopping the conversation we're currently viewing
       if (currentConversationId === variables.conversationId) {
         navigate("/");
       }

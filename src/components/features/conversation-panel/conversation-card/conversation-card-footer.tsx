@@ -3,16 +3,17 @@ import { formatTimeDelta } from "#/utils/format-time-delta";
 import { cn } from "#/utils/utils";
 import { I18nKey } from "#/i18n/declaration";
 import { RepositorySelection } from "#/api/open-hands.types";
-import { V1SandboxStatus } from "#/api/sandbox-service/sandbox-service.types";
+import { V1ExecutionStatus } from "#/types/v1/core/base/common";
+import { isExecutionPaused } from "#/utils/status";
 import { ConversationRepoLink } from "./conversation-repo-link";
 import { NoRepository } from "./no-repository";
 import CircuitIcon from "#/icons/u-circuit.svg?react";
 
 interface ConversationCardFooterProps {
   selectedRepository: RepositorySelection | null;
-  lastUpdatedAt: string; // ISO 8601
-  createdAt?: string; // ISO 8601
-  sandboxStatus?: V1SandboxStatus;
+  lastUpdatedAt: string;
+  createdAt?: string;
+  executionStatus?: V1ExecutionStatus | null;
   llmModel?: string | null;
 }
 
@@ -20,18 +21,18 @@ export function ConversationCardFooter({
   selectedRepository,
   lastUpdatedAt,
   createdAt,
-  sandboxStatus,
+  executionStatus,
   llmModel,
 }: ConversationCardFooterProps) {
   const { t } = useTranslation("openhands");
 
-  const isConversationArchived = sandboxStatus === "MISSING";
+  const isPaused = isExecutionPaused(executionStatus);
 
   return (
     <div
       className={cn(
         "flex flex-row justify-between items-center mt-1",
-        isConversationArchived && "opacity-60",
+        isPaused && "opacity-60",
       )}
     >
       {selectedRepository?.selected_repository ? (

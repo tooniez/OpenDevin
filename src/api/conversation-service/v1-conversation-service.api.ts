@@ -51,18 +51,9 @@ class V1ConversationService {
   }
 
   static async createConversation(
-    _selectedRepository?: string,
-    _git_provider?: Provider,
     initialUserMsg?: string,
-    _selected_branch?: string,
     conversationInstructions?: string,
-    _suggestedTask?: SuggestedTask,
-    _trigger?: ConversationTrigger,
-    _parent_conversation_id?: string,
-    _agent_type?: "default" | "plan",
     plugins?: PluginSpec[],
-    _sandbox_id?: string,
-    _llm_model?: string,
   ): Promise<V1AppConversationStartTask> {
     const settings = await SettingsService.getSettings();
     const payload = buildStartConversationRequest({
@@ -84,7 +75,6 @@ class V1ConversationService {
       status: "READY",
       detail: null,
       app_conversation_id: data.id,
-      sandbox_id: data.id,
       agent_server_url: getAgentServerBaseUrl(),
       request: {
         initial_message: payload.initial_message as
@@ -280,14 +270,6 @@ class V1ConversationService {
         "idle",
       stats: data.stats ?? { usage_to_metrics: {} },
     };
-  }
-
-  static async searchConversationsBySandboxId(
-    sandboxId: string,
-    limit: number = 100,
-  ): Promise<V1AppConversation[]> {
-    const page = await this.searchConversations(limit);
-    return page.items.filter((item) => item.sandbox_id === sandboxId);
   }
 
   static async searchConversations(

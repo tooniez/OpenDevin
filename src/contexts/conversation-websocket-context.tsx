@@ -695,8 +695,6 @@ export function ConversationWebSocketProvider({
       },
       onClose: () => {
         setMainConnectionState("CLOSED");
-        // Recovery is handled by useSandboxRecovery on tab focus/page refresh
-        // No error message needed - silent recovery provides better UX
       },
       onError: () => {
         setMainConnectionState("CLOSED");
@@ -762,8 +760,6 @@ export function ConversationWebSocketProvider({
       },
       onClose: () => {
         setPlanningConnectionState("CLOSED");
-        // Recovery is handled by useSandboxRecovery on tab focus/page refresh
-        // No error message needed - silent recovery provides better UX
       },
       onError: () => {
         setPlanningConnectionState("CLOSED");

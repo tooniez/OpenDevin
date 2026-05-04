@@ -1,6 +1,7 @@
 import React from "react";
 import { cn } from "#/utils/utils";
-import { V1SandboxStatus } from "#/api/sandbox-service/sandbox-service.types";
+import { V1ExecutionStatus } from "#/types/v1/core/base/common";
+import { isExecutionActive, isExecutionPaused } from "#/utils/status";
 import { ConversationCardContextMenu } from "./conversation-card-context-menu";
 import EllipsisIcon from "#/icons/ellipsis.svg?react";
 
@@ -12,7 +13,7 @@ interface ConversationCardActionsProps {
   onEdit?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onDownloadViaVSCode?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onDownloadConversation?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  sandboxStatus?: V1SandboxStatus;
+  executionStatus?: V1ExecutionStatus | null;
   conversationId?: string;
   showOptions?: boolean;
 }
@@ -25,11 +26,12 @@ export function ConversationCardActions({
   onEdit,
   onDownloadViaVSCode,
   onDownloadConversation,
-  sandboxStatus,
+  executionStatus,
   conversationId,
   showOptions,
 }: ConversationCardActionsProps) {
-  const isConversationStopped = sandboxStatus === "MISSING";
+  const isPaused = isExecutionPaused(executionStatus);
+  const isActive = isExecutionActive(executionStatus);
 
   return (
     <div className="group">
@@ -43,27 +45,21 @@ export function ConversationCardActions({
         }}
         className={cn(
           "cursor-pointer w-6 h-6 flex flex-row items-center justify-center translate-x-2.5",
-          isConversationStopped && "opacity-60",
+          isPaused && "opacity-60",
         )}
       >
         <EllipsisIcon />
       </button>
       <div
         className={cn(
-          // Show on hover (desktop) or when explicitly opened (click/touch)
           "relative opacity-0 invisible group-hover:opacity-100 group-hover:visible",
-          // Override hover styles when explicitly opened via click
           contextMenuOpen && "opacity-100 visible",
         )}
       >
         <ConversationCardContextMenu
           onClose={() => onContextMenuToggle(false)}
           onDelete={onDelete}
-          onStop={
-            sandboxStatus === "RUNNING" || sandboxStatus === "STARTING"
-              ? onStop
-              : undefined
-          }
+          onStop={isActive ? onStop : undefined}
           onEdit={onEdit}
           onDownloadViaVSCode={
             conversationId && showOptions ? onDownloadViaVSCode : undefined

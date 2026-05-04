@@ -4,19 +4,12 @@ import V1GitService from "#/api/git-service/v1-git-service.api";
 import { useConversationId } from "#/hooks/use-conversation-id";
 import { useActiveConversation } from "#/hooks/query/use-active-conversation";
 import { useRuntimeIsReady } from "#/hooks/use-runtime-is-ready";
-import { useSettings } from "#/hooks/query/use-settings";
 import { getGitPath } from "#/utils/get-git-path";
 import type { GitChange } from "#/api/open-hands.types";
 
-/**
- * Unified hook to get git changes for both legacy (V0) and V1 conversations
- * - V0: Uses the legacy GitService.getGitChanges API endpoint
- * - V1: Uses the V1GitService.getGitChanges API endpoint with runtime URL
- */
 export const useUnifiedGetGitChanges = () => {
   const { conversationId } = useConversationId();
   const { data: conversation } = useActiveConversation();
-  const { data: settings } = useSettings();
   const [orderedChanges, setOrderedChanges] = React.useState<GitChange[]>([]);
   const previousDataRef = React.useRef<GitChange[] | null>(null);
   const runtimeIsReady = useRuntimeIsReady();
@@ -26,20 +19,9 @@ export const useUnifiedGetGitChanges = () => {
   const selectedRepository = conversation?.selected_repository;
   const workingDir = conversation?.workspace?.working_dir?.trim();
 
-  // Sandbox grouping is enabled when strategy is not NO_GROUPING
-  const useSandboxGrouping =
-    settings?.sandbox_grouping_strategy !== "NO_GROUPING" &&
-    settings?.sandbox_grouping_strategy !== undefined;
-
   const gitPath = React.useMemo(
-    () =>
-      getGitPath(
-        conversationId,
-        selectedRepository,
-        useSandboxGrouping,
-        workingDir,
-      ),
-    [conversationId, selectedRepository, useSandboxGrouping, workingDir],
+    () => getGitPath(selectedRepository, workingDir),
+    [selectedRepository, workingDir],
   );
 
   const result = useQuery({
@@ -62,7 +44,7 @@ export const useUnifiedGetGitChanges = () => {
     retry: false,
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 15, // 15 minutes
-    refetchOnMount: "always", // Always refetch when mounting (e.g. navigating between conversations that share a sandbox)
+    refetchOnMount: "always",
     enabled: runtimeIsReady && !!conversationId,
     meta: {
       disableToast: true,

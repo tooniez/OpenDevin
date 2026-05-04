@@ -53,7 +53,6 @@ export function AgentStatus({
   const statusCode = getStatusCode(
     webSocketStatus,
     executionStatus ?? null,
-    conversation?.sandbox_status || null,
     taskStatus,
     subConversationTaskStatus,
   );

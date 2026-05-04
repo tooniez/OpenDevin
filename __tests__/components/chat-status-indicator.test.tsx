@@ -12,7 +12,7 @@ describe("ChatStatusIndicator", () => {
   it("renders the status indicator with status text", () => {
     render(
       <ChatStatusIndicator
-        status="Waiting for sandbox"
+        status="Waiting for runtime"
         statusColor="#FFD600"
       />
     );
@@ -20,7 +20,7 @@ describe("ChatStatusIndicator", () => {
     expect(
       screen.getByTestId("chat-status-indicator"),
     ).toBeInTheDocument();
-    expect(screen.getByText("Waiting for sandbox")).toBeInTheDocument();
+    expect(screen.getByText("Waiting for runtime")).toBeInTheDocument();
   });
 
   it("passes the statusColor to the DebugStackframeDot icon", () => {

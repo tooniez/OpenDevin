@@ -19,61 +19,20 @@ export const useNewConversationCommand = () => {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      if (!conversation?.id || !conversation.sandbox_id) {
-        throw new Error("No active conversation or sandbox");
+      if (!conversation?.id) {
+        throw new Error("No active conversation");
       }
 
-      // Fetch V1 conversation data to get llm_model (not available in legacy type)
-      const v1Conversations =
-        await V1ConversationService.batchGetAppConversations([conversation.id]);
-      const llmModel = v1Conversations?.[0]?.llm_model;
+      const startTask = await V1ConversationService.createConversation();
 
-      // Start a new conversation reusing the existing sandbox directly.
-      // We pass sandbox_id instead of parent_conversation_id so that the
-      // new conversation is NOT marked as a sub-conversation and will
-      // appear in the conversation list.
-      const startTask = await V1ConversationService.createConversation(
-        conversation.selected_repository ?? undefined, // selectedRepository
-        conversation.git_provider ?? undefined, // git_provider
-        undefined, // initialUserMsg
-        conversation.selected_branch ?? undefined, // selected_branch
-        undefined, // conversationInstructions
-        undefined, // suggestedTask
-        undefined, // trigger
-        undefined, // parent_conversation_id
-        undefined, // agent_type
-        undefined, // plugins
-        conversation.sandbox_id ?? undefined, // sandbox_id - reuse the same sandbox
-        llmModel ?? undefined, // llm_model - preserve the LLM model
-      );
-
-      // Poll for the task to complete and get the new conversation ID
-      let task = await V1ConversationService.getStartTask(startTask.id);
-      const maxAttempts = 60; // 60 seconds timeout
-      let attempts = 0;
-
-      /* eslint-disable no-await-in-loop */
-      while (
-        task &&
-        !["READY", "ERROR"].includes(task.status) &&
-        attempts < maxAttempts
-      ) {
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise((resolve) => {
-          setTimeout(resolve, 1000);
-        });
-        task = await V1ConversationService.getStartTask(startTask.id);
-        attempts += 1;
-      }
-
-      if (!task || task.status !== "READY" || !task.app_conversation_id) {
+      if (!startTask.app_conversation_id) {
         throw new Error(
-          task?.detail || "Failed to create new conversation in sandbox",
+          startTask.detail || "Failed to create new conversation",
         );
       }
 
       return {
-        newConversationId: task.app_conversation_id,
+        newConversationId: startTask.app_conversation_id,
         oldConversationId: conversation.id,
       };
     },
@@ -88,7 +47,6 @@ export const useNewConversationCommand = () => {
       displaySuccessToast(t(I18nKey.CONVERSATION$CLEAR_SUCCESS));
       navigate(`/conversations/${data.newConversationId}`);
 
-      // Refresh the sidebar to show the new conversation.
       queryClient.invalidateQueries({
         queryKey: ["user", "conversations"],
       });

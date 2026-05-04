@@ -14,10 +14,6 @@ import {
   V1AppConversation,
   V1AppConversationPage,
 } from "./conversation-service/v1-conversation-service.types";
-import {
-  V1SandboxInfo,
-  V1SandboxStatus,
-} from "./sandbox-service/sandbox-service.types";
 import { createHttpClient, createSkillsClient } from "./typescript-client";
 
 export interface DirectConversationInfo {
@@ -55,24 +51,6 @@ function browserToolsEnabled() {
   return import.meta.env.VITE_ENABLE_BROWSER_TOOLS !== "false";
 }
 
-export function mapExecutionStatusToSandboxStatus(
-  executionStatus?: string | null,
-): V1SandboxStatus {
-  switch (executionStatus) {
-    case "paused":
-      return "PAUSED";
-    case "error":
-    case "stuck":
-      return "ERROR";
-    case "running":
-    case "waiting_for_confirmation":
-    case "finished":
-    case "idle":
-    default:
-      return "RUNNING";
-  }
-}
-
 export function toConversationUrl(conversationId: string): string {
   return `${getAgentServerBaseUrl()}/api/conversations/${conversationId}`;
 }
@@ -83,7 +61,6 @@ export function toV1AppConversation(
   return {
     id: info.id,
     created_by_user_id: null,
-    sandbox_id: info.id,
     selected_repository: null,
     selected_branch: null,
     git_provider: null,
@@ -115,7 +92,6 @@ export function toV1AppConversation(
       : null,
     created_at: info.created_at,
     updated_at: info.updated_at,
-    sandbox_status: mapExecutionStatusToSandboxStatus(info.execution_status),
     execution_status:
       (info.execution_status as V1AppConversation["execution_status"]) ??
       V1ExecutionStatus.IDLE,
@@ -397,25 +373,6 @@ export async function downloadTextFile(path: string): Promise<string> {
   );
 
   return new TextDecoder().decode(response.data);
-}
-
-export function createSandboxInfo(
-  conversation: V1AppConversation,
-): V1SandboxInfo {
-  const exposedUrls = getConfiguredWorkerUrls().map((url, index) => ({
-    name: `WORKER_${index + 1}`,
-    url,
-  }));
-
-  return {
-    id: conversation.sandbox_id,
-    created_by_user_id: null,
-    sandbox_spec_id: conversation.sandbox_id,
-    status: conversation.sandbox_status,
-    session_api_key: conversation.session_api_key,
-    exposed_urls: exposedUrls,
-    created_at: conversation.created_at,
-  };
 }
 
 export async function loadSkillsForConversation(

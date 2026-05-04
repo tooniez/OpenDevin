@@ -27,7 +27,6 @@ vi.mock("react-i18next", async () => {
 const baseConversation: V1AppConversation = {
   id: "test-id",
   title: "Test Conversation",
-  sandbox_status: "RUNNING",
   execution_status: V1ExecutionStatus.RUNNING,
   updated_at: "2021-10-01T12:00:00Z",
   created_at: "2021-10-01T12:00:00Z",
@@ -38,7 +37,6 @@ const baseConversation: V1AppConversation = {
   created_by_user_id: "user1",
   metrics: null,
   llm_model: null,
-  sandbox_id: "sandbox1",
   trigger: null,
   pr_number: [],
   session_api_key: null,

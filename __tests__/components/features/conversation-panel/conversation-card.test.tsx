@@ -15,7 +15,7 @@ import { formatTimeDelta } from "#/utils/format-time-delta";
 import { ConversationCard } from "#/components/features/conversation-panel/conversation-card/conversation-card";
 import { clickOnEditButton } from "./utils";
 import { ConversationCardActions } from "#/components/features/conversation-panel/conversation-card/conversation-card-actions";
-import { V1SandboxStatus } from "#/api/sandbox-service/sandbox-service.types";
+import { V1ExecutionStatus } from "#/types/v1/core/base/common";
 
 // We'll use the actual i18next implementation but override the translation function
 
@@ -474,23 +474,25 @@ describe("ConversationCard", () => {
     ).not.toBeInTheDocument();
   });
 
-  const statusTable: [V1SandboxStatus, boolean][] = [
-    ["RUNNING", true],
-    ["STARTING", true],
-    ["ERROR", false],
-    ["PAUSED", false],
-    ["MISSING", false],
+  const statusTable: [V1ExecutionStatus, boolean][] = [
+    [V1ExecutionStatus.RUNNING, true],
+    [V1ExecutionStatus.IDLE, true],
+    [V1ExecutionStatus.FINISHED, true],
+    [V1ExecutionStatus.WAITING_FOR_CONFIRMATION, true],
+    [V1ExecutionStatus.ERROR, false],
+    [V1ExecutionStatus.STUCK, false],
+    [V1ExecutionStatus.PAUSED, false],
   ];
 
   it.each(statusTable)(
-    "should toggle stop button visibility correctly for sandbox status",
-    (sandboxStatus, shouldShow) => {
+    "should toggle stop button visibility correctly for execution status",
+    (executionStatus, shouldShow) => {
       renderWithProviders(
         <ConversationCardActions
           contextMenuOpen={true}
           onContextMenuToggle={vi.fn()}
           onStop={vi.fn()}
-          sandboxStatus={sandboxStatus}
+          executionStatus={executionStatus}
         />,
       );
 

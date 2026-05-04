@@ -49,7 +49,7 @@ const terminalObservationEvent: ObservationEvent = {
       exit_code: 0,
       pid: 1,
       username: "openhands",
-      hostname: "sandbox",
+      hostname: "runtime",
       prefix: "",
       suffix: "",
       working_dir: "/workspace/project/OpenHands",

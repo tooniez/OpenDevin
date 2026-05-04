@@ -4,7 +4,6 @@ import { createHttpClient } from "./typescript-client";
 export interface SharedConversation {
   id: string;
   created_by_user_id: string | null;
-  sandbox_id: string;
   selected_repository: string | null;
   selected_branch: string | null;
   git_provider: string | null;

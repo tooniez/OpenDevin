@@ -39,7 +39,6 @@ describe("useSubConversationTaskPolling", () => {
     status,
     detail: null,
     app_conversation_id: appConversationId,
-    sandbox_id: null,
     agent_server_url: null,
     request: {},
     created_at: new Date().toISOString(),

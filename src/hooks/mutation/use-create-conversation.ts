@@ -37,26 +37,11 @@ export const useCreateConversation = () => {
     mutationFn: async (
       variables: CreateConversationVariables,
     ): Promise<CreateConversationResponse> => {
-      const {
-        query,
-        repository,
-        suggestedTask,
-        conversationInstructions,
-        parentConversationId,
-        agentType,
-        plugins,
-      } = variables;
+      const { query, conversationInstructions, plugins } = variables;
 
       const conversation = await V1ConversationService.createConversation(
-        repository?.name,
-        repository?.gitProvider,
         query,
-        repository?.branch,
         conversationInstructions,
-        suggestedTask,
-        undefined,
-        parentConversationId,
-        agentType,
         plugins,
       );
 

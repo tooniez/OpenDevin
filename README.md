@@ -1,9 +1,7 @@
 # agent-server-gui
 
 > [!WARNING]
-> This project is in the **Sandbox** phase. It may be vibecoded, untested, or out of date. OpenHands takes no responsibility for the code or its support. [Learn more](https://github.com/OpenHands/incubator-program).
-
-[![Project Status: Sandbox](https://img.shields.io/badge/status-sandbox-yellow)](https://github.com/OpenHands/incubator-program)
+> This project is in an early incubator phase. It may be vibecoded, untested, or out of date. OpenHands takes no responsibility for the code or its support. [Learn more](https://github.com/OpenHands/incubator-program).
 
 ## Quickstart
 
@@ -80,4 +78,4 @@ After the page opens:
 
 ## More documentation
 
-For contributor and developer workflows, including OpenHands Cloud sandbox debugging, frontend-only mode, mock mode, environment variables, and build/test commands, see [DEVELOPMENT.md](./DEVELOPMENT.md).
+For contributor and developer workflows, including frontend-only mode, mock mode, environment variables, and build/test commands, see [DEVELOPMENT.md](./DEVELOPMENT.md).
