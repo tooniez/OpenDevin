@@ -12,12 +12,9 @@ Each service lives in its own directory:
 
 ```
 src/api/
-├── billing-service/
-│   ├── billing-service.api.ts    # Service methods
-│   └── billing.types.ts          # Types and interfaces
-├── organization-service/
-│   ├── organization-service.api.ts
-│   └── organization.types.ts
+├── feature-service/
+│   ├── feature-service.api.ts    # Service methods
+│   └── feature.types.ts          # Types and interfaces
 └── open-hands-axios.ts           # Shared axios instance
 ```
 

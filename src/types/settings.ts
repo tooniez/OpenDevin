@@ -108,7 +108,7 @@ export type SkillInfo = {
   triggers?: string[];
 };
 
-export type SettingsScope = "personal" | "org";
+export type SettingsScope = "personal";
 
 export type Settings = {
   llm_model: string;

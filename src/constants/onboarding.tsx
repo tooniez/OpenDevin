@@ -31,30 +31,6 @@ export type OnboardingQuestion =
 
 export const ONBOARDING_FORM: OnboardingQuestion[] = [
   {
-    id: "org_name",
-    type: "input",
-    app_mode: ["self-hosted"],
-    questionKey: I18nKey.ONBOARDING$ORG_NAME_QUESTION,
-    inputOptions: [
-      { key: I18nKey.ONBOARDING$ORG_NAME_INPUT_NAME, id: "org_name" },
-      { key: I18nKey.ONBOARDING$ORG_NAME_INPUT_DOMAIN, id: "org_domain" },
-    ],
-  },
-  {
-    id: "org_size",
-    type: "single",
-    app_mode: ["cloud", "self-hosted"],
-    questionKey: I18nKey.ONBOARDING$ORG_SIZE_QUESTION,
-    subtitleKey: I18nKey.ONBOARDING$SELECT_ONE_SUBTITLE,
-    answerOptions: [
-      { key: I18nKey.ONBOARDING$ORG_SIZE_SOLO, id: "solo" },
-      { key: I18nKey.ONBOARDING$ORG_SIZE_2_10, id: "org_2_10" },
-      { key: I18nKey.ONBOARDING$ORG_SIZE_11_50, id: "org_11_50" },
-      { key: I18nKey.ONBOARDING$ORG_SIZE_51_200, id: "org_51_200" },
-      { key: I18nKey.ONBOARDING$ORG_SIZE_200_PLUS, id: "org_200_plus" },
-    ],
-  },
-  {
     id: "use_case",
     type: "multi",
     app_mode: ["cloud", "self-hosted"],

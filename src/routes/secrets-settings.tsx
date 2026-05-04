@@ -11,10 +11,7 @@ import {
 import { BrandButton } from "#/components/features/settings/brand-button";
 import { ConfirmationModal } from "#/components/shared/modals/confirmation-modal";
 import { I18nKey } from "#/i18n/declaration";
-import { createPermissionGuard } from "#/utils/org/permission-guard";
 import { LoadingSpinner } from "#/components/shared/loading-spinner";
-
-export const clientLoader = createPermissionGuard("manage_secrets");
 
 export function SecretsSettingsScreen() {
   const queryClient = useQueryClient();

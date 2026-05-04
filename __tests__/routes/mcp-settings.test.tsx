@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import MCPSettingsScreen, { clientLoader } from "#/routes/mcp-settings";
+import MCPSettingsScreen from "#/routes/mcp-settings";
 import SettingsService from "#/api/settings-service/settings-service.api";
 import { MOCK_DEFAULT_USER_SETTINGS } from "#/mocks/handlers";
 import { Settings } from "#/types/settings";
@@ -46,12 +46,5 @@ describe("MCPSettingsScreen", () => {
 
     expect(screen.getByTestId("search-api-key-input")).toBeInTheDocument();
     expect(screen.getByTestId("save-search-api-key-button")).toBeDisabled();
-  });
-});
-
-describe("clientLoader permission checks", () => {
-  it("exports a clientLoader", () => {
-    expect(clientLoader).toBeDefined();
-    expect(typeof clientLoader).toBe("function");
   });
 });

@@ -3,9 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import SettingsService from "#/api/settings-service/settings-service.api";
 import { MOCK_DEFAULT_USER_SETTINGS } from "#/mocks/handlers";
-import VerificationSettingsScreen, {
-  clientLoader,
-} from "#/routes/verification-settings";
+import VerificationSettingsScreen from "#/routes/verification-settings";
 import { Settings } from "#/types/settings";
 
 function buildSettings(overrides: Partial<Settings> = {}): Settings {
@@ -49,12 +47,5 @@ describe("VerificationSettingsScreen", () => {
     await screen.findByTestId("verification-settings-screen");
 
     expect(screen.getByTestId("confirmation-mode-toggle")).toBeInTheDocument();
-  });
-});
-
-describe("clientLoader permission checks", () => {
-  it("should export a clientLoader for route protection", () => {
-    expect(clientLoader).toBeDefined();
-    expect(typeof clientLoader).toBe("function");
   });
 });

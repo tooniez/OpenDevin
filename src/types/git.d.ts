@@ -62,7 +62,6 @@ interface GitRepository {
   stargazers_count?: number;
   link_header?: string;
   pushed_at?: string;
-  owner_type?: "user" | "organization";
   main_branch?: string;
 }
 

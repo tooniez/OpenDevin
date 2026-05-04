@@ -1,7 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useConfig } from "#/hooks/query/use-config";
-import { createPermissionGuard } from "#/utils/org/permission-guard";
 import { useSettings } from "#/hooks/query/use-settings";
 import { BrandButton } from "#/components/features/settings/brand-button";
 import { GitHubTokenInput } from "#/components/features/settings/git-settings/github-token-input";
@@ -22,8 +21,6 @@ import { useDeleteGitProviders } from "#/hooks/mutation/use-delete-git-providers
 import { useUserProviders } from "#/hooks/use-user-providers";
 import { ProjectManagementIntegration } from "#/components/features/settings/project-management/project-management-integration";
 import { Provider, ProviderToken } from "#/types/settings";
-
-export const clientLoader = createPermissionGuard("manage_integrations");
 
 export function GitSettingsScreen() {
   const { t } = useTranslation("openhands");

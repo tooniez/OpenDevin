@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import LlmSettingsScreen, { clientLoader } from "#/routes/llm-settings";
+import LlmSettingsScreen from "#/routes/llm-settings";
 import SettingsService from "#/api/settings-service/settings-service.api";
 import { MOCK_DEFAULT_USER_SETTINGS } from "#/mocks/handlers";
 import { Settings } from "#/types/settings";
@@ -62,12 +62,5 @@ describe("LlmSettingsScreen", () => {
 
     expect(screen.getByTestId("llm-provider-input")).toBeInTheDocument();
     expect(screen.getByTestId("llm-api-key-input")).toBeInTheDocument();
-  });
-});
-
-describe("clientLoader permission checks", () => {
-  it("exports a clientLoader", () => {
-    expect(clientLoader).toBeDefined();
-    expect(typeof clientLoader).toBe("function");
   });
 });

@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import SettingsService from "#/api/settings-service/settings-service.api";
 import { MOCK_DEFAULT_USER_SETTINGS } from "#/mocks/handlers";
-import GitSettingsScreen, { clientLoader } from "#/routes/git-settings";
+import { GitSettingsScreen } from "#/routes/git-settings";
 import { Settings } from "#/types/settings";
 
 function buildSettings(overrides: Partial<Settings> = {}): Settings {
@@ -83,12 +83,5 @@ describe("GitSettingsScreen", () => {
     await waitFor(() => {
       expect(screen.getByTestId("disconnect-tokens-button")).toBeEnabled();
     });
-  });
-});
-
-describe("clientLoader permission checks", () => {
-  it("exports a clientLoader", () => {
-    expect(clientLoader).toBeDefined();
-    expect(typeof clientLoader).toBe("function");
   });
 });

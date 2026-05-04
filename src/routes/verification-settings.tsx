@@ -10,7 +10,6 @@ import { useSettings } from "#/hooks/query/use-settings";
 import { I18nKey } from "#/i18n/declaration";
 import { DEFAULT_SETTINGS } from "#/services/settings";
 import { SettingsScope } from "#/types/settings";
-import { createPermissionGuard } from "#/utils/org/permission-guard";
 
 const VERIFICATION_SCHEMA_EXCLUDE_KEYS = new Set([
   "confirmation_mode",
@@ -187,7 +186,5 @@ export function VerificationSettingsScreen({
     />
   );
 }
-
-export const clientLoader = createPermissionGuard("view_llm_settings");
 
 export default VerificationSettingsScreen;

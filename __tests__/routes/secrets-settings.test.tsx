@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import SecretsSettingsScreen, { clientLoader } from "#/routes/secrets-settings";
+import { SecretsSettingsScreen } from "#/routes/secrets-settings";
 import { SecretsService } from "#/api/secrets-service";
 
 function renderSecretsSettingsScreen() {
@@ -44,12 +44,5 @@ describe("SecretsSettingsScreen", () => {
     await screen.findByTestId("secrets-settings-screen");
     expect(await screen.findByText("MY_SECRET")).toBeInTheDocument();
     expect(screen.getByTestId("add-secret-button")).toBeInTheDocument();
-  });
-});
-
-describe("clientLoader permission checks", () => {
-  it("exports a clientLoader", () => {
-    expect(clientLoader).toBeDefined();
-    expect(typeof clientLoader).toBe("function");
   });
 });

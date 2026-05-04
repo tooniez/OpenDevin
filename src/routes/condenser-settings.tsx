@@ -1,5 +1,4 @@
 import { SdkSectionPage } from "#/components/features/settings/sdk-settings/sdk-section-page";
-import { createPermissionGuard } from "#/utils/org/permission-guard";
 
 function CondenserSettingsScreen() {
   return (
@@ -9,7 +8,5 @@ function CondenserSettingsScreen() {
     />
   );
 }
-
-export const clientLoader = createPermissionGuard("view_llm_settings");
 
 export default CondenserSettingsScreen;

@@ -16,7 +16,6 @@ const generateMockRepositories = (
     pushed_at: new Date(
       Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000,
     ).toISOString(), // Last 90 days
-    owner_type: Math.random() > 0.7 ? "organization" : "user", // 30% chance of being organization
   }));
 
 // Generate mock branches for a repository

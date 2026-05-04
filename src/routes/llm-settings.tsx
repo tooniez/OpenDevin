@@ -2,7 +2,6 @@ import React from "react";
 import { useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { ModelSelector } from "#/components/shared/modals/settings/model-selector";
-import { createPermissionGuard } from "#/utils/org/permission-guard";
 import { useAgentSettingsSchema } from "#/hooks/query/use-agent-settings-schema";
 import { useSettings } from "#/hooks/query/use-settings";
 import { SettingsInput } from "#/components/features/settings/settings-input";
@@ -144,10 +143,10 @@ export function LlmSettingsScreen({
   }, [settings?.llm_model]);
 
   React.useEffect(() => {
-    if (settings && isSaasMode && scope !== "org") {
+    if (settings && isSaasMode) {
       hasHydratedInitialPersonalSaasViewRef.current = true;
     }
-  }, [isSaasMode, scope, settings]);
+  }, [isSaasMode, settings]);
 
   React.useEffect(() => {
     const checkout = searchParams.get("checkout");
@@ -161,23 +160,12 @@ export function LlmSettingsScreen({
     }
   }, [searchParams, setSearchParams, t]);
 
-  const infoMessageKey = React.useMemo((): I18nKey | null => {
-    if (!isSaasMode) return null;
-    return scope === "org"
-      ? I18nKey.SETTINGS$ORG_DEFAULTS_INFO
-      : I18nKey.SETTINGS$PERSONAL_AGENT_INFO;
-  }, [isSaasMode, scope]);
-
   const getInitialView = React.useCallback(
     (
       currentSettings: Settings,
       filteredSchema: SettingsSchema,
     ): SettingsView => {
-      if (
-        isSaasMode &&
-        scope !== "org" &&
-        !hasHydratedInitialPersonalSaasViewRef.current
-      ) {
+      if (isSaasMode && !hasHydratedInitialPersonalSaasViewRef.current) {
         return "basic";
       }
 
@@ -194,7 +182,7 @@ export function LlmSettingsScreen({
 
       return hasCustomBaseUrl ? "all" : "basic";
     },
-    [isSaasMode, scope],
+    [isSaasMode],
   );
 
   const buildHeader = React.useCallback(
@@ -255,15 +243,6 @@ export function LlmSettingsScreen({
 
       return (
         <div className="flex flex-col gap-6">
-          {infoMessageKey ? (
-            <p
-              data-testid="llm-settings-info-message"
-              className="text-sm text-tertiary-alt"
-            >
-              {t(infoMessageKey)}
-            </p>
-          ) : null}
-
           {view === "basic" ? (
             <div
               className="flex flex-col gap-6"
@@ -331,14 +310,7 @@ export function LlmSettingsScreen({
         </div>
       );
     },
-    [
-      infoMessageKey,
-      isSaasMode,
-      defaultModel,
-      selectedProvider,
-      settings?.llm_api_key_set,
-      t,
-    ],
+    [isSaasMode, defaultModel, selectedProvider, settings?.llm_api_key_set, t],
   );
 
   const buildPayload = React.useCallback(
@@ -396,7 +368,5 @@ export function LlmSettingsScreen({
     />
   );
 }
-
-export const clientLoader = createPermissionGuard("view_llm_settings");
 
 export default LlmSettingsScreen;

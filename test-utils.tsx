@@ -42,10 +42,7 @@ i18n.use(initReactI18next).init({
   defaultNS: "translation",
   resources: {
     en: {
-      translation: {
-        "ORG$PERSONAL_WORKSPACE": "Personal Workspace",
-        "ORG$SELECT_ORGANIZATION_PLACEHOLDER": "Please select an organization",
-      },
+      translation: {},
     },
   },
   interpolation: {

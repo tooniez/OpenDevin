@@ -18,10 +18,6 @@ vi.mock("#/hooks/query/use-settings", async () => {
   };
 });
 
-vi.mock("#/context/use-selected-organization", () => ({
-  useSelectedOrganizationId: () => ({ organizationId: null }),
-}));
-
 const MOCK_TASK_1: SuggestedTask = {
   issue_number: 123,
   repo: "repo1",
