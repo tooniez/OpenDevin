@@ -84,6 +84,13 @@ const writeStoredGitProviders = (providers: StoredGitProviderTokens) => {
   );
 };
 
+export const getStoredGitProviders = (): StoredGitProviderTokens =>
+  readStoredGitProviders();
+
+export const getStoredGitProviderToken = (
+  provider: Provider,
+): ProviderToken | null => readStoredGitProviders()[provider] ?? null;
+
 const buildProviderTokensSet = (
   providers: StoredGitProviderTokens,
 ): Partial<Record<Provider, string | null>> =>

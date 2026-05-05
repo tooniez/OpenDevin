@@ -15,6 +15,7 @@ import {
   V1AppConversationPage,
 } from "./conversation-service/v1-conversation-service.types";
 import { createHttpClient, createSkillsClient } from "./typescript-client";
+import { getStoredConversationMetadata } from "./conversation-metadata-store";
 
 export interface DirectConversationInfo {
   id: string;
@@ -65,12 +66,13 @@ export function getDefaultConversationTitle(conversationId: string): string {
 export function toV1AppConversation(
   info: DirectConversationInfo,
 ): V1AppConversation {
+  const metadata = getStoredConversationMetadata(info.id);
   return {
     id: info.id,
     created_by_user_id: null,
-    selected_repository: null,
-    selected_branch: null,
-    git_provider: null,
+    selected_repository: metadata?.selected_repository ?? null,
+    selected_branch: metadata?.selected_branch ?? null,
+    git_provider: metadata?.git_provider ?? null,
     title: info.title?.trim() ? info.title : getDefaultConversationTitle(info.id),
     trigger: null,
     pr_number: [],

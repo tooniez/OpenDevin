@@ -22,6 +22,11 @@ import {
   createVSCodeClient,
 } from "../typescript-client";
 import SettingsService from "../settings-service/settings-service.api";
+import {
+  ConversationMetadata,
+  removeStoredConversationMetadata,
+  setStoredConversationMetadata,
+} from "../conversation-metadata-store";
 import type {
   GetHooksResponse,
   GetSkillsResponse,
@@ -55,10 +60,13 @@ class V1ConversationService {
     initialUserMsg?: string,
     conversationInstructions?: string,
     plugins?: PluginSpec[],
+    metadata?: ConversationMetadata | null,
+    workingDirOverride?: string,
   ): Promise<V1AppConversationStartTask> {
     const settings = await SettingsService.getSettings();
     const conversationId = crypto.randomUUID();
-    const workingDir = buildConversationWorkingDir(conversationId);
+    const workingDir =
+      workingDirOverride ?? buildConversationWorkingDir(conversationId);
     const payload = buildStartConversationRequest({
       settings,
       query: initialUserMsg,
@@ -73,6 +81,13 @@ class V1ConversationService {
       payload,
     );
     const { data } = response;
+
+    if (metadata?.selected_repository) {
+      // The agent-server runtime has no concept of selected repo/branch, so
+      // persist the home-page selection client-side. toV1AppConversation
+      // reads the same store when the chat page hydrates the badges.
+      setStoredConversationMetadata(data.id, metadata);
+    }
 
     return {
       id: data.id,
@@ -206,10 +221,19 @@ class V1ConversationService {
 
   static async updateConversationRepository(
     conversationId: string,
-    _repository: string | null,
-    _branch?: string | null,
-    _gitProvider?: string | null,
+    repository: string | null,
+    branch?: string | null,
+    gitProvider?: string | null,
   ): Promise<V1AppConversation> {
+    if (repository) {
+      setStoredConversationMetadata(conversationId, {
+        selected_repository: repository,
+        selected_branch: branch ?? null,
+        git_provider: (gitProvider as Provider | null | undefined) ?? null,
+      });
+    } else {
+      removeStoredConversationMetadata(conversationId);
+    }
     const results = await this.batchGetAppConversations([conversationId]);
     return results[0] as V1AppConversation;
   }
@@ -313,6 +337,7 @@ class V1ConversationService {
 
   static async deleteConversation(conversationId: string): Promise<void> {
     await createHttpClient().delete(`/api/conversations/${conversationId}`);
+    removeStoredConversationMetadata(conversationId);
   }
 
   static async updateConversationTitle(
