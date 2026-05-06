@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import FilesService from "#/api/files-service/files-service.api";
 
-export const useListSubdirs = (path: string | null) =>
+export const useSearchSubdirs = (path: string | null) =>
   useQuery({
-    queryKey: ["file", "list_subdirs", path],
-    queryFn: () => FilesService.listSubdirs(path as string),
+    queryKey: ["file", "search_subdirs", path],
+    queryFn: () => FilesService.searchSubdirs(path as string),
     enabled: !!path,
     retry: false,
     meta: { disableToast: true },

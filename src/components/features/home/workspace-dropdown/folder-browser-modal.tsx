@@ -7,8 +7,8 @@ import { I18nKey } from "#/i18n/declaration";
 import { LocalWorkspace } from "#/types/workspace";
 import {
   useHomeDirectory,
-  useListSubdirs,
-} from "#/hooks/query/use-list-subdirs";
+  useSearchSubdirs,
+} from "#/hooks/query/use-search-subdirs";
 import { cn } from "#/utils/utils";
 import FolderIcon from "#/icons/folder.svg?react";
 import ChevronLeft from "#/icons/chevron-left-small.svg?react";
@@ -122,7 +122,7 @@ export function FolderBrowserModal({
     isLoading,
     isError,
     error,
-  } = useListSubdirs(isOpen ? currentPath : null);
+  } = useSearchSubdirs(isOpen ? currentPath : null);
 
   const sidebar = useMemo(
     () => buildSidebar(homeData?.home ?? null),
@@ -131,7 +131,7 @@ export function FolderBrowserModal({
 
   if (!isOpen) return null;
 
-  const subdirs = listing?.subdirs ?? [];
+  const subdirs = listing?.items ?? [];
   const parent = currentPath ? getParentPath(currentPath) : null;
 
   const handleUseThisFolder = () => {

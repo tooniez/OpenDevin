@@ -83,23 +83,23 @@ describe("WorkspaceSelectionForm", () => {
 
   it("Add Workspaces opens Finder-like modal, navigates, and imports subfolders deduped on repeat", async () => {
     vi.spyOn(FilesService, "getHome").mockResolvedValue({ home: "/Users/me" });
-    const listSpy = vi
-      .spyOn(FilesService, "listSubdirs")
+    const searchSpy = vi
+      .spyOn(FilesService, "searchSubdirs")
       .mockImplementation(async (path: string) => {
         if (path === "/Users/me") {
           return {
-            path,
-            subdirs: [{ name: "dev", path: "/Users/me/dev" }],
+            items: [{ name: "dev", path: "/Users/me/dev" }],
+            next_page_id: null,
           };
         }
         if (path === "/Users/me/dev") {
           return {
-            path,
-            subdirs: [
+            items: [
               { name: "repo1", path: "/Users/me/dev/repo1" },
               { name: "repo2", path: "/Users/me/dev/repo2" },
               { name: "repo3", path: "/Users/me/dev/repo3" },
             ],
+            next_page_id: null,
           };
         }
         throw new Error(`unexpected path ${path}`);
@@ -141,7 +141,7 @@ describe("WorkspaceSelectionForm", () => {
       "/Users/me/dev/repo2",
       "/Users/me/dev/repo3",
     ]);
-    expect(listSpy).toHaveBeenCalledWith("/Users/me/dev");
+    expect(searchSpy).toHaveBeenCalledWith("/Users/me/dev");
   });
 
   it("Launch creates a v1 conversation with the selected workspace path as working_dir", async () => {
