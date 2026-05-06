@@ -33,7 +33,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body style={{ margin: 0 }}>
+      <body data-agent-server-ui="" style={{ margin: 0 }}>
         <AgentServerUIRoot contentClassName="min-h-screen">
           {children}
           <Toaster />

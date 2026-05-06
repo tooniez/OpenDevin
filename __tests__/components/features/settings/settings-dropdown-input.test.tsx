@@ -59,7 +59,13 @@ describe("SettingsDropdownInput", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Clear selection" }));
+    const clearButton = screen
+      .getAllByRole("button")
+      .find((button) => button.getAttribute("aria-label") !== "Show suggestions");
+    if (!clearButton) {
+      throw new Error("Clear button not found");
+    }
+    await user.click(clearButton);
 
     expect(screen.getByLabelText("Language")).toHaveValue("");
     expect(onSelectionChange).toHaveBeenCalledWith(null);

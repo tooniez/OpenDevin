@@ -26,6 +26,11 @@ describe("SettingsForm", () => {
       },
     );
 
+    await waitFor(() => {
+      const llmProvider = screen.queryByLabelText(/LLM\$PROVIDER/i);
+      expect(llmProvider?.getAttribute("aria-expanded")).toBe("false");
+    });
+
     await user.click(screen.getByTestId("save-settings-button"));
 
     await waitFor(() => {
@@ -55,6 +60,11 @@ describe("SettingsForm", () => {
         },
       },
     );
+
+    await waitFor(() => {
+      const llmProvider = screen.queryByLabelText(/LLM\$PROVIDER/i);
+      expect(llmProvider?.getAttribute("aria-expanded")).toBe("false");
+    });
 
     await user.click(screen.getByTestId("save-settings-button"));
 
