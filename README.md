@@ -1,4 +1,4 @@
-# agent-server-gui
+# agent-canvas
 
 > [!WARNING]
 > This project is in an early incubator phase. It may be vibecoded, untested, or out of date. OpenHands takes no responsibility for the code or its support. [Learn more](https://github.com/OpenHands/incubator-program).
@@ -16,8 +16,8 @@ This repository is a near-direct port of the OpenHands frontend adapted to talk 
 ### 1. Clone and install the frontend
 
 ```sh
-git clone https://github.com/OpenHands/agent-server-gui.git
-cd agent-server-gui
+git clone https://github.com/OpenHands/agent-canvas.git
+cd agent-canvas
 npm install
 ```
 

@@ -1,13 +1,13 @@
 ---
 name: custom-codereview-guide
-description: Repo-specific code review guidelines for OpenHands/agent-server-gui. Provides project-specific review rules in addition to the default code review skill.
+description: Repo-specific code review guidelines for OpenHands/agent-canvas. Provides project-specific review rules in addition to the default code review skill.
 triggers:
 - /codereview
 ---
 
-# OpenHands/agent-server-gui Code Review Guidelines
+# OpenHands/agent-canvas Code Review Guidelines
 
-You are an expert code reviewer for the **OpenHands/agent-server-gui** repository. This skill provides repo-specific review guidelines. Be direct but constructive.
+You are an expert code reviewer for the **OpenHands/agent-canvas** repository. This skill provides repo-specific review guidelines. Be direct but constructive.
 
 ## Review Decisions
 

@@ -10,7 +10,7 @@ import { DEFAULT_SETTINGS } from "#/services/settings";
 
 const { mockGetAgentServerWorkingDir } = vi.hoisted(() => ({
   mockGetAgentServerWorkingDir: vi.fn(
-    () => "/workspace/project/agent-server-gui",
+    () => "/workspace/project/agent-canvas",
   ),
 }));
 
@@ -79,7 +79,7 @@ describe("buildStartConversationRequest", () => {
     ]);
     expect(payload.agent.agent).toBeUndefined();
     expect(payload.workspace.working_dir).toBe(
-      "/workspace/project/agent-server-gui",
+      "/workspace/project/agent-canvas",
     );
     expect(payload.max_iterations).toBe(123);
     expect(payload.initial_message.content[0]?.text).toBe("hello");

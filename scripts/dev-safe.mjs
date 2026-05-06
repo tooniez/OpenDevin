@@ -146,14 +146,17 @@ function parsePort(value, fallback) {
 
 export function buildSafeDevConfig(cwd = process.cwd(), env = process.env) {
   const backendPort = parsePort(
-    env.OH_GUI_SAFE_BACKEND_PORT,
+    env.OH_CANVAS_SAFE_BACKEND_PORT,
     DEFAULT_BACKEND_PORT,
   );
-  const vscodePort = parsePort(env.OH_GUI_SAFE_VSCODE_PORT, backendPort + 1);
+  const vscodePort = parsePort(
+    env.OH_CANVAS_SAFE_VSCODE_PORT,
+    backendPort + 1,
+  );
   const stateDir = path.resolve(
     cwd,
-    env.OH_GUI_SAFE_STATE_DIR ||
-      path.join(homedir(), ".openhands", "agent-server-gui"),
+    env.OH_CANVAS_SAFE_STATE_DIR ||
+      path.join(homedir(), ".openhands", "agent-canvas"),
   );
   const conversationsPath = path.join(stateDir, "conversations");
   const workspacesPath = path.join(stateDir, "workspaces");

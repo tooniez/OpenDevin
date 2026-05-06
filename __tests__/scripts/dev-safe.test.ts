@@ -21,14 +21,14 @@ const repoRoot = path.resolve(
 describe("formatMissingUvxGuidance", () => {
   it("includes install, PATH, README, and fallback workflow hints", () => {
     const guidance = formatMissingUvxGuidance(
-      "/workspace/project/agent-server-gui",
+      "/workspace/project/agent-canvas",
     );
 
     expect(guidance).toContain("curl -LsSf https://astral.sh/uv/install.sh | sh");
     expect(guidance).toContain('export PATH="$HOME/.local/bin:$PATH"');
     expect(guidance).toContain("command -v uvx");
     expect(guidance).toContain(
-      path.join("/workspace/project/agent-server-gui", "README.md"),
+      path.join("/workspace/project/agent-canvas", "README.md"),
     );
     expect(guidance).toContain(
       "https://docs.astral.sh/uv/getting-started/installation/",
@@ -122,7 +122,7 @@ describe("buildAgentServerCommand", () => {
 
 describe("buildSafeDevConfig", () => {
   it("builds isolated default paths and ports", () => {
-    const cwd = "/workspace/project/agent-server-gui";
+    const cwd = "/workspace/project/agent-canvas";
 
     const config = buildSafeDevConfig(cwd, {});
 
@@ -132,7 +132,7 @@ describe("buildSafeDevConfig", () => {
     expect(config.backendHost).toBe("127.0.0.1:18000");
     expect(config.workingDir).toBe(config.workspacesPath);
     expect(config.stateDir).toBe(
-      path.join(homedir(), ".openhands", "agent-server-gui"),
+      path.join(homedir(), ".openhands", "agent-canvas"),
     );
     expect(config.tmuxTmpDir).toBe(path.join(config.stateDir, "tmux"));
     expect(config.conversationsPath).toBe(
@@ -147,12 +147,12 @@ describe("buildSafeDevConfig", () => {
   });
 
   it("honors environment overrides", () => {
-    const cwd = "/workspace/project/agent-server-gui";
+    const cwd = "/workspace/project/agent-canvas";
 
     const config = buildSafeDevConfig(cwd, {
-      OH_GUI_SAFE_BACKEND_PORT: "19000",
-      OH_GUI_SAFE_VSCODE_PORT: "19010",
-      OH_GUI_SAFE_STATE_DIR: ".tmp/dev-safe",
+      OH_CANVAS_SAFE_BACKEND_PORT: "19000",
+      OH_CANVAS_SAFE_VSCODE_PORT: "19010",
+      OH_CANVAS_SAFE_STATE_DIR: ".tmp/dev-safe",
       VITE_WORKING_DIR: "/workspace/custom-repo",
     });
 

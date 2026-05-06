@@ -11,7 +11,7 @@ const TRANSLATIONS: Record<string, string> = {
   "SETTINGS$AGENT_SERVER_UPGRADE_TITLE": "Update your agent server",
   "SETTINGS$AGENT_SERVER_UPGRADE_EYEBROW": "Upgrade required",
   "SETTINGS$AGENT_SERVER_UPGRADE_DESCRIPTION":
-    "This GUI can only connect to agent server version {{minimumVersion}} or newer. Upgrade the server or point this GUI at a newer deployment.",
+    "Agent Canvas can only connect to agent server version {{minimumVersion}} or newer. Upgrade the server or point Agent Canvas at a newer deployment.",
   "SETTINGS$AGENT_SERVER_UPGRADE_STATUS_TITLE":
     "The connected server is too old",
   "SETTINGS$AGENT_SERVER_UPGRADE_STATUS_MESSAGE":
@@ -19,11 +19,11 @@ const TRANSLATIONS: Record<string, string> = {
   "SETTINGS$AGENT_SERVER_ONBOARDING_EYEBROW": "Get started",
   "SETTINGS$AGENT_SERVER_ONBOARDING_TITLE": "Connect to your agent server",
   "SETTINGS$AGENT_SERVER_ONBOARDING_DESCRIPTION":
-    "This GUI needs an agent server before it can load conversations, tools, and settings. Start or choose a compatible server, then connect it here.",
+    "Agent Canvas needs an agent server before it can load conversations, tools, and settings. Start or choose a compatible server, then connect it here.",
   "SETTINGS$AGENT_SERVER_UNAVAILABLE_STATUS_TITLE":
     "We couldn't reach the configured server",
   "SETTINGS$AGENT_SERVER_UNAVAILABLE_STATUS_MESSAGE":
-    "Check the URL, confirm the server is running, and try again. You can also point this GUI at a different deployment.",
+    "Check the URL, confirm the server is running, and try again. You can also point Agent Canvas at a different deployment.",
   "SETTINGS$AGENT_SERVER_UNKNOWN_VERSION_STATUS_TITLE":
     "We couldn't confirm the server version",
   "SETTINGS$AGENT_SERVER_UNKNOWN_VERSION_STATUS_MESSAGE":
@@ -36,7 +36,7 @@ const TRANSLATIONS: Record<string, string> = {
   "SETTINGS$AGENT_SERVER_DETAILS_LABEL": "Details: {{details}}",
   "SETTINGS$AGENT_SERVER_CONNECTION_DETAILS_TITLE": "Connection details",
   "SETTINGS$AGENT_SERVER_CONNECTION_DETAILS_DESCRIPTION":
-    "Paste the agent server URL and optional session API key that this GUI should use.",
+    "Paste the agent server URL and optional session API key that Agent Canvas should use.",
   "SETTINGS$AGENT_SERVER_URL": "Agent server URL",
   "SETTINGS$AGENT_SERVER_URL_PLACEHOLDER": "https://agent.example.com",
   "SETTINGS$AGENT_SERVER_API_KEY": "Session API key",
@@ -49,11 +49,11 @@ const TRANSLATIONS: Record<string, string> = {
   "SETTINGS$AGENT_SERVER_STEP_LABEL": "Step {{step}}",
   "SETTINGS$AGENT_SERVER_STEP_UPGRADE_TITLE": "Upgrade to {{minimumVersion}}+",
   "SETTINGS$AGENT_SERVER_STEP_UPGRADE_DESCRIPTION":
-    "Update the connected agent server so it exposes the APIs this GUI expects.",
+    "Update the connected agent server so it exposes the APIs Agent Canvas expects.",
   "SETTINGS$AGENT_SERVER_STEP_URL_TITLE": "Enter its URL",
   "SETTINGS$AGENT_SERVER_STEP_URL_DESCRIPTION":
     "Use the address where this browser can reach the server, such as https://agent.example.com.",
-  "SETTINGS$AGENT_SERVER_STEP_RECONNECT_TITLE": "Reconnect the GUI",
+  "SETTINGS$AGENT_SERVER_STEP_RECONNECT_TITLE": "Reconnect Agent Canvas",
   "SETTINGS$AGENT_SERVER_STEP_RECONNECT_DESCRIPTION":
     "Retry once the server is upgraded, or point this browser at a newer deployment.",
   "SETTINGS$AGENT_SERVER_STEP_START_TITLE": "Start a compatible server",
@@ -165,7 +165,7 @@ describe("App root compatibility guard", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /setup instructions/i }),
-    ).toHaveAttribute("href", "https://github.com/OpenHands/agent-server-gui");
+    ).toHaveAttribute("href", "https://github.com/OpenHands/agent-canvas");
     expect(screen.queryByText(/step 1/i)).not.toBeInTheDocument();
     expect(
       screen.queryByRole("link", { name: /open full settings page/i }),

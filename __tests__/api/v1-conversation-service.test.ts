@@ -29,7 +29,7 @@ vi.mock("#/api/agent-server-config", () => ({
   DEFAULT_WORKING_DIR: "workspace/project",
   getAgentServerBaseUrl: vi.fn(() => "http://localhost:54928"),
   getAgentServerSessionApiKey: vi.fn(() => "test-api-key"),
-  getAgentServerWorkingDir: vi.fn(() => "/workspace/project/agent-server-gui"),
+  getAgentServerWorkingDir: vi.fn(() => "/workspace/project/agent-canvas"),
   buildConversationWorkingDir: vi.fn(
     (id: string) => `/state/workspaces/${id.replace(/-/g, "")}`,
   ),
@@ -73,7 +73,7 @@ describe("V1ConversationService", () => {
                 created_at: "2024-01-01",
                 updated_at: "2024-01-01",
                 workspace: {
-                  working_dir: "/workspace/project/agent-server-gui/conv-123",
+                  working_dir: "/workspace/project/agent-canvas/conv-123",
                 },
               },
             ],
@@ -90,7 +90,7 @@ describe("V1ConversationService", () => {
         "/api/file/download",
         expect.objectContaining({
           params: {
-            path: "/workspace/project/agent-server-gui/conv-123/.agents_tmp/PLAN.md",
+            path: "/workspace/project/agent-canvas/conv-123/.agents_tmp/PLAN.md",
           },
           responseType: "arrayBuffer",
         }),

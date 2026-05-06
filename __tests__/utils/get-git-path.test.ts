@@ -38,9 +38,9 @@ describe("getGitPath", () => {
       expect(
         getGitPath(
           "OpenHands/software-agent-sdk",
-          "/workspace/project/agent-server-gui",
+          "/workspace/project/agent-canvas",
         ),
-      ).toBe("/workspace/project/agent-server-gui");
+      ).toBe("/workspace/project/agent-canvas");
     });
 
     it("ignores blank workspace paths and falls back to heuristics", () => {

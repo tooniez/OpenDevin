@@ -8,10 +8,10 @@ const TRANSLATIONS: Record<string, string> = {
   "SETTINGS$AGENT_SERVER_ONBOARDING_EYEBROW": "Get started",
   "SETTINGS$AGENT_SERVER_SETTINGS_TITLE": "Agent server connection",
   "SETTINGS$AGENT_SERVER_DESCRIPTION":
-    "Set the agent server URL and optional session API key that this GUI should use. Start or choose a compatible server, then save here to reconnect. Deployment defaults appear automatically until you override them.",
+    "Set the agent server URL and optional session API key that Agent Canvas should use. Start or choose a compatible server, then save here to reconnect. Deployment defaults appear automatically until you override them.",
   "SETTINGS$AGENT_SERVER_CONNECTION_DETAILS_TITLE": "Connection details",
   "SETTINGS$AGENT_SERVER_CONNECTION_DETAILS_DESCRIPTION":
-    "Paste the agent server URL and optional session API key that this GUI should use.",
+    "Paste the agent server URL and optional session API key that Agent Canvas should use.",
   "SETTINGS$AGENT_SERVER_URL": "Agent server URL",
   "SETTINGS$AGENT_SERVER_URL_PLACEHOLDER": "https://agent.example.com",
   "SETTINGS$AGENT_SERVER_API_KEY": "Session API key",

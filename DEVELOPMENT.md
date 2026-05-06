@@ -1,6 +1,6 @@
 # Development
 
-This document is for contributors working on `agent-server-gui` itself.
+This document is for contributors working on `agent-canvas` itself.
 
 ## Recommended local workflow
 
@@ -29,9 +29,9 @@ OH_AGENT_SERVER_GIT_REF=abc1234 npm run dev
 
 ### Other useful overrides
 
-- `OH_GUI_SAFE_BACKEND_PORT` — backend port for the isolated server (default `18000`)
-- `OH_GUI_SAFE_VSCODE_PORT` — VS Code sidecar port (default `backend port + 1`)
-- `OH_GUI_SAFE_STATE_DIR` — base directory for isolated server state
+- `OH_CANVAS_SAFE_BACKEND_PORT` — backend port for the isolated server (default `18000`)
+- `OH_CANVAS_SAFE_VSCODE_PORT` — VS Code sidecar port (default `backend port + 1`)
+- `OH_CANVAS_SAFE_STATE_DIR` — base directory for isolated server state
 - `VITE_WORKING_DIR` — repo root used for new conversations (defaults to the current checkout)
 
 ## Alternative development workflows
