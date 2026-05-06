@@ -84,13 +84,16 @@ export function buildAgentServerCommand(env = process.env) {
     );
     source = `git (${gitRef})`;
   } else if (version) {
-    // Use specific PyPI version: uvx --with ... openhands-agent-server==version
+    // Use specific PyPI version: uvx --from openhands-agent-server==version agent-server
+    // The package name differs from the executable name, so we need --from syntax
     uvxArgs.push(
+      "--from",
+      `${DEFAULT_AGENT_SERVER_PACKAGE}==${version}`,
       "--with",
       "openhands-tools",
       "--with",
       "openhands-workspace",
-      `${DEFAULT_AGENT_SERVER_PACKAGE}==${version}`,
+      "agent-server",
     );
     source = `PyPI (${version})`;
   } else if (DEFAULT_GIT_REF) {
@@ -107,13 +110,16 @@ export function buildAgentServerCommand(env = process.env) {
     );
     source = `git (${DEFAULT_GIT_REF}, default)`;
   } else {
-    // Use latest released version: uvx --with ... openhands-agent-server
+    // Use latest released version: uvx --from openhands-agent-server agent-server
+    // The package name differs from the executable name, so we need --from syntax
     uvxArgs.push(
+      "--from",
+      DEFAULT_AGENT_SERVER_PACKAGE,
       "--with",
       "openhands-tools",
       "--with",
       "openhands-workspace",
-      DEFAULT_AGENT_SERVER_PACKAGE,
+      "agent-server",
     );
     source = "PyPI (latest)";
   }

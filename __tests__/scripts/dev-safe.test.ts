@@ -60,12 +60,15 @@ describe("buildAgentServerCommand", () => {
     const cmd = buildAgentServerCommand({ OH_AGENT_SERVER_VERSION: "1.18.0" });
 
     expect(cmd.command).toBe("uvx");
+    // Uses --from syntax because executable name (agent-server) differs from package name (openhands-agent-server)
     expect(cmd.args).toEqual([
+      "--from",
+      "openhands-agent-server==1.18.0",
       "--with",
       "openhands-tools",
       "--with",
       "openhands-workspace",
-      "openhands-agent-server==1.18.0",
+      "agent-server",
     ]);
     expect(cmd.source).toBe("PyPI (1.18.0)");
   });
