@@ -39,16 +39,19 @@ describe("useSlashCommand", () => {
     mockConversation.data = undefined;
   });
 
-  it("includes /new built-in command for V1 conversations", () => {
+  it("excludes /new from the built-in commands while the planning agent is disabled", () => {
+    // Arrange
     mockConversation.data = { conversation_version: "V1" };
     mockSkills.isLoading = false;
     mockSkills.data = [makeSkill("code-search", ["/code-search"])];
 
+    // Act
     const ref = makeChatInputRef();
     const { result } = renderHook(() => useSlashCommand(ref));
 
+    // Assert
     const commands = result.current.filteredItems.map((i) => i.command);
-    expect(commands).toContain("/new");
-    expect(commands).toContain("/code-search");
+    expect(commands).not.toContain("/new");
+    expect(commands).toEqual(expect.arrayContaining(["/btw", "/code-search"]));
   });
 });
