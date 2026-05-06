@@ -170,6 +170,25 @@ export function buildSafeDevConfig(cwd = process.cwd(), env = process.env) {
   };
 }
 
+/**
+ * Build the environment variables object for spawning the agent-server process.
+ *
+ * This is exported so downstream consumers (e.g., automation service) can use
+ * the same env vars without duplicating the mapping logic.
+ *
+ * @param {ReturnType<typeof buildSafeDevConfig>} config - Config from buildSafeDevConfig
+ * @returns {Record<string, string>} Environment variables for agent-server
+ */
+export function buildAgentServerEnv(config) {
+  return {
+    TMUX_TMPDIR: config.tmuxTmpDir,
+    OH_CONVERSATIONS_PATH: config.conversationsPath,
+    OH_BASH_EVENTS_DIR: config.bashEventsDir,
+    OH_VSCODE_PORT: String(config.vscodePort),
+    OH_SECRET_KEY: config.secretKey,
+  };
+}
+
 export function buildNpmScriptCommand(
   scriptName,
   platform = process.platform,
@@ -274,11 +293,7 @@ async function main() {
       cwd: config.cwd,
       env: {
         ...process.env,
-        TMUX_TMPDIR: config.tmuxTmpDir,
-        OH_CONVERSATIONS_PATH: config.conversationsPath,
-        OH_BASH_EVENTS_DIR: config.bashEventsDir,
-        OH_VSCODE_PORT: String(config.vscodePort),
-        OH_SECRET_KEY: config.secretKey,
+        ...buildAgentServerEnv(config),
       },
     },
   );
