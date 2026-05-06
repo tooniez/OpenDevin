@@ -1,5 +1,5 @@
 import { DEFAULT_SETTINGS } from "#/services/settings";
-import { Settings } from "#/types/settings";
+import { Settings, SettingsValue } from "#/types/settings";
 import { V1ExecutionStatus } from "#/types/v1/core";
 import {
   getAgentServerBaseUrl,
@@ -15,6 +15,7 @@ import {
   V1AppConversationPage,
 } from "./conversation-service/v1-conversation-service.types";
 import { createHttpClient, createSkillsClient } from "./typescript-client";
+import SettingsService from "./settings-service/settings-service.api";
 import { getStoredConversationMetadata } from "./conversation-metadata-store";
 
 export interface DirectConversationInfo {
@@ -322,17 +323,70 @@ function buildConfiguredConversationSettings(options: {
   };
 }
 
-export function buildStartConversationRequest(options: {
+/**
+ * A secret looked up from the agent-server at runtime.
+ * This allows secrets configured in Settings > Secrets to be available
+ * to conversations without exposing values to the frontend.
+ */
+interface LookupSecret {
+  kind: "LookupSecret";
+  url: string;
+  headers?: Record<string, string>;
+  description?: string;
+}
+
+export interface StartConversationOptions {
   settings: Settings;
   query?: string;
   conversationInstructions?: string;
   plugins?: PluginSpec[];
   conversationId?: string;
   workingDir?: string;
-}) {
-  const agentSettings = buildConfiguredAgentSettings(options.settings);
+  /**
+   * Pre-fetched agent settings with encrypted secrets.
+   * If provided, these will be used instead of settings.agent_settings.
+   */
+  encryptedAgentSettings?: Record<string, SettingsValue>;
+  /**
+   * Pre-fetched conversation settings with encrypted secrets.
+   * If provided, these will be used instead of settings.conversation_settings.
+   */
+  encryptedConversationSettings?: Record<string, SettingsValue>;
+  /**
+   * Whether the secrets in agent/conversation settings are encrypted.
+   * If true, the server will decrypt them before use.
+   */
+  secretsEncrypted?: boolean;
+  /**
+   * Custom secrets to include in the conversation.
+   * Each entry maps a secret name to metadata (description).
+   * The actual values are fetched at runtime via LookupSecret.
+   */
+  customSecrets?: Array<{ name: string; description?: string }>;
+}
+
+export function buildStartConversationRequest(options: StartConversationOptions) {
+  // Use encrypted settings if provided, otherwise fall back to regular settings
+  const sourceAgentSettings = options.encryptedAgentSettings
+    ? { ...options.settings, agent_settings: options.encryptedAgentSettings }
+    : options.settings;
+
+  const agentSettings = buildConfiguredAgentSettings(sourceAgentSettings);
   const agent = createAgentFromSettings(agentSettings);
-  const conversationSettings = buildConfiguredConversationSettings(options);
+
+  // For conversation settings, merge encrypted settings if provided
+  const sourceConversationOptions = options.encryptedConversationSettings
+    ? {
+        ...options,
+        settings: {
+          ...options.settings,
+          conversation_settings: options.encryptedConversationSettings,
+        },
+      }
+    : options;
+
+  const conversationSettings =
+    buildConfiguredConversationSettings(sourceConversationOptions);
 
   const payload: Record<string, unknown> = {
     agent,
@@ -346,6 +400,11 @@ export function buildStartConversationRequest(options: {
     stuck_detection: true,
     autotitle: true,
   };
+
+  // Add secrets_encrypted flag if secrets are encrypted
+  if (options.secretsEncrypted) {
+    payload.secrets_encrypted = true;
+  }
 
   if (options.conversationId) {
     payload.conversation_id = options.conversationId;
@@ -377,7 +436,71 @@ export function buildStartConversationRequest(options: {
     payload.agent_definitions = conversationSettings.agent_definitions;
   }
 
+  // Add custom secrets as LookupSecret entries
+  // The agent-server will fetch values at runtime from /api/settings/secrets/{name}
+  if (options.customSecrets && options.customSecrets.length > 0) {
+    const baseUrl = getAgentServerBaseUrl();
+    const sessionApiKey = getAgentServerSessionApiKey();
+
+    const secrets: Record<string, LookupSecret> = {};
+    for (const secret of options.customSecrets) {
+      const lookupSecret: LookupSecret = {
+        kind: "LookupSecret",
+        url: `${baseUrl}/api/settings/secrets/${encodeURIComponent(secret.name)}`,
+        description: secret.description,
+      };
+
+      // Include session API key header if configured
+      if (sessionApiKey) {
+        lookupSecret.headers = {
+          "X-Session-API-Key": sessionApiKey,
+        };
+      }
+
+      secrets[secret.name] = lookupSecret;
+    }
+
+    payload.secrets = secrets;
+  }
+
   return payload;
+}
+
+/**
+ * Build a start conversation request using encrypted settings from the server.
+ * This is the recommended way to start conversations from the frontend,
+ * as it ensures secrets are never exposed in plaintext to the browser.
+ *
+ * Also fetches custom secrets from the settings store and adds them as
+ * LookupSecret entries so they're available to the conversation at runtime.
+ */
+export async function buildStartConversationRequestWithEncryptedSettings(options: {
+  settings: Settings;
+  query?: string;
+  conversationInstructions?: string;
+  plugins?: PluginSpec[];
+  conversationId?: string;
+  workingDir?: string;
+}): Promise<Record<string, unknown>> {
+  // Import SecretsService dynamically to avoid circular dependencies
+  const { SecretsService } = await import("./secrets-service");
+
+  // Fetch settings with encrypted secrets and custom secrets list in parallel
+  const [settingsResult, customSecrets] = await Promise.all([
+    SettingsService.getSettingsForConversation(),
+    SecretsService.getSecrets(),
+  ]);
+
+  const { agentSettings, conversationSettings, secretsEncrypted } =
+    settingsResult;
+
+  return buildStartConversationRequest({
+    ...options,
+    encryptedAgentSettings: agentSettings,
+    encryptedConversationSettings: conversationSettings,
+    secretsEncrypted,
+    customSecrets,
+  });
 }
 
 export async function downloadTextFile(path: string): Promise<string> {

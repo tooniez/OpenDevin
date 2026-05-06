@@ -1,21 +1,83 @@
-import SettingsService from "./settings-service/settings-service.api";
-import { openHands } from "./open-hands-axios";
-import {
-  CustomSecret,
-  CustomSecretPage,
-  CustomSecretWithoutValue,
-  SearchSecretsParams,
-} from "./secrets-service.types";
+import { createHttpClient } from "./typescript-client";
+import { CustomSecretWithoutValue } from "./secrets-service.types";
 import { Provider, ProviderOptions, ProviderToken } from "#/types/settings";
 
-const GIT_PROVIDER_STORAGE_KEY = "openhands-agent-server-git-provider-tokens";
+/**
+ * Response from GET /api/settings/secrets (agent-server API)
+ */
+interface SecretsListResponse {
+  secrets: Array<{
+    name: string;
+    description?: string;
+  }>;
+}
 
-type StoredGitProviderTokens = Partial<Record<Provider, ProviderToken>>;
+/**
+ * Request for PUT /api/settings/secrets (agent-server API)
+ * This is an upsert operation - creates or updates by name.
+ */
+interface CreateSecretRequest {
+  name: string;
+  value: string;
+  description?: string;
+}
+
+/**
+ * Response from PUT /api/settings/secrets (agent-server API)
+ */
+interface CreateSecretResponse {
+  name: string;
+  description?: string;
+}
 
 const normalizeHost = (host: string | null | undefined): string | null => {
   const trimmed = typeof host === "string" ? host.trim() : "";
   return trimmed.length > 0 ? trimmed : null;
 };
+
+/**
+ * Retry helper for API calls with exponential backoff.
+ */
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  maxRetries: number = 3,
+  baseDelayMs: number = 500,
+): Promise<T> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      if (attempt < maxRetries - 1) {
+        // Exponential backoff: 500ms, 1000ms, 2000ms
+        const delay = baseDelayMs * Math.pow(2, attempt);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+  }
+  throw lastError;
+}
+
+/**
+ * Get the secret name for a git provider token.
+ */
+function getGitProviderSecretName(provider: Provider): string {
+  return `GIT_PROVIDER_${provider.toUpperCase()}_TOKEN`;
+}
+
+// ============================================================================
+// Git Provider Token Storage (for frontend git API calls)
+// ============================================================================
+// Note: Git provider tokens need to be accessible from the frontend to make
+// direct API calls to GitHub/GitLab/etc. for repo search, branches, etc.
+// These are stored in localStorage for frontend use AND synced to the server
+// for agent runtime use.
+// ============================================================================
+
+const GIT_PROVIDER_STORAGE_KEY = "openhands-agent-server-git-provider-tokens";
+
+type StoredGitProviderTokens = Partial<Record<Provider, ProviderToken>>;
 
 const readStoredGitProviders = (): StoredGitProviderTokens => {
   if (typeof window === "undefined") {
@@ -84,99 +146,126 @@ const writeStoredGitProviders = (providers: StoredGitProviderTokens) => {
   );
 };
 
+/**
+ * Get stored git provider tokens for frontend API calls.
+ * These are stored locally for making direct GitHub/GitLab API calls.
+ */
 export const getStoredGitProviders = (): StoredGitProviderTokens =>
   readStoredGitProviders();
 
+/**
+ * Get a specific git provider token for frontend API calls.
+ */
 export const getStoredGitProviderToken = (
   provider: Provider,
 ): ProviderToken | null => readStoredGitProviders()[provider] ?? null;
 
-const buildProviderTokensSet = (
-  providers: StoredGitProviderTokens,
-): Partial<Record<Provider, string | null>> =>
-  Object.fromEntries(
-    Object.entries(providers).map(([provider, value]) => [
-      provider,
-      value?.host ?? null,
-    ]),
-  ) as Partial<Record<Provider, string | null>>;
-
 export class SecretsService {
   /**
-   * Search/list custom secrets with pagination support.
-   * Uses the new V1 API endpoint: GET /api/v1/secrets/search
+   * List all custom secrets (names and descriptions only, no values).
+   * Uses the agent-server API endpoint: GET /api/settings/secrets
+   *
+   * Note: The agent-server API doesn't support pagination or search filtering.
+   * All secrets are returned in a single response.
    */
-  static async searchSecrets(
-    params: SearchSecretsParams = {},
-  ): Promise<CustomSecretPage> {
-    const queryParams = new URLSearchParams();
-
-    if (params.name__contains) {
-      queryParams.set("name__contains", params.name__contains);
+  static async getSecrets(): Promise<CustomSecretWithoutValue[]> {
+    try {
+      const response = await withRetry(() =>
+        createHttpClient().get<SecretsListResponse>("/api/settings/secrets"),
+      );
+      return response.data.secrets.map((s) => ({
+        name: s.name,
+        description: s.description,
+      }));
+    } catch (error) {
+      console.error("Failed to fetch secrets after retries:", error);
+      return [];
     }
-    if (params.page_id) {
-      queryParams.set("page_id", params.page_id);
-    }
-    if (params.limit) {
-      queryParams.set("limit", params.limit.toString());
-    }
-
-    const queryString = queryParams.toString();
-    const url = `/api/v1/secrets/search${queryString ? `?${queryString}` : ""}`;
-
-    const { data } = await openHands.get<CustomSecretPage>(url);
-    return data;
   }
 
   /**
-   * @deprecated Use searchSecrets instead. This method uses the deprecated V0 API.
+   * Create or update a custom secret (upsert by name).
+   * Uses the agent-server API endpoint: PUT /api/settings/secrets
+   *
+   * @param name - Secret name (must start with letter, contain only letters/numbers/underscores, 1-64 chars)
+   * @param value - Secret value
+   * @param description - Optional description
+   * @throws Error if the API call fails after retries
    */
-  static async getSecrets(): Promise<CustomSecretWithoutValue[]> {
-    const allSecrets: CustomSecretWithoutValue[] = [];
-    let pageId: string | null = null;
+  static async createSecret(
+    name: string,
+    value: string,
+    description?: string,
+  ): Promise<void> {
+    await withRetry(() =>
+      createHttpClient().put<CreateSecretResponse>("/api/settings/secrets", {
+        name,
+        value,
+        description,
+      } satisfies CreateSecretRequest),
+    );
+  }
 
-    for (;;) {
-      const page = await SecretsService.searchSecrets({
-        page_id: pageId ?? undefined,
-        limit: 100,
-      });
-      allSecrets.push(...page.items);
-      pageId = page.next_page_id;
-      if (!pageId) break;
+  /**
+   * Update a secret's value and/or description.
+   * Uses the same upsert endpoint as createSecret since agent-server
+   * doesn't have a separate update endpoint.
+   *
+   * @param name - Secret name (used as identifier)
+   * @param value - New secret value
+   * @param description - Optional new description
+   * @throws Error if the API call fails after retries
+   */
+  static async updateSecret(
+    name: string,
+    value: string,
+    description?: string,
+  ): Promise<void> {
+    // Agent-server uses upsert, so update is the same as create
+    await this.createSecret(name, value, description);
+  }
+
+  /**
+   * Delete a custom secret by name.
+   * Uses the agent-server API endpoint: DELETE /api/settings/secrets/{name}
+   *
+   * @param name - Secret name to delete
+   * @throws Error if the API call fails (except 404, which is treated as success)
+   */
+  static async deleteSecret(name: string): Promise<void> {
+    try {
+      await withRetry(() =>
+        createHttpClient().delete<{ deleted: boolean }>(
+          `/api/settings/secrets/${encodeURIComponent(name)}`,
+        ),
+      );
+    } catch (error) {
+      // 404 means secret doesn't exist - treat as successful deletion
+      if (
+        error &&
+        typeof error === "object" &&
+        "response" in error &&
+        (error as { response?: { status?: number } }).response?.status === 404
+      ) {
+        return;
+      }
+      throw error;
     }
-
-    return allSecrets;
   }
 
-  static async createSecret(name: string, value: string, description?: string) {
-    const secret: CustomSecret = {
-      name,
-      value,
-      description,
-    };
-
-    const { status } = await openHands.post("/api/v1/secrets", secret);
-    return status === 201;
-  }
-
-  static async updateSecret(id: string, name: string, description?: string) {
-    const secret: CustomSecretWithoutValue = {
-      name,
-      description,
-    };
-
-    const { status } = await openHands.put(`/api/v1/secrets/${id}`, secret);
-    return status === 200;
-  }
-
-  static async deleteSecret(id: string) {
-    const { status } = await openHands.delete<boolean>(`/api/v1/secrets/${id}`);
-    return status === 200;
-  }
-
+  /**
+   * Add or update git provider tokens.
+   * Stores tokens in both:
+   * 1. localStorage - for frontend git API calls (repo search, branches, etc.)
+   * 2. Agent server secrets API - for agent runtime use
+   *
+   * Both stores must succeed for the operation to complete successfully.
+   *
+   * @throws Error if the server API call fails after retries
+   */
   static async addGitProvider(
     providers: Partial<Record<Provider, ProviderToken>>,
-  ): Promise<boolean> {
+  ): Promise<void> {
     const storedProviders = readStoredGitProviders();
     const nextProviders: StoredGitProviderTokens = { ...storedProviders };
 
@@ -187,28 +276,66 @@ export class SecretsService {
       const token = value.token.trim();
       const host = normalizeHost(value.host);
 
-      if (token) {
-        nextProviders[provider] = { token, host };
+      if (!token) {
+        // Just updating host for existing token - still need to update server
+        const existing = nextProviders[provider];
+        if (existing) {
+          // Re-store to server with updated host in description
+          // This ensures server metadata stays in sync with localStorage
+          const secretName = getGitProviderSecretName(provider);
+          await this.createSecret(
+            secretName,
+            existing.token,
+            `Git provider token for ${provider}${host ? ` (${host})` : ""}`,
+          );
+
+          // Only update localStorage after server storage succeeds
+          nextProviders[provider] = {
+            token: existing.token,
+            host,
+          };
+        }
         continue;
       }
 
-      const existing = nextProviders[provider];
-      if (existing) {
-        nextProviders[provider] = {
-          token: existing.token,
-          host,
-        };
+      // Store the token as a secret on the server for agent runtime use
+      // This MUST succeed - no fallback to localStorage-only
+      const secretName = getGitProviderSecretName(provider);
+      await this.createSecret(
+        secretName,
+        token,
+        `Git provider token for ${provider}${host ? ` (${host})` : ""}`,
+      );
+
+      // Only update localStorage after server storage succeeds
+      nextProviders[provider] = { token, host };
+    }
+
+    // Update localStorage for frontend git API calls
+    writeStoredGitProviders(nextProviders);
+  }
+
+  /**
+   * Delete all git provider tokens from both localStorage and server.
+   */
+  static async deleteGitProviders(): Promise<void> {
+    const storedProviders = readStoredGitProviders();
+
+    // Delete each provider's secret from the server
+    for (const provider of Object.keys(storedProviders) as Provider[]) {
+      const secretName = getGitProviderSecretName(provider);
+      try {
+        await this.deleteSecret(secretName);
+      } catch (error) {
+        // Log but continue - we still want to clear other providers
+        console.warn(
+          `Failed to delete git provider secret for ${provider}:`,
+          error,
+        );
       }
     }
 
-    writeStoredGitProviders(nextProviders);
-    return SettingsService.saveSettings({
-      provider_tokens_set: buildProviderTokensSet(nextProviders),
-    });
-  }
-
-  static async deleteGitProviders(): Promise<boolean> {
+    // Clear localStorage
     writeStoredGitProviders({});
-    return SettingsService.saveSettings({ provider_tokens_set: {} });
   }
 }
