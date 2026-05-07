@@ -1,8 +1,8 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
   getTelemetryConsent,
   setTelemetryConsent,
-  trackFirstUse,
+  trackInstall,
   trackSessionStart,
   trackEvent,
   clearTelemetryData,
@@ -29,9 +29,15 @@ export interface UseTelemetryReturn {
 /**
  * Hook for managing telemetry consent and tracking.
  *
+ * TRACKING BEHAVIOR:
+ * - Install event: Sent immediately on first mount, regardless of consent status.
+ *   This is anonymous and allows us to track library adoption.
+ * - Session/custom events: Only sent after user grants consent.
+ *
  * This hook handles:
- * - Checking and setting user consent
- * - Tracking first use automatically when consent is granted
+ * - Sending install event immediately on first use
+ * - Showing consent prompt for ongoing tracking
+ * - Tracking session start when consent is granted
  * - Providing a simple API for tracking custom events
  *
  * @example
@@ -56,12 +62,26 @@ export function useTelemetry(): UseTelemetryReturn {
     getTelemetryConsent(),
   );
 
-  // Track first use and session start when consent is granted
-  // Note: trackFirstUse() has built-in deduplication via localStorage,
-  // so it's safe to call multiple times - it only sends once per install
+  // Track install immediately on first mount (regardless of consent)
+  // This only fires once per installation due to localStorage deduplication
+  //
+  // PRIVACY NOTE: This sends an anonymous install event before the user grants consent.
+  // Data collected: browser platform, user agent, referrer, origin URL, embedded status.
+  // A random PostHog distinct_id is generated (not tied to user identity).
+  // Users can prevent this by setting VITE_DO_NOT_TRACK=1 or browser's DNT setting.
+  // This approach uses "legitimate interest" under GDPR Article 6(1)(f) for basic
+  // aggregate analytics. No cross-site tracking, no advertising, no user profiles.
+  const hasTrackedInstall = useRef(false);
+  useEffect(() => {
+    if (!hasTrackedInstall.current) {
+      hasTrackedInstall.current = true;
+      trackInstall();
+    }
+  }, []);
+
+  // Track session start when consent is granted
   useEffect(() => {
     if (consent === "granted") {
-      trackFirstUse();
       trackSessionStart();
     }
   }, [consent]);

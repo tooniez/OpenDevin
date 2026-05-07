@@ -46,7 +46,7 @@ export {
   getTelemetryConsent,
   setTelemetryConsent,
   isTelemetryEnabled,
-  trackFirstUse,
+  trackInstall,
   trackSessionStart,
   trackEvent,
   clearTelemetryData,
