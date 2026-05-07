@@ -50,8 +50,9 @@
     "zustand": "5.0.12"
   },
   "scripts": {
-    "dev": "npm run dev:safe",
-    "dev:safe": "node --env-file-if-exists=.env scripts/dev-safe.mjs",
+    "dev": "npm run dev:automation",
+    "dev:automation": "node --env-file-if-exists=.env scripts/dev-with-automation.mjs",
+    "dev:minimal": "node --env-file-if-exists=.env scripts/dev-safe.mjs",
     "dev:frontend": "npm run make-i18n && cross-env VITE_MOCK_API=false react-router dev",
     "dev:mock": "npm run make-i18n && cross-env VITE_MOCK_API=true react-router dev",
     "build": "npm run build:app",
