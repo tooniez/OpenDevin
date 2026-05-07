@@ -52,6 +52,8 @@
   },
   "scripts": {
     "dev": "npm run dev:automation",
+    "dev:safe": "node --env-file-if-exists=.env scripts/dev-safe.mjs",
+    "dev:extra-backend": "node --env-file-if-exists=.env scripts/dev-extra-backend.mjs",
     "dev:automation": "node --env-file-if-exists=.env scripts/dev-with-automation.mjs",
     "dev:minimal": "node --env-file-if-exists=.env scripts/dev-safe.mjs",
     "dev:frontend": "npm run make-i18n && cross-env VITE_MOCK_API=false react-router dev",
