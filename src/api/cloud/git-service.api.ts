@@ -85,7 +85,7 @@ export async function getCloudRepositoryBranches(args: {
   params.set("provider", args.provider);
   params.set("repository", args.repository);
   params.set("limit", String(args.limit ?? 30));
-  if (args.query) params.set("query", args.query);
+  params.set("query", args.query ?? "");
   if (args.pageId) params.set("page_id", args.pageId);
 
   const data = await callCloudProxy<{
