@@ -115,7 +115,7 @@
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-prettier": "5.5.5",
     "eslint-plugin-react": "7.37.5",
-    "eslint-plugin-react-hooks": "4.6.2",
+    "eslint-plugin-react-hooks": "7.1.1",
     "eslint-plugin-unused-imports": "4.4.1",
     "husky": "9.1.7",
     "jsdom": "29.1.1",
@@ -139,7 +139,10 @@
     ]
   },
   "overrides": {
-    "dompurify": "3.3.2"
+    "dompurify": "3.3.2",
+    "eslint-config-airbnb": {
+      "eslint-plugin-react-hooks": "$eslint-plugin-react-hooks"
+    }
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
