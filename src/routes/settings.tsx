@@ -29,10 +29,6 @@ export const clientLoader = async ({ request }: Route.ClientLoaderArgs) => {
     return redirect("/settings");
   }
 
-  if (pathname === "/settings/agent-server") {
-    return null;
-  }
-
   const config = await queryClient.fetchQuery<WebClientConfig>({
     queryKey: QUERY_KEYS.WEB_CLIENT_CONFIG,
     queryFn: OptionService.getConfig,

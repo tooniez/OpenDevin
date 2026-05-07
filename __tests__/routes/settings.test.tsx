@@ -93,29 +93,8 @@ describe("settings route", () => {
       context: {},
     } as never)) as Response;
 
-    const agentServerResponse = (await clientLoader({
-      request: new Request("http://localhost/settings/agent-server"),
-      params: {},
-      context: {},
-    } as never)) as Response;
-
     expect(integrationsResponse.status).toBe(302);
     expect(integrationsResponse.headers.get("Location")).toBe("/settings");
-    expect(agentServerResponse.status).toBe(302);
-    expect(agentServerResponse.headers.get("Location")).toBe("/settings");
-    expect(getConfigSpy).not.toHaveBeenCalled();
-  });
-
-  it("skips backend config loading for the agent server settings route", async () => {
-    const getConfigSpy = vi.spyOn(OptionService, "getConfig");
-
-    const result = await clientLoader({
-      request: new Request("http://localhost/settings/agent-server"),
-      params: {},
-      context: {},
-    } as never);
-
-    expect(result).toBeNull();
     expect(getConfigSpy).not.toHaveBeenCalled();
   });
 

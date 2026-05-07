@@ -4776,23 +4776,6 @@
     "uk": "Додаток",
     "ca": "Aplicació"
   },
-  "SETTINGS$NAV_AGENT_SERVER": {
-    "en": "Agent Server",
-    "ja": "Agent Server",
-    "zh-CN": "Agent Server",
-    "zh-TW": "Agent Server",
-    "ko-KR": "Agent Server",
-    "no": "Agent Server",
-    "it": "Agent Server",
-    "pt": "Agent Server",
-    "es": "Agent Server",
-    "ar": "Agent Server",
-    "fr": "Agent Server",
-    "tr": "Agent Server",
-    "de": "Agent Server",
-    "uk": "Agent Server",
-    "ca": "Agent Server"
-  },
   "SETTINGS$NAV_SECRETS": {
     "en": "Secrets",
     "ja": "シークレット",
@@ -5660,23 +5643,6 @@
     "uk": "Налаштуйте ім'я користувача та електронну пошту, які OpenHands використовує для фіксації змін.",
     "ca": "Configura el nom d'usuari i el correu electrònic que OpenHands utilitza per confirmar els canvis."
   },
-  "SETTINGS$AGENT_SERVER_DESCRIPTION": {
-    "en": "Set the agent server URL and optional session API key that Agent Canvas should use. Start or choose a compatible server, then save here to reconnect. Deployment defaults appear automatically until you override them.",
-    "ja": "Set the agent server URL and optional session API key that Agent Canvas should use. Start or choose a compatible server, then save here to reconnect. Deployment defaults appear automatically until you override them.",
-    "zh-CN": "Set the agent server URL and optional session API key that Agent Canvas should use. Start or choose a compatible server, then save here to reconnect. Deployment defaults appear automatically until you override them.",
-    "zh-TW": "Set the agent server URL and optional session API key that Agent Canvas should use. Start or choose a compatible server, then save here to reconnect. Deployment defaults appear automatically until you override them.",
-    "ko-KR": "Set the agent server URL and optional session API key that Agent Canvas should use. Start or choose a compatible server, then save here to reconnect. Deployment defaults appear automatically until you override them.",
-    "no": "Set the agent server URL and optional session API key that Agent Canvas should use. Start or choose a compatible server, then save here to reconnect. Deployment defaults appear automatically until you override them.",
-    "it": "Set the agent server URL and optional session API key that Agent Canvas should use. Start or choose a compatible server, then save here to reconnect. Deployment defaults appear automatically until you override them.",
-    "pt": "Set the agent server URL and optional session API key that Agent Canvas should use. Start or choose a compatible server, then save here to reconnect. Deployment defaults appear automatically until you override them.",
-    "es": "Set the agent server URL and optional session API key that Agent Canvas should use. Start or choose a compatible server, then save here to reconnect. Deployment defaults appear automatically until you override them.",
-    "ar": "Set the agent server URL and optional session API key that Agent Canvas should use. Start or choose a compatible server, then save here to reconnect. Deployment defaults appear automatically until you override them.",
-    "fr": "Set the agent server URL and optional session API key that Agent Canvas should use. Start or choose a compatible server, then save here to reconnect. Deployment defaults appear automatically until you override them.",
-    "tr": "Set the agent server URL and optional session API key that Agent Canvas should use. Start or choose a compatible server, then save here to reconnect. Deployment defaults appear automatically until you override them.",
-    "de": "Set the agent server URL and optional session API key that Agent Canvas should use. Start or choose a compatible server, then save here to reconnect. Deployment defaults appear automatically until you override them.",
-    "uk": "Set the agent server URL and optional session API key that Agent Canvas should use. Start or choose a compatible server, then save here to reconnect. Deployment defaults appear automatically until you override them.",
-    "ca": "Set the agent server URL and optional session API key that Agent Canvas should use. Start or choose a compatible server, then save here to reconnect. Deployment defaults appear automatically until you override them."
-  },
   "SETTINGS$AGENT_SERVER_URL": {
     "en": "Agent server URL",
     "ja": "Agent server URL",
@@ -6050,23 +6016,6 @@
     "de": "Agent Canvas needs an agent server before it can load conversations, tools, and settings. Start or choose a compatible server, then connect it here.",
     "uk": "Agent Canvas needs an agent server before it can load conversations, tools, and settings. Start or choose a compatible server, then connect it here.",
     "ca": "Agent Canvas needs an agent server before it can load conversations, tools, and settings. Start or choose a compatible server, then connect it here."
-  },
-  "SETTINGS$AGENT_SERVER_SETTINGS_TITLE": {
-    "en": "Agent server connection",
-    "ja": "Agent server connection",
-    "zh-CN": "Agent server connection",
-    "zh-TW": "Agent server connection",
-    "ko-KR": "Agent server connection",
-    "no": "Agent server connection",
-    "it": "Agent server connection",
-    "pt": "Agent server connection",
-    "es": "Agent server connection",
-    "ar": "Agent server connection",
-    "fr": "Agent server connection",
-    "tr": "Agent server connection",
-    "de": "Agent server connection",
-    "uk": "Agent server connection",
-    "ca": "Agent server connection"
   },
   "SETTINGS$AGENT_SERVER_UNAVAILABLE_STATUS_TITLE": {
     "en": "We couldn't reach the configured server",
