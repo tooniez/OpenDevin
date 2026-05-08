@@ -343,6 +343,12 @@ export const SETTINGS_HANDLERS = [
       uptime: 0,
       idle_time: 0,
       version: "1.18.1",
+      usable_tools: [
+        "terminal",
+        "file_editor",
+        "task_tracker",
+        "browser_tool_set",
+      ],
       agents: ["CodeActAgent"],
       default_agent: "CodeActAgent",
       models: MOCK_MODELS,

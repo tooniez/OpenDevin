@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   buildStartConversationRequest,
@@ -8,11 +8,13 @@ import {
 } from "#/api/agent-server-adapter";
 import { DEFAULT_SETTINGS } from "#/services/settings";
 
-const { mockGetAgentServerWorkingDir } = vi.hoisted(() => ({
-  mockGetAgentServerWorkingDir: vi.fn(
-    () => "/workspace/project/agent-canvas",
-  ),
-}));
+const { mockGetAgentServerWorkingDir, mockIsAgentServerToolAvailable } =
+  vi.hoisted(() => ({
+    mockGetAgentServerWorkingDir: vi.fn(
+      () => "/workspace/project/agent-canvas",
+    ),
+    mockIsAgentServerToolAvailable: vi.fn(() => true),
+  }));
 
 vi.mock("#/api/agent-server-config", () => ({
   getAgentServerBaseUrl: vi.fn(() => "http://127.0.0.1:8000"),
@@ -20,6 +22,15 @@ vi.mock("#/api/agent-server-config", () => ({
   getAgentServerWorkingDir: mockGetAgentServerWorkingDir,
   getConfiguredWorkerUrls: vi.fn(() => []),
 }));
+
+vi.mock("#/api/agent-server-compatibility", () => ({
+  isAgentServerToolAvailable: mockIsAgentServerToolAvailable,
+}));
+
+beforeEach(() => {
+  mockIsAgentServerToolAvailable.mockReturnValue(true);
+});
+
 
 describe("buildStartConversationRequest", () => {
   it("uses nested settings as the source of truth and keeps SDK tool names", () => {
@@ -83,6 +94,31 @@ describe("buildStartConversationRequest", () => {
     );
     expect(payload.max_iterations).toBe(123);
     expect(payload.initial_message.content[0]?.text).toBe("hello");
+  });
+
+
+  it("omits browser_tool_set when the server does not advertise browser support", () => {
+    mockIsAgentServerToolAvailable.mockReturnValue(false);
+
+    const payload = buildStartConversationRequest({
+      settings: {
+        ...DEFAULT_SETTINGS,
+        agent_settings: {
+          ...DEFAULT_SETTINGS.agent_settings,
+          llm: { model: "nested-model" },
+        },
+      },
+    }) as {
+      agent: {
+        tools: Array<{ name: string; params: Record<string, unknown> }>;
+      };
+    };
+
+    expect(payload.agent.tools).toEqual([
+      { name: "terminal", params: {} },
+      { name: "file_editor", params: {} },
+      { name: "task_tracker", params: {} },
+    ]);
   });
 
   it("derives confirmation and security settings the same way as OpenHands", () => {

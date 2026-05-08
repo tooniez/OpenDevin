@@ -46,6 +46,8 @@
   - runtime git panels: `/api/git/changes`, `/api/git/diff`
 - Static mock verification needs a build created with `VITE_MOCK_API=true` (use `npm run build:mock`); the client must start MSW whenever that flag is enabled, even in production/static builds, otherwise routes like `/settings` and the conversations pane fall through to the static server and crash on undefined `.filter`/`.map` assumptions.
 - Frontend compatibility guard: `OptionService.getConfig()` now uses `/server_info.version` to block unsupported agent-server versions before the app loads. Git history in `software-agent-sdk` shows `/api/settings/agent-schema` and `/api/settings/conversation-schema` first shipped in tag `v1.17.0`, so Agent Canvas currently treats `< 1.17.0` (or unknown/unparseable versions) as incompatible, `useConfig` stops retrying that case, and `src/root.tsx` renders a blocking unsupported-version notice on every route.
+- `/server_info` tool capability metadata from `software-agent-sdk` PR #3028 ended up shipping as `usable_tools` (not `available_tools`). Frontend browser-tool gating should key off `usable_tools`, and still default to allowing tools when the server does not advertise tool metadata.
+
 - Useful regression tests for mock mode live in `__tests__/api/option-service.test.ts`, `__tests__/api/mock-conversation-handlers.test.ts`, and `__tests__/api/mock-settings-handlers.test.ts`.
 - Browser-verified mock-mode tour artifact was generated at `artifacts/frontend-tour.gif`.
 - Live `agent_server` compatibility quirks discovered during browser verification:

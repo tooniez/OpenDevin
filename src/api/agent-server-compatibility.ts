@@ -1,14 +1,30 @@
 /* eslint-disable max-classes-per-file */
 import { HttpError } from "@openhands/typescript-client/client/http-client";
 import { getBundledBackend } from "#/api/backend-registry/bundled";
-import { createServerClient, type ServerInfo } from "#/api/typescript-client";
+import {
+  createServerClient,
+  type ServerInfo as BaseServerInfo,
+} from "#/api/typescript-client";
 
 export const MINIMUM_SUPPORTED_AGENT_SERVER_VERSION = "1.17.0";
 const AGENT_SERVER_INFO_TIMEOUT_MS = 5000;
 
 const SEMVER_PATTERN = /^v?(\d+)\.(\d+)\.(\d+)(?:[-+].*)?$/;
 
-const getServerVersion = (serverInfo: ServerInfo): string => serverInfo.version;
+export interface AgentServerInfo extends BaseServerInfo {
+  usable_tools?: string[] | null;
+}
+
+let cachedAgentServerInfo: AgentServerInfo | null = null;
+
+const getServerVersion = (serverInfo: AgentServerInfo): string => serverInfo.version;
+
+const getAdvertisedTools = (serverInfo: AgentServerInfo | null) => {
+  if (Array.isArray(serverInfo?.usable_tools)) {
+    return serverInfo.usable_tools;
+  }
+  return null;
+};
 
 const parseSemver = (
   version: string | null,
@@ -94,21 +110,34 @@ export const isAgentServerUnavailableError = (
     "name" in error &&
     error.name === "AgentServerUnavailableError");
 
+export function clearCachedAgentServerInfo() {
+  cachedAgentServerInfo = null;
+}
+
+export function isAgentServerToolAvailable(toolName: string) {
+  const availableTools = getAdvertisedTools(cachedAgentServerInfo);
+  if (!Array.isArray(availableTools)) {
+    return true;
+  }
+  return availableTools.includes(toolName);
+}
+
 export async function ensureCompatibleAgentServer() {
   // The compatibility check is a *local* agent-server concern — it verifies
   // that the runtime hosting the GUI is at the right version. It must NEVER
   // run against the active backend, because cloud SaaS hosts don't expose
   // /api/server_info and would fail with a CORS error besides.
   const bundled = getBundledBackend();
-  let serverInfo: ServerInfo;
+  let serverInfo: AgentServerInfo;
 
   try {
-    serverInfo = await createServerClient({
+    serverInfo = (await createServerClient({
       host: bundled.host,
       sessionApiKey: bundled.apiKey || null,
       timeout: AGENT_SERVER_INFO_TIMEOUT_MS,
-    }).getServerInfo();
+    }).getServerInfo()) as AgentServerInfo;
   } catch (error) {
+    clearCachedAgentServerInfo();
     if (error instanceof HttpError) {
       throw error;
     }
@@ -117,6 +146,7 @@ export async function ensureCompatibleAgentServer() {
     throw new AgentServerUnavailableError(details);
   }
 
+  cachedAgentServerInfo = serverInfo;
   const serverVersion = getServerVersion(serverInfo);
 
   if (!isSupportedAgentServerVersion(serverVersion)) {
