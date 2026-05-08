@@ -22591,5 +22591,17 @@
     "ca": "Confirma les preferències",
     "tr": "Tercihleri onayla",
     "uk": "Підтвердити налаштування"
+  },
+  "EVENT_GROUP$ACTIONS_COMPLETED": {
+    "en": "{{count}} actions completed"
+  },
+  "EVENT_GROUP$ACTIONS_PROGRESS": {
+    "en": "{{completed}} of {{total}} actions"
+  },
+  "EVENT_GROUP$EXPAND": {
+    "en": "Expand actions"
+  },
+  "EVENT_GROUP$COLLAPSE": {
+    "en": "Collapse actions"
   }
 }
