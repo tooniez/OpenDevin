@@ -12001,6 +12001,15 @@
     "uk": "Тригер",
     "ca": "Activador"
   },
+  "AUTOMATIONS$BACKEND_UNAVAILABLE_TITLE": {
+    "en": "Automations Unavailable"
+  },
+  "AUTOMATIONS$BACKEND_UNAVAILABLE_MESSAGE": {
+    "en": "The automations backend is not available right now. Please try again later or check that the automation service is running."
+  },
+  "AUTOMATIONS$BACKEND_UNAVAILABLE_RETRY": {
+    "en": "Retry"
+  },
   "SIDEBAR$CONVERSATIONS": {
     "en": "Conversations",
     "ja": "会話",

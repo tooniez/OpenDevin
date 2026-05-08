@@ -10,6 +10,11 @@ import { callCloudProxy } from "../cloud/proxy";
 
 const AUTOMATION_BASE_PATH = "/api/automation";
 
+export interface AutomationHealthResponse {
+  status: "ok" | "error";
+  message?: string;
+}
+
 // Local automation calls go to the automation sidecar that
 // `scripts/dev-with-automation.mjs` mounts behind the bundled agent-server.
 // That sidecar authenticates via its own `VITE_AUTOMATION_API_KEY` Bearer
@@ -151,6 +156,30 @@ class AutomationService {
     enabled: boolean,
   ): Promise<Automation> {
     return AutomationService.updateAutomation(id, { enabled });
+  }
+
+  static async checkHealth(): Promise<AutomationHealthResponse> {
+    const active = getActiveBackend().backend;
+    const path = `${AUTOMATION_BASE_PATH}/health`;
+
+    try {
+      if (active.kind === "cloud") {
+        const response = await callCloudProxy<AutomationHealthResponse>({
+          backend: active,
+          method: "GET",
+          path,
+        });
+        return response;
+      }
+
+      const { data } = await localAutomationAxios.get<AutomationHealthResponse>(
+        path,
+        { timeout: 5000 },
+      );
+      return data;
+    } catch {
+      return { status: "error" };
+    }
   }
 }
 
