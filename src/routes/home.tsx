@@ -26,7 +26,7 @@ function HomeScreen() {
           className="flex flex-col gap-5 px-6 sm:max-w-full sm:min-w-full md:flex-row lg:px-0 lg:max-w-[703px] lg:min-w-[703px]"
           data-testid="home-screen-new-conversation-section"
         >
-          <RepoConnector onRepoSelection={(repo) => setSelectedRepo(repo)} />
+          <RepoConnector onRepoSelection={setSelectedRepo} />
           <NewConversation />
         </div>
       </div>
