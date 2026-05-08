@@ -22,6 +22,9 @@
 - `__tests__/vite-config.test.ts` should import `vite.config` directly under `// @vitest-environment node`; spawning plain `node -e 'import ./vite.config.ts'` is not portable across Node patch releases in CI.
 - `vitest.setup.ts` must guard DOM-specific globals (`HTMLCanvasElement`, `HTMLElement`, `window`) because some suites run in the Node environment instead of jsdom.
 - `__tests__/components/providers/posthog-wrapper.test.tsx` must wrap `PostHogWrapper` in a `QueryClientProvider`; the wrapper now reads its client from React Query context instead of importing the global singleton.
+- `src/components/shared/buttons/styled-tooltip.tsx` should keep HeroUI tooltip animations disabled in Vitest (`disableAnimation` when `import.meta.env.MODE === "test"`); otherwise full-suite runs can end with unhandled `window is not defined` rejections from `framer-motion` after jsdom teardown (seen via `recent-conversation` tests in CI).
+- `__tests__/i18n/library-namespace.test.ts` imports the full library entry and can exceed Vitest's default 5s timeout under full-suite load; keep an explicit higher timeout on that case unless the test is substantially narrowed.
+
 
 - `@openhands/typescript-client` is consumed directly from `github:OpenHands/typescript-client#6b9603f`; that package ships the needed subpath exports for `client/http-client`, `events/remote-events-list`, and `workspace/remote-workspace`. `RemoteWorkspace.gitChanges`/`gitDiff` accept an optional `{ ref }` option; agent-canvas passes `'HEAD'` so the changes panel reflects working-tree + index versus the latest commit (i.e. staged + unstaged) instead of a diff against the upstream/default branch.
 - Shared TypeScript-client adapters live in `src/api/typescript-client.ts`; prefer those helpers for agent-server-backed REST/workspace/event/VS Code calls before falling back to `open-hands-axios`.
