@@ -45,6 +45,7 @@ class V1GitService {
     if (active.kind === "cloud" && conversationUrl) {
       const params = new URLSearchParams();
       params.set("path", toAbsoluteRuntimePath(path));
+      params.set("ref", "HEAD");
       const data = await callCloudProxy<V1GitChange[]>({
         backend: active,
         method: "GET",
@@ -71,7 +72,7 @@ class V1GitService {
     const changes = await createRemoteWorkspace({
       conversationUrl,
       sessionApiKey,
-    }).gitChanges(path);
+    }).gitChanges(path, { ref: "HEAD" });
 
     if (!Array.isArray(changes)) {
       throw new Error(
@@ -99,6 +100,7 @@ class V1GitService {
     if (active.kind === "cloud" && conversationUrl) {
       const params = new URLSearchParams();
       params.set("path", toAbsoluteRuntimePath(path));
+      params.set("ref", "HEAD");
       const diff = await callCloudProxy<GitChangeDiff & { diff?: string }>({
         backend: active,
         method: "GET",
@@ -117,7 +119,7 @@ class V1GitService {
     const diff = (await createRemoteWorkspace({
       conversationUrl,
       sessionApiKey,
-    }).gitDiff(path)) as GitChangeDiff & { diff?: string };
+    }).gitDiff(path, { ref: "HEAD" })) as GitChangeDiff & { diff?: string };
 
     return {
       modified: diff.modified ?? "",

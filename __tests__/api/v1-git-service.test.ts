@@ -48,7 +48,7 @@ describe("V1GitService", () => {
         conversationUrl: "http://localhost:3000/api/conversations/123",
         sessionApiKey: "my-session-key",
       });
-      expect(mockGitChanges).toHaveBeenCalledWith("/workspace/project");
+      expect(mockGitChanges).toHaveBeenCalledWith("/workspace/project", { ref: "HEAD" });
     });
 
     test("preserves slashes in path when using workspace helper", async () => {
@@ -61,7 +61,7 @@ describe("V1GitService", () => {
         pathWithSlashes,
       );
 
-      expect(mockGitChanges).toHaveBeenCalledWith(pathWithSlashes);
+      expect(mockGitChanges).toHaveBeenCalledWith(pathWithSlashes, { ref: "HEAD" });
     });
 
     test("maps V1 git statuses to V0 format", async () => {
@@ -101,7 +101,7 @@ describe("V1GitService", () => {
         conversationUrl: "http://localhost:3000/api/conversations/123",
         sessionApiKey: "test-api-key",
       });
-      expect(mockGitDiff).toHaveBeenCalledWith("/workspace/project/file.ts");
+      expect(mockGitDiff).toHaveBeenCalledWith("/workspace/project/file.ts", { ref: "HEAD" });
     });
 
     test("preserves slashes in file path when using workspace helper", async () => {
@@ -114,7 +114,7 @@ describe("V1GitService", () => {
         filePath,
       );
 
-      expect(mockGitDiff).toHaveBeenCalledWith(filePath);
+      expect(mockGitDiff).toHaveBeenCalledWith(filePath, { ref: "HEAD" });
     });
 
     test("returns the diff data from the response", async () => {
