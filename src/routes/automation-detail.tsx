@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useParams } from "react-router";
 import { isAxiosError } from "axios";
 import { useAutomationDetail } from "#/hooks/query/use-automation-detail";
@@ -6,6 +6,7 @@ import {
   useToggleAutomation,
   useDeleteAutomation,
 } from "#/hooks/query/use-automations";
+import { useActiveBackend } from "#/contexts/active-backend-context";
 import { useNavigation } from "#/context/navigation-context";
 import { BackLink } from "#/components/features/automations/detail/back-link";
 import { DetailHeader } from "#/components/features/automations/detail/detail-header";
@@ -24,13 +25,22 @@ export default function AutomationDetail() {
   const { navigate } = useNavigation();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  // The automationId in the URL belongs to whichever backend was active
+  // when the page first mounted. If the user switches backends, the id
+  // is meaningless under the new backend — disable the query so we
+  // don't fire a request that the backend selector's redirect will
+  // immediately navigate away from anyway.
+  const active = useActiveBackend();
+  const mountedBackendId = useRef(active.backend.id);
+  const backendChanged = mountedBackendId.current !== active.backend.id;
+
   const {
     data: automation,
     isLoading,
     isError,
     error,
     refetch,
-  } = useAutomationDetail(automationId ?? "");
+  } = useAutomationDetail(backendChanged ? "" : (automationId ?? ""));
 
   const toggleMutation = useToggleAutomation();
   const deleteMutation = useDeleteAutomation();

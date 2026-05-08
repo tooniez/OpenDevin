@@ -82,6 +82,7 @@ export function BackendSelector() {
     useSwitchCloudOrganization();
   const navigate = useNavigate();
   const conversationMatch = useMatch("/conversations/:conversationId");
+  const automationDetailMatch = useMatch("/automations/:automationId");
 
   const bundledLabel = t(I18nKey.BACKEND$LOCAL_ROW);
   const personalWorkspaceLabel = t(I18nKey.BACKEND$PERSONAL_WORKSPACE);
@@ -182,15 +183,20 @@ export function BackendSelector() {
           }
         }
 
+        // The current conversation/automation belongs to the previous
+        // backend and is no longer reachable under the new one — redirect
+        // BEFORE flipping the active selection so the route change and
+        // backend change land in the same render batch. Otherwise the
+        // detail page re-renders once with the new backend (its query
+        // key includes `active.backend.id`) and react-query fires a
+        // fetch for the previous backend's id against the new backend.
+        if (conversationMatch) navigate("/");
+        else if (automationDetailMatch) navigate("/automations");
+
         // Pure backend swap (local-↔-bundled or backend-only cloud
         // selection without an org) skips `/switch` and updates active
         // directly; cloud-with-org falls through here after `/switch`.
         setActive(backendId, orgId);
-
-        // The current conversation belongs to the previous backend
-        // and is no longer reachable under the new one — redirect home
-        // so the user lands on a coherent screen.
-        if (conversationMatch) navigate("/");
       }}
       placeholder={bundledLabel}
       loading={someCloudLoading || isSwitching}
