@@ -111,7 +111,7 @@
 - The repo should include a root `LICENSE` file to satisfy the incubator-program requirements.
 - OpenHands repo bootstrap files live under `.openhands/`:
   - `.openhands/setup.sh` installs `uv` (via `curl -LsSf https://astral.sh/uv/install.sh | sh`) if not present, installs frontend dependencies with `npm ci` when needed, creates `.env` from `.env.sample` if missing, appends `VITE_WORKING_DIR` for this repo when unset, and generates `src/i18n/declaration.ts` via `npm run make-i18n`.
-  - `.openhands/pre-commit.sh` mirrors the repo's local quality gate with `npm run lint && npm run test`.
+  - `.openhands/hooks.json` registers `.openhands/hooks/on_stop.sh` as a Stop hook so OpenHands runs the local quality gate (`npm run lint` and `npm test`) before finishing.
 - GitHub PR-review automation should stay aligned with the current OpenHands repo conventions: keep the review workflow at `.github/workflows/pr-review-by-openhands.yml`, keep the companion `.github/workflows/pr-review-evaluation.yml`, auto-run on newly opened non-draft PRs and `ready_for_review` events from established contributors, still support the `review-this` label / `openhands-agent` / `all-hands-bot` reviewer triggers, use the OpenHands app LLM proxy defaults, and use the dual-trigger pattern (`pull_request` for same-repo PRs, `pull_request_target` for forks) so workflow changes can self-verify without widening fork secret exposure.
 - The repo now includes `.agents/skills/custom-codereview-guide.md`, adapted from `OpenHands/software-agent-sdk`, to force PR reviews to always leave either an APPROVE or COMMENT review instead of silently finishing with no review object.
 
