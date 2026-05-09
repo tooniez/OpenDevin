@@ -536,6 +536,8 @@ function startVite(config) {
       VITE_SESSION_API_KEY: config.sessionApiKey,
       // Automation API key for frontend to authenticate with automation backend
       VITE_AUTOMATION_API_KEY: config.localApiKey,
+      // Session API key for agent-server auth (when SESSION_API_KEY is set)
+      ...(config.sessionApiKey && { VITE_SESSION_API_KEY: config.sessionApiKey }),
     },
     color: c.magenta,
   });
