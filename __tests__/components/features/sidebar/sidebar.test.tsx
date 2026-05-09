@@ -66,6 +66,19 @@ vi.mock("#/components/shared/modals/settings/settings-modal", () => ({
   SettingsModal: () => null,
 }));
 
+vi.mock("#/components/features/backends/backend-selector", () => ({
+  BackendSelector: () => <div data-testid="backend-selector" />,
+}));
+
+vi.mock("#/components/features/sidebar/sidebar-conversation-list", () => ({
+  SidebarConversationList: () => <div data-testid="sidebar-conversation-list" />,
+}));
+
+vi.mock("#/hooks/use-settings-nav-items", () => ({
+  useSettingsNavItems: () => [],
+}));
+
+
 function renderSidebar(currentPath: string) {
   const value: NavigationContextValue = {
     currentPath,

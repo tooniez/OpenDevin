@@ -12035,6 +12035,15 @@
     "uk": "Розмови",
     "ca": "Converses"
   },
+  "SIDEBAR$SKILLS": {
+    "en": "Skills"
+  },
+  "SIDEBAR$INTEGRATIONS": {
+    "en": "Integrations"
+  },
+  "SIDEBAR$NEW_CONVERSATION": {
+    "en": "New Conversation"
+  },
   "STATUS$CONNECTING_TO_RUNTIME": {
     "en": "Connecting to runtime...",
     "zh-CN": "正在连接到运行时...",
@@ -13734,6 +13743,27 @@
     "tr": "Konuşma yok",
     "uk": "Розмов не знайдено",
     "ca": "No s'han trobat converses"
+  },
+  "CONVERSATION$N_OLDER_CONVERSATIONS": {
+    "en": "older conversations"
+  },
+  "CONVERSATION$SHOW_ALL": {
+    "en": "show all"
+  },
+  "CONVERSATION$HIDE": {
+    "en": "hide"
+  },
+  "CONVERSATION$DELETE_ALL": {
+    "en": "delete all"
+  },
+  "CONVERSATION$CONFIRM_DELETE_OLDER_TITLE": {
+    "en": "Delete older conversations"
+  },
+  "CONVERSATION$CONFIRM_DELETE_OLDER_DESC": {
+    "en": "Are you sure you want to delete {{count}} older conversations? This action cannot be undone."
+  },
+  "CONVERSATION$LOAD_MORE": {
+    "en": "Load more"
   },
   "LANDING$SELECT_GIT_REPO": {
     "en": "Select a Git project",
@@ -16505,6 +16535,23 @@
     "de": "Noch keine Arbeitsbereiche",
     "uk": "Робочих областей ще немає",
     "ca": "Encara no hi ha espais de treball"
+  },
+  "HOME$NO_WORKSPACE_OPTION": {
+    "en": "No workspace",
+    "ja": "ワークスペースなし",
+    "zh-CN": "无工作区",
+    "zh-TW": "無工作區",
+    "ko-KR": "작업 공간 없음",
+    "no": "Ingen arbeidsområde",
+    "it": "Nessuna area di lavoro",
+    "pt": "Sem espaço de trabalho",
+    "es": "Sin espacio de trabajo",
+    "ar": "بدون مساحة عمل",
+    "fr": "Aucun espace de travail",
+    "tr": "Çalışma alanı yok",
+    "de": "Kein Arbeitsbereich",
+    "uk": "Без робочої області",
+    "ca": "Sense espai de treball"
   },
   "HOME$WORKSPACE_PLACEHOLDER": {
     "en": "Select a workspace",
@@ -19395,6 +19442,15 @@
     "de": "Läuft",
     "uk": "Працює",
     "ca": "En execució"
+  },
+  "COMMON$WORKING": {
+    "en": "Working"
+  },
+  "COMMON$PAUSED": {
+    "en": "Paused"
+  },
+  "COMMON$FINISHED": {
+    "en": "Finished"
   },
   "COMMON$WAITING_FOR_SANDBOX": {
     "en": "Waiting for sandbox",
@@ -22456,6 +22512,58 @@
     "uk": "Додати бекенд",
     "ca": "Afegir backend"
   },
+  "BACKEND$MANAGE": {
+    "en": "Manage Backends",
+    "ja": "バックエンドを管理",
+    "zh-CN": "管理后端",
+    "zh-TW": "管理後端",
+    "ko-KR": "백엔드 관리",
+    "no": "Administrer backender",
+    "it": "Gestisci backend",
+    "pt": "Gerenciar backends",
+    "es": "Gestionar backends",
+    "ar": "إدارة الخوادم الخلفية",
+    "fr": "Gérer les backends",
+    "tr": "Backend'leri yönet",
+    "de": "Backends verwalten",
+    "uk": "Керувати бекендами",
+    "ca": "Gestiona els backends"
+  },
+  "BACKEND$MANAGE_TITLE": {
+    "en": "Manage backends",
+    "ja": "バックエンドを管理",
+    "zh-CN": "管理后端",
+    "zh-TW": "管理後端",
+    "ko-KR": "백엔드 관리",
+    "no": "Administrer backender",
+    "it": "Gestisci backend",
+    "pt": "Gerenciar backends",
+    "es": "Gestionar backends",
+    "ar": "إدارة الخوادم الخلفية",
+    "fr": "Gérer les backends",
+    "tr": "Backend'leri yönet",
+    "de": "Backends verwalten",
+    "uk": "Керувати бекендами",
+    "ca": "Gestiona els backends"
+  },
+  "BACKEND$MANAGE_EMPTY": {
+    "en": "No extra backends added yet.",
+    "ja": "追加されたバックエンドはまだありません。",
+    "zh-CN": "尚未添加额外后端。",
+    "zh-TW": "尚未新增其他後端。",
+    "ko-KR": "아직 추가된 백엔드가 없습니다.",
+    "no": "Ingen ekstra backender er lagt til ennå.",
+    "it": "Nessun backend aggiuntivo ancora presente.",
+    "pt": "Nenhum backend adicional foi adicionado ainda.",
+    "es": "Aún no se han añadido backends adicionales.",
+    "ar": "لم تتم إضافة أي خوادم خلفية إضافية بعد.",
+    "fr": "Aucun backend supplémentaire n'a encore été ajouté.",
+    "tr": "Henüz ek bir backend eklenmedi.",
+    "de": "Es wurden noch keine zusätzlichen Backends hinzugefügt.",
+    "uk": "Додаткові бекенди ще не додано.",
+    "ca": "Encara no s'han afegit backends addicionals."
+  },
+
   "BACKEND$ADD_TITLE": {
     "en": "Add a backend",
     "ja": "バックエンドを追加",
@@ -22676,6 +22784,23 @@
     "de": "Entfernen",
     "uk": "Видалити",
     "ca": "Eliminar"
+  },
+  "BACKEND$REMOVE_CONFIRMATION": {
+    "en": "Remove backend \"{{name}}\"? If it is active, the app will switch back to Local.",
+    "ja": "バックエンド \"{{name}}\" を削除しますか？ アクティブな場合、アプリはローカルに戻ります。",
+    "zh-CN": "要移除后端“{{name}}”吗？如果它当前处于活动状态，应用将切换回本地。",
+    "zh-TW": "要移除後端「{{name}}」嗎？如果它目前為使用中，應用程式將切換回本機。",
+    "ko-KR": "백엔드 \"{{name}}\" 를 제거하시겠습니까? 현재 활성 상태라면 앱은 로컬로 전환됩니다.",
+    "no": "Fjern backend \"{{name}}\"? Hvis den er aktiv, bytter appen tilbake til Lokal.",
+    "it": "Rimuovere il backend \"{{name}}\"? Se è attivo, l'app tornerà a Locale.",
+    "pt": "Remover o backend \"{{name}}\"? Se ele estiver ativo, o aplicativo voltará para Local.",
+    "es": "¿Eliminar el backend \"{{name}}\"? Si está activo, la aplicación volverá a Local.",
+    "ar": "هل تريد إزالة الخادم الخلفي \"{{name}}\"؟ إذا كان نشطًا، فسيعود التطبيق إلى المحلي.",
+    "fr": "Supprimer le backend \"{{name}}\" ? S'il est actif, l'application reviendra sur Local.",
+    "tr": "\"{{name}}\" backend'i kaldırılsın mı? Etkinse uygulama yeniden Yerel'e döner.",
+    "de": "Backend \"{{name}}\" entfernen? Falls er aktiv ist, wechselt die App zurück zu Lokal.",
+    "uk": "Видалити бекенд \"{{name}}\"? Якщо він активний, застосунок повернеться до локального режиму.",
+    "ca": "Vols eliminar el backend \"{{name}}\"? Si és l'actiu, l'aplicació tornarà a Local."
   },
   "BACKEND$EDIT": {
     "en": "Edit",

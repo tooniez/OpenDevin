@@ -1,5 +1,4 @@
 import KeyIcon from "#/icons/key.svg?react";
-import LightbulbIcon from "#/icons/lightbulb.svg?react";
 import LockIcon from "#/icons/lock.svg?react";
 import MemoryIcon from "#/icons/memory_icon.svg?react";
 import ServerProcessIcon from "#/icons/server-process.svg?react";
@@ -32,11 +31,6 @@ export const OSS_NAV_ITEMS: SettingsNavItem[] = [
     icon: <ServerProcessIcon width={22} height={22} />,
     to: "/settings/mcp",
     text: "SETTINGS$NAV_MCP",
-  },
-  {
-    icon: <LightbulbIcon width={22} height={22} />,
-    to: "/settings/skills",
-    text: "SETTINGS$NAV_SKILLS",
   },
   {
     icon: <SettingsGearIcon width={22} height={22} />,

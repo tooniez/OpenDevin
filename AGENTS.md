@@ -33,6 +33,8 @@
 - Shared TypeScript-client adapters live in `src/api/typescript-client.ts`; prefer those helpers for agent-server-backed REST/workspace/event/VS Code calls before falling back to `open-hands-axios`.
 - Local verification/build gotchas:
   - `npm run typecheck` assumes generated translation types exist; run `npm run make-i18n` first if `src/i18n/declaration.ts` is missing.
+- Merge note: `main` removed the old project-management integration subcomponents/hooks and their related feature-flag/i18n surface. If a feature branch still keeps the top-level `/integrations` git-token page, retain `src/routes/git-settings.tsx` plus the git-provider token inputs/hooks, but do **not** blindly restore `src/components/features/settings/project-management/*` or the old integration mutation/query hooks unless the corresponding option types and i18n keys are also reintroduced.
+
 - The OSS cleanup removed hosted-only auth, org, account, onboarding, and invitation codepaths, routes, and tests. Keep `integrations`, `git-settings`, `secrets`, MCP settings, and other local/self-hosted flows intact when simplifying OSS behavior.
 - When merging main into this branch, keep the new agent-server compatibility bootstrap in `src/root.tsx`, but do not reintroduce hosted-only invitation cleanup or marketing CTA chrome in the OSS user menu; the OSS account menu should just render settings links plus Docs.
 
@@ -80,6 +82,10 @@
   2. **localStorage** (`openhands-agent-server-git-provider-tokens`) - for frontend git API calls (repo search, branches, etc.)
      The `addGitProvider` method stores to server FIRST (must succeed), then updates localStorage. This ensures server-side persistence is the source of truth.
 - Agent server connection settings now live at `Settings > Agent Server` (`/settings/agent-server`). The page reads deployment defaults from `VITE_BACKEND_BASE_URL` / `VITE_SESSION_API_KEY`, saves user overrides in the `openhands-agent-server-config` localStorage key, and must stay reachable even when the backend compatibility probe fails so users can recover from missing or wrong backend configuration.
+- Backend/footer actions that launch modals from inside a dropdown or popover should intercept `onMouseDown` to keep the menu mounted, then perform the actual open on `onClick`. Current examples: `Add backend` / `Manage backends` in `src/components/features/backends/backend-selector.tsx`, plus the mirrored workspace-footer buttons in `src/components/features/conversation-panel/new-conversation-button.tsx`.
+- `BackendSelector`'s cloud-org switch paths should never rethrow from the dropdown `onChange` handler: unexpected non-Axios failures need a generic error toast instead of an unhandled promise rejection, and the malformed `(cloud backend, null org)` self-heal path should fall back to the bundled backend if `/switch` fails.
+- `NewConversationButton` should support keyboard dismissal (`Escape`) for its inline popover, while still keeping the popover open when its modal children (`FolderBrowserModal`, `ManageWorkspacesModal`) are active.
+
 
 - README expectation: keep the first section as a concrete, chronological from-scratch quickstart for running this frontend against a real `openhands-agent-server` (clone, install uv, optional `.env`, run `npm run dev`).
 - Keep README user-focused and move contributor/developer-specific workflows (`dev:safe`, mock mode, detailed env vars/build-test notes) into `DEVELOPMENT.md`.
@@ -138,13 +144,13 @@
   - `src/components/conversation-events/chat/messages.tsx` is the only consumer; the grouping is transparent to upstream code. Coverage lives in `__tests__/components/conversation-events/chat/group-events.test.ts` (pure logic, including thought hoisting) and `__tests__/components/conversation-events/chat/event-message-components/event-group.test.tsx` (rendering/interaction).
 
 - Home page workspace UX (agent-server backend):
-  - `RepoConnector` no longer renders tab UI, but it still must branch on the active backend: local/bundled backends render `WorkspaceSelectionForm`, while cloud backends render the repo path (`RepositorySelectionForm` when git providers exist, otherwise `ConnectToProviderMessage`). Keep `src/routes/home.tsx` passing through the selected repo state so `TaskSuggestions` can still filter on cloud repo picks.
+  - `RepoConnector` no longer renders a tabbed launcher; it just renders `WorkspaceSelectionForm` because this build only ever talks to an agent-server backend (no cloud backend is wired up). The old `LaunchTabs` component was removed; if a cloud backend is ever supported again, branch on backend mode in `RepoConnector` and render `RepositorySelectionForm` for that path.
   - `FolderBrowserModal`'s "Use this folder" button adds **only the currently navigated directory** as a single workspace (named by its basename). It no longer iterates `subdirs` and adds each child as a separate workspace.
   - The `WorkspaceDropdown` sticky footer now exposes both "+ Add Workspace" (opens the folder browser) and "Manage Workspaces" (opens `ManageWorkspacesModal`, which lets users remove individual workspaces via `useWorkspacesStore.removeWorkspace`). The Manage button is hidden when there are no workspaces yet.
+  - The sidebar "+ New Conversation" trigger (`NewConversationButton` in `src/components/features/conversation-panel/`) opens a popover that is a **flat list**, not the home-screen combobox: a leading "No workspace" entry plus one entry per stored workspace, each clicking through to `useCreateConversation` immediately (no separate Launch button). It mirrors the dropdown footer actions/pattern (`+ Add Workspace`, `Manage Workspaces`) locally rather than embedding `WorkspaceDropdown` itself.
   - `useResolvedWorkspaces()` now returns `isLoading` / `isError` for parent-directory scans; `WorkspaceSelectionForm` should surface that state (status text and disabling the empty dropdown while parent results are still loading) instead of assuming the merged list is immediately ready.
   - `ManageWorkspacesModal` should require a confirmation step before removing either a saved workspace or a workspace parent; parent removals should mention the child-workspace impact, and tests should assert both the confirmation flow and that removing the selected workspace clears the launch selection.
   - In `useWorkspacesStore`, keep `clearWorkspaces()` scoped to literal workspaces only; use explicit helpers like `clearWorkspaceParents()` / `clearAll()` for broader resets so future callers do not accidentally wipe parent registrations.
-
 
 - Library packaging notes:
   - Public npm entrypoints now come from `src/index.ts` → `src/lib/index.ts`, with domain barrels under `src/components/{conversation,terminal,browser,files,settings,sidebar}/index.ts`.

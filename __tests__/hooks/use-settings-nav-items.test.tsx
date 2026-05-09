@@ -57,7 +57,7 @@ describe("useSettingsNavItems", () => {
     expect(paths).toContain("/settings/secrets");
   });
 
-  it("never lists the removed /settings/integrations entry", () => {
+  it("never lists removed settings sub-pages", () => {
     useConfigMock.mockReturnValue({ data: createConfig() });
 
     const { result } = renderHook(() => useSettingsNavItems());
@@ -65,6 +65,8 @@ describe("useSettingsNavItems", () => {
       .filter((item) => item.type === "item")
       .map((item) => (item.type === "item" ? item.item.to : null));
 
+    expect(paths).not.toContain("/settings/agent-server");
     expect(paths).not.toContain("/settings/integrations");
+    expect(paths).not.toContain("/settings/skills");
   });
 });
