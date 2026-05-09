@@ -7,6 +7,7 @@ import { cn, getDisplayedTaskGroups, getTotalTaskCount } from "#/utils/utils";
 import { I18nKey } from "#/i18n/declaration";
 import { GitRepository } from "#/types/git";
 import { Typography } from "#/ui/typography";
+import { useActiveBackend } from "#/contexts/active-backend-context";
 
 interface TaskSuggestionsProps {
   filterFor?: GitRepository | null;
@@ -15,8 +16,11 @@ interface TaskSuggestionsProps {
 export function TaskSuggestions({ filterFor }: TaskSuggestionsProps) {
   const { t } = useTranslation("openhands");
   const [isExpanded, setIsExpanded] = useState(false);
+  const isCloud = useActiveBackend().backend.kind === "cloud";
 
   const { data: tasks, isLoading } = useSuggestedTasks();
+
+  if (!isCloud) return null;
 
   const suggestedTasks = filterFor
     ? tasks?.filter(
