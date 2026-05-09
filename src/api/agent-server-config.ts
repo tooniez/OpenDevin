@@ -182,8 +182,8 @@ export function getAgentServerHeaders(): Record<string, string> {
  * Returns whether public skills from the OpenHands extensions marketplace
  * (https://github.com/OpenHands/extensions) should be loaded.
  *
- * Defaults to true. Set VITE_LOAD_PUBLIC_SKILLS=false to disable.
+ * Defaults to false. Set VITE_LOAD_PUBLIC_SKILLS=true to enable.
  */
 export function shouldLoadPublicSkills(): boolean {
-  return import.meta.env.VITE_LOAD_PUBLIC_SKILLS !== "false";
+  return import.meta.env.VITE_LOAD_PUBLIC_SKILLS === "true";
 }
