@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * Development Stack with Automation Service
  *
@@ -38,10 +37,10 @@
  *   as OPENHANDS_AUTOMATION_API_KEY, making it available to agents in conversations.
  */
 
-import { spawn, execSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { mkdirSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { homedir } from "node:os";
 import { setTimeout as delay } from "node:timers/promises";
 import process from "node:process";
@@ -271,12 +270,12 @@ function buildConfig(args, env = process.env) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 function commandExists(cmd) {
-  try {
-    execSync(`command -v ${cmd}`, { stdio: "pipe" });
-    return true;
-  } catch {
-    return false;
-  }
+  const result =
+    process.platform === "win32"
+      ? spawnSync("where.exe", [cmd], { stdio: "pipe" })
+      : spawnSync("sh", ["-c", `command -v ${cmd}`], { stdio: "pipe" });
+
+  return result.status === 0;
 }
 
 function checkPrerequisites() {
@@ -717,7 +716,8 @@ export {
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Check if this module is the main entry point
-const isMainModule = import.meta.url === `file://${process.argv[1]}`;
+const isMainModule =
+  process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
 
 if (isMainModule) {
   main().catch((err) => {
