@@ -1,4 +1,4 @@
-import { ensureCompatibleAgentServer } from "../agent-server-compatibility";
+import { loadAgentServerInfo } from "../agent-server-compatibility";
 import { createLlmMetadataClient } from "../typescript-client";
 import { ModelsResponse, WebClientConfig } from "./option.types";
 
@@ -31,7 +31,7 @@ class OptionService {
   }
 
   static async getConfig(): Promise<WebClientConfig> {
-    await ensureCompatibleAgentServer();
+    await loadAgentServerInfo();
 
     return {
       posthog_client_key: null,

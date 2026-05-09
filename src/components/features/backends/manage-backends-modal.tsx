@@ -1,6 +1,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "@tanstack/react-query";
 
+import { type Backend } from "#/api/backend-registry/types";
+import { createServerClient } from "#/api/typescript-client";
 import { BrandButton } from "#/components/features/settings/brand-button";
 import { ConfirmationModal } from "#/components/shared/modals/confirmation-modal";
 import { ModalBackdrop } from "#/components/shared/modals/modal-backdrop";
@@ -8,6 +11,35 @@ import { useActiveBackendContext } from "#/contexts/active-backend-context";
 import CloseIcon from "#/icons/close.svg?react";
 import { I18nKey } from "#/i18n/declaration";
 import { cn } from "#/utils/utils";
+
+function BackendVersion({ backend }: { backend: Backend }) {
+  const { t } = useTranslation("openhands");
+  const { data: version } = useQuery({
+    queryKey: ["backend-version", backend.host, backend.apiKey],
+    queryFn: async () => {
+      const info = await createServerClient({
+        host: backend.host,
+        sessionApiKey: backend.apiKey || null,
+        timeout: 5000,
+      }).getServerInfo();
+      return info.version ?? null;
+    },
+    retry: false,
+    staleTime: 60_000,
+    enabled: backend.kind === "local",
+  });
+
+  if (!version) return null;
+
+  return (
+    <span
+      className="text-xs text-[#7E848C] truncate"
+      data-testid={`manage-backends-version-${backend.name}`}
+    >
+      {t(I18nKey.BACKEND$VERSION_LABEL, { version })}
+    </span>
+  );
+}
 
 interface ManageBackendsModalProps {
   onClose: () => void;
@@ -72,6 +104,7 @@ export function ManageBackendsModal({ onClose }: ManageBackendsModalProps) {
                       <span className="text-xs text-[#A3A3A3] truncate">
                         {backend.host}
                       </span>
+                      <BackendVersion backend={backend} />
                     </div>
                     <span className="px-2 py-1 rounded-full text-[11px] uppercase tracking-wide text-[#D6D6D6] bg-[#1F1F1F] border border-[#4B4E57]">
                       {backend.kind === "cloud"
