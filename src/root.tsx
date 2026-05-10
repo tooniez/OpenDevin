@@ -11,11 +11,18 @@ import "./index.css";
 import React from "react";
 import { Toaster } from "react-hot-toast";
 import { isAgentServerUnavailableError } from "#/api/agent-server-compatibility";
-import { ManageBackendsModal } from "#/components/features/backends/manage-backends-modal";
 import { TelemetryConsentBanner } from "#/components/features/analytics/telemetry-consent-banner";
 import { LoadingSpinner } from "#/components/shared/loading-spinner";
 import { useConfig } from "#/hooks/query/use-config";
 import { AgentServerUIRoot } from "#/components/providers";
+
+// Only rendered when the active backend is unreachable; keep the modal out of
+// the default root graph.
+const ManageBackendsModal = React.lazy(() =>
+  import("#/components/features/backends/manage-backends-modal").then((m) => ({
+    default: m.ManageBackendsModal,
+  })),
+);
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -54,18 +61,11 @@ function AgentServerBootstrapLoading() {
 
 /**
  * When the active backend is unreachable, the rest of the app cannot
- * render (most queries chain off of `/server_info`). Instead of the
- * old full-screen onboarding error, drop a minimal placeholder behind
- * the Manage Backends modal so the user can edit, add, or pick another
- * backend right away. Closing the modal just reopens it — the only way
- * out is a successful reconnection (the modal triggers a refetch via
- * its health probe and the user can reload).
+ * render (most queries chain off of `/server_info`). Drop a minimal
+ * placeholder behind the Manage Backends modal so the user can edit,
+ * add, or pick another backend right away.
  */
 function MissingAgentServerScreen() {
-  // Provide a no-op `onClose` so the user can't dismiss the modal into
-  // a broken empty state. Editing/adding a backend reseeds the registry
-  // and the next config refetch (via React Query's natural retry on
-  // mount or a manual reload) recovers the app.
   const noop = React.useCallback(() => {}, []);
 
   return (
@@ -73,7 +73,9 @@ function MissingAgentServerScreen() {
       data-testid="agent-server-onboarding-screen"
       className="min-h-screen bg-base"
     >
-      <ManageBackendsModal onClose={noop} />
+      <React.Suspense fallback={null}>
+        <ManageBackendsModal onClose={noop} />
+      </React.Suspense>
     </main>
   );
 }

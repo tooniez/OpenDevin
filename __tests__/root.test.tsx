@@ -121,9 +121,9 @@ describe("App root agent-server availability guard", () => {
     // modal additionally probes /server_info per registered backend
     // for its status dot + version label, so the request count is
     // bounded but greater than the single config probe.
-    expect(
-      screen.getByTestId("manage-backends-modal"),
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId("manage-backends-modal")).toBeInTheDocument();
+    });
     expect(serverInfoRequests).toBeGreaterThanOrEqual(1);
     expect(screen.queryByTestId("app-outlet")).not.toBeInTheDocument();
   });
