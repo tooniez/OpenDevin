@@ -3,7 +3,7 @@
 This guide walks through running Agent Canvas on a virtual machine (VM) so you
 (and only you) can reach it from anywhere via a browser.
 
-> [!CAUTION]
+> [!WARNING]
 > Agent Canvas drives an agent that can read and write the filesystem of the
 > machine it runs on, execute shell commands, and reach the network. Anyone who
 > can talk to the agent server can do the same. **Treat the VM as you would any
