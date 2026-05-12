@@ -54,7 +54,6 @@ import useMetricsStore from "#/stores/metrics-store";
 import { useConversationHistory } from "#/hooks/query/use-conversation-history";
 import { setConversationState } from "#/utils/conversation-local-storage";
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export type WebSocketConnectionState =
   | "CONNECTING"
   | "OPEN"
@@ -343,7 +342,6 @@ export function ConversationWebSocketProvider({
             setPlanContent(fileContent);
           },
           onError: (error) => {
-            // eslint-disable-next-line no-console
             console.warn("Failed to read conversation file:", error);
           },
         },
@@ -498,7 +496,6 @@ export function ConversationWebSocketProvider({
           }
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.warn("Failed to parse WebSocket message as JSON:", error);
       }
     },
@@ -658,7 +655,6 @@ export function ConversationWebSocketProvider({
                         setPlanContent(fileContent);
                       },
                       onError: (error) => {
-                        // eslint-disable-next-line no-console
                         console.warn(
                           "Failed to read conversation file:",
                           error,
@@ -672,7 +668,6 @@ export function ConversationWebSocketProvider({
           }
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.warn("Failed to parse WebSocket message as JSON:", error);
       }
     },

@@ -60,7 +60,6 @@ async function withRetry<T>(
 ): Promise<T> {
   for (let attempt = 0; attempt < maxRetries; attempt += 1) {
     try {
-      // eslint-disable-next-line no-await-in-loop
       return await fn();
     } catch (error) {
       if (attempt >= maxRetries - 1) {
@@ -68,7 +67,7 @@ async function withRetry<T>(
       }
 
       const delay = baseDelayMs * 2 ** attempt;
-      // eslint-disable-next-line no-await-in-loop
+
       await new Promise<void>((resolve) => {
         setTimeout(resolve, delay);
       });

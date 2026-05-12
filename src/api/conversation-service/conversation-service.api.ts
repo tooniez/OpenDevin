@@ -104,7 +104,7 @@ class ConversationService {
       index += FILE_UPLOAD_CONCURRENCY
     ) {
       const batch = files.slice(index, index + FILE_UPLOAD_CONCURRENCY);
-      // eslint-disable-next-line no-await-in-loop
+
       results.push(...(await Promise.all(batch.map(uploadFile))));
     }
 

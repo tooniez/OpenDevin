@@ -109,7 +109,6 @@ export function useResolvedWorkspaces(): UseResolvedWorkspacesResult {
     });
 
     return Array.from(byPath.values());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaces, workspaceParents, queriesFingerprint]);
 
   return { workspaces: merged, isLoading, isError };
