@@ -16,7 +16,8 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const BUILD_DIR = join(__dirname, "..", "build", "client");
+// Build output is in build/ (not build/client/) - see react-router.config.ts unpackClientDirectory
+const BUILD_DIR = join(__dirname, "..", "build");
 
 // Check for help flag first
 const args = process.argv.slice(2);
