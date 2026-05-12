@@ -5,7 +5,7 @@
   - `option-service` fabricates an OSS web-client config and reads models/providers from `agent_server` LLM endpoints.
   - `settings-service` uses agent server `/api/settings` endpoints for persistence; reads schemas from `/api/settings/agent-schema` and `/api/settings/conversation-schema`, fetches settings with optional `X-Expose-Secrets: encrypted` header for conversation start payloads, and saves settings via PATCH with diffs.
   - `agent-server-conversation-service`, `event-service`, `agent-server-git-service`, and `skills-service` are mapped directly to `agent_server` REST endpoints.
-  - `open-hands-axios` injects the optional `X-Session-API-Key` from env/local config for all requests.
+  - Shared REST calls should use `createHttpClient()` / typed adapters from `src/api/typescript-client.ts`, which handle backend URL and optional `X-Session-API-Key` resolution.
 - Supported env vars for deployment:
   - `VITE_BACKEND_BASE_URL` for the agent server base URL.
   - `VITE_SESSION_API_KEY` for optional session auth.
@@ -30,7 +30,7 @@
 - `__tests__/i18n/library-namespace.test.ts` imports the full library entry and can exceed Vitest's default 5s timeout under full-suite load; keep an explicit higher timeout on that case unless the test is substantially narrowed.
 
 - `@openhands/typescript-client` is consumed directly from `github:OpenHands/typescript-client#6b9603f`; that package ships the needed subpath exports for `client/http-client`, `events/remote-events-list`, and `workspace/remote-workspace`. `RemoteWorkspace.gitChanges`/`gitDiff` accept an optional `{ ref }` option; agent-canvas passes `'HEAD'` so the changes panel reflects working-tree + index versus the latest commit (i.e. staged + unstaged) instead of a diff against the upstream/default branch.
-- Shared TypeScript-client adapters live in `src/api/typescript-client.ts`; prefer those helpers for agent-server-backed REST/workspace/event/VS Code calls before falling back to `open-hands-axios`.
+- Shared TypeScript-client adapters live in `src/api/typescript-client.ts`; prefer those helpers for agent-server-backed REST/workspace/event/VS Code calls instead of adding new bespoke axios clients.
 - Local verification/build gotchas:
   - `npm run typecheck` assumes generated translation types exist; run `npm run make-i18n` first if `src/i18n/declaration.ts` is missing.
 - Merge note: `main` removed the old project-management integration subcomponents/hooks and their related feature-flag/i18n surface. If a feature branch still keeps the top-level `/integrations` git-token page, retain `src/routes/git-settings.tsx` plus the git-provider token inputs/hooks, but do **not** blindly restore `src/components/features/settings/project-management/*` or the old integration mutation/query hooks unless the corresponding option types and i18n keys are also reintroduced.
