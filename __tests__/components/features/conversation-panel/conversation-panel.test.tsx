@@ -1,7 +1,6 @@
 import {
   screen,
   waitFor,
-  waitForElementToBeRemoved,
   within,
 } from "@testing-library/react";
 import {
@@ -33,7 +32,7 @@ vi.mock("#/hooks/mutation/use-unified-stop-conversation", () => ({
 
 // Helper to create complete AppConversation mock data
 // Default timestamps use "now" so conversations are considered recent and
-// rendered eagerly by the panel (which hides items older than ~1h by default).
+// rendered eagerly by the panel.
 const createMockConversation = (
   overrides: Partial<AppConversation> = {},
 ): AppConversation => ({
@@ -163,17 +162,57 @@ describe("ConversationPanel", () => {
 
     renderWithProviders(<CompactRouterStub />);
 
-    const skeletons = await screen.findAllByTestId(
-      "conversation-card-skeleton",
-    );
-    await waitForElementToBeRemoved(skeletons);
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId("conversation-card-skeleton-compact"),
+      ).not.toBeInTheDocument();
+    });
 
     expect(
       screen.queryByText("CONVERSATION$NO_CONVERSATIONS"),
     ).not.toBeInTheDocument();
   });
 
-  it("should handle an error when fetching conversations", async () => {
+  it("hides closed conversations in compact mode", async () => {
+    vi.spyOn(
+      AgentServerConversationService,
+      "searchConversations",
+    ).mockResolvedValue({
+      items: [
+        createMockConversation({
+          id: "running",
+          title: "Running Conversation",
+          execution_status: ExecutionStatus.RUNNING,
+        }),
+        createMockConversation({
+          id: "closed",
+          title: "Closed Conversation",
+          execution_status: ExecutionStatus.PAUSED,
+        }),
+      ],
+      next_page_id: null,
+    });
+
+    const CompactRouterStub = createRoutesStub([
+      {
+        Component: () => <ConversationPanel compact />,
+        path: "/",
+      },
+      {
+        Component: () => null,
+        path: "/conversations/:conversationId",
+      },
+    ]);
+
+    renderWithProviders(<CompactRouterStub />);
+
+    expect(
+      await screen.findByLabelText("Running Conversation"),
+    ).toBeInTheDocument();
+    expect(screen.queryByLabelText("Closed Conversation")).not.toBeInTheDocument();
+  });
+
+  it("should not render fetch errors in the conversation panel", async () => {
     const searchConversationsSpy = vi.spyOn(
       AgentServerConversationService,
       "searchConversations",
@@ -184,8 +223,11 @@ describe("ConversationPanel", () => {
 
     renderConversationPanel();
 
-    const error = await screen.findByText("Failed to fetch conversations");
-    expect(error).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.queryByText("Failed to fetch conversations"),
+      ).not.toBeInTheDocument();
+    });
   });
 
   it("should cancel deleting a conversation", async () => {
@@ -332,7 +374,7 @@ describe("ConversationPanel", () => {
     expect(newCards).toHaveLength(3);
   });
 
-  it("keeps invalid timestamps recent and only shows load more after expanding older conversations", async () => {
+  it("keeps invalid timestamps recent and shows older conversations by default", async () => {
     const now = Date.now();
     const minutesAgo = (minutes: number) =>
       new Date(now - minutes * 60 * 1000).toISOString();
@@ -385,17 +427,13 @@ describe("ConversationPanel", () => {
     expect(await screen.findByText("Recent Conversation")).toBeInTheDocument();
     expect(screen.getByText("Invalid Timestamp")).toBeInTheDocument();
     expect(screen.getByText("Missing Timestamp")).toBeInTheDocument();
-    expect(screen.queryByText("Older Conversation")).not.toBeInTheDocument();
+    expect(screen.getByText("Older Conversation")).toBeInTheDocument();
     expect(
       screen.getByTestId("older-conversations-summary"),
     ).toBeInTheDocument();
     expect(
-      screen.queryByTestId("load-more-conversations"),
-    ).not.toBeInTheDocument();
-
-    await user.click(screen.getByTestId("toggle-older-conversations"));
-
-    expect(await screen.findByText("Older Conversation")).toBeInTheDocument();
+      screen.getByTestId("load-more-conversations"),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByTestId("load-more-conversations"));
 
@@ -1014,7 +1052,7 @@ describe("ConversationPanel", () => {
     const olderIso = () =>
       new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
 
-    it("hides conversations older than 1h behind a summary line", async () => {
+    it("shows conversations older than 1h and includes a summary line", async () => {
       vi.spyOn(
         AgentServerConversationService,
         "searchConversations",
@@ -1042,18 +1080,16 @@ describe("ConversationPanel", () => {
       renderConversationPanel();
 
       const cards = await screen.findAllByTestId("conversation-card");
-      expect(cards).toHaveLength(1);
-      expect(within(cards[0]).getByText("Recent")).toBeInTheDocument();
+      expect(cards).toHaveLength(3);
+      expect(screen.getByText("Recent")).toBeInTheDocument();
+      expect(screen.getByText("Old 1")).toBeInTheDocument();
+      expect(screen.getByText("Old 2")).toBeInTheDocument();
 
       const summary = screen.getByTestId("older-conversations-summary");
-      expect(summary).toHaveTextContent("2");
-      expect(summary).toHaveTextContent("CONVERSATION$N_OLDER_CONVERSATIONS");
+      expect(summary).toHaveTextContent("SIDEBAR$CONVERSATIONS");
       expect(
-        within(summary).getByTestId("toggle-older-conversations"),
-      ).toHaveTextContent("CONVERSATION$SHOW_ALL");
-      expect(
-        within(summary).getByTestId("delete-older-conversations"),
-      ).toHaveTextContent("CONVERSATION$DELETE_ALL");
+        within(summary).getByTestId("older-conversations-filter-toggle"),
+      ).toBeInTheDocument();
     });
 
     it("does not render the summary when no conversations are older than 1h", async () => {
@@ -1084,7 +1120,7 @@ describe("ConversationPanel", () => {
       ).not.toBeInTheDocument();
     });
 
-    it("toggles older conversations visibility via the show-all link", async () => {
+    it("toggles older conversations visibility via the filter dropdown", async () => {
       const user = userEvent.setup();
       vi.spyOn(
         AgentServerConversationService,
@@ -1108,19 +1144,67 @@ describe("ConversationPanel", () => {
       renderConversationPanel();
 
       let cards = await screen.findAllByTestId("conversation-card");
+      expect(cards).toHaveLength(2);
+
+      await user.click(screen.getByTestId("older-conversations-filter-toggle"));
+      let toggle = await screen.findByTestId("toggle-older-conversations");
+      expect(toggle).toHaveTextContent("CONVERSATION$HIDE");
+      await user.click(toggle);
+
+      cards = await screen.findAllByTestId("conversation-card");
       expect(cards).toHaveLength(1);
 
-      const toggle = screen.getByTestId("toggle-older-conversations");
+      await user.click(screen.getByTestId("older-conversations-filter-toggle"));
+      toggle = await screen.findByTestId("toggle-older-conversations");
       expect(toggle).toHaveTextContent("CONVERSATION$SHOW_ALL");
       await user.click(toggle);
-
       cards = await screen.findAllByTestId("conversation-card");
       expect(cards).toHaveLength(2);
-      expect(toggle).toHaveTextContent("CONVERSATION$HIDE");
+    });
 
-      await user.click(toggle);
-      cards = await screen.findAllByTestId("conversation-card");
-      expect(cards).toHaveLength(1);
+    it("keeps repo/branch metadata hidden by default and toggles it from the filter dropdown", async () => {
+      const user = userEvent.setup();
+      vi.spyOn(
+        AgentServerConversationService,
+        "searchConversations",
+      ).mockResolvedValue({
+        items: [
+          createMockConversation({
+            id: "recent",
+            title: "Recent",
+            updated_at: recentIso(),
+          }),
+          createMockConversation({
+            id: "old-with-repo",
+            title: "Old With Repo",
+            updated_at: olderIso(),
+            selected_repository: "openhands/agent-canvas",
+            selected_branch: "main",
+            git_provider: "github",
+          }),
+        ],
+        next_page_id: null,
+      });
+
+      renderConversationPanel();
+      await screen.findByText("Old With Repo");
+
+      expect(
+        screen.queryByTestId("conversation-card-selected-repository"),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId("conversation-card-selected-branch"),
+      ).not.toBeInTheDocument();
+
+      await user.click(screen.getByTestId("older-conversations-filter-toggle"));
+      await user.click(screen.getByTestId("toggle-repo-branch-metadata"));
+
+      expect(
+        await screen.findByTestId("conversation-card-selected-repository"),
+      ).toHaveTextContent("openhands/agent-canvas");
+      expect(
+        await screen.findByTestId("conversation-card-selected-branch"),
+      ).toHaveTextContent("main");
     });
 
     it("delete-all confirms then deletes every older conversation", async () => {
@@ -1156,6 +1240,7 @@ describe("ConversationPanel", () => {
       renderConversationPanel();
       await screen.findAllByTestId("conversation-card");
 
+      await user.click(screen.getByTestId("older-conversations-filter-toggle"));
       await user.click(screen.getByTestId("delete-older-conversations"));
 
       const confirmButton = await screen.findByRole("button", {
@@ -1209,6 +1294,7 @@ describe("ConversationPanel", () => {
       });
       await screen.findAllByTestId("conversation-card");
 
+      await user.click(screen.getByTestId("older-conversations-filter-toggle"));
       await user.click(screen.getByTestId("delete-older-conversations"));
       await user.click(await screen.findByRole("button", { name: /confirm/i }));
 
@@ -1260,6 +1346,7 @@ describe("ConversationPanel", () => {
       });
       await screen.findAllByTestId("conversation-card");
 
+      await user.click(screen.getByTestId("older-conversations-filter-toggle"));
       await user.click(screen.getByTestId("delete-older-conversations"));
       await user.click(await screen.findByRole("button", { name: /confirm/i }));
 
@@ -1345,7 +1432,7 @@ describe("ConversationPanel", () => {
       expect(loadMore).toHaveTextContent("CONVERSATION$LOAD_MORE");
     });
 
-    it("hides the load-more link while older conversations are hidden", async () => {
+    it("hides the load-more link after older conversations are hidden from the filter dropdown", async () => {
       vi.spyOn(
         AgentServerConversationService,
         "searchConversations",
@@ -1368,13 +1455,23 @@ describe("ConversationPanel", () => {
       renderConversationPanel();
 
       await screen.findAllByTestId("conversation-card");
-      // Older conversations are present and collapsed → no load-more.
+      // Older conversations are visible by default, so load-more is visible.
+      expect(
+        screen.getByTestId("load-more-conversations"),
+      ).toBeInTheDocument();
+
+      // Hide older conversations via the filter dropdown.
+      const user = userEvent.setup();
+      await user.click(screen.getByTestId("older-conversations-filter-toggle"));
+      await user.click(screen.getByTestId("toggle-older-conversations"));
+
+      // Older conversations are hidden → no load-more.
       expect(
         screen.queryByTestId("load-more-conversations"),
       ).not.toBeInTheDocument();
 
-      // After expanding "show all", the link reappears.
-      const user = userEvent.setup();
+      // After showing older conversations again, the link reappears.
+      await user.click(screen.getByTestId("older-conversations-filter-toggle"));
       await user.click(screen.getByTestId("toggle-older-conversations"));
       expect(
         await screen.findByTestId("load-more-conversations"),
