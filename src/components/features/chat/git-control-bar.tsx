@@ -33,7 +33,6 @@ export function GitControlBar({ onSuggestionsClick }: GitControlBarProps) {
   const { conversationId } = useConversationId();
   const [isOpenRepoModalOpen, setIsOpenRepoModalOpen] = useState(false);
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
-  const [isFolderBrowserOpen, _setIsFolderBrowserOpen] = useState(false);
   const workspaceMenuContainerRef = useRef<HTMLDivElement>(null);
   const { addRecentRepository } = useHomeStore();
   const enqueuePendingMessage = useOptimisticUserMessageStore(
@@ -101,7 +100,7 @@ export function GitControlBar({ onSuggestionsClick }: GitControlBarProps) {
   const isConversationReady = !!conversation && webSocketStatus === "OPEN";
 
   useEffect(() => {
-    if (!isWorkspaceMenuOpen || isFolderBrowserOpen) return undefined;
+    if (!isWorkspaceMenuOpen) return undefined;
     const onMouseDown = (event: MouseEvent) => {
       if (
         workspaceMenuContainerRef.current &&
@@ -112,10 +111,10 @@ export function GitControlBar({ onSuggestionsClick }: GitControlBarProps) {
     };
     document.addEventListener("mousedown", onMouseDown);
     return () => document.removeEventListener("mousedown", onMouseDown);
-  }, [isWorkspaceMenuOpen, isFolderBrowserOpen]);
+  }, [isWorkspaceMenuOpen]);
 
   useEffect(() => {
-    if (!isWorkspaceMenuOpen || isFolderBrowserOpen) return undefined;
+    if (!isWorkspaceMenuOpen) return undefined;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsWorkspaceMenuOpen(false);
@@ -123,7 +122,7 @@ export function GitControlBar({ onSuggestionsClick }: GitControlBarProps) {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isWorkspaceMenuOpen, isFolderBrowserOpen]);
+  }, [isWorkspaceMenuOpen]);
 
   const handleLaunchRepository = (
     repository: GitRepository,
