@@ -4,72 +4,63 @@
  * server (workspace/.openhands/workspaces.json). All clients pointed at
  * the same agent-server see the same list.
  *
- * This service preflights workspace support through the SDK compatibility
- * helper so old agent-server backends fail with a typed version error instead
- * of surfacing a generic 404 from /api/workspaces.
+ * The SDK WorkspacesClient owns compatibility preflight behavior, so old
+ * agent-server backends surface the same typed version error without this
+ * frontend constructing a raw HttpClient.
  */
 import {
-  AgentServerFeatureRequirements,
-  assertAgentServerSupports,
+  WorkspacesClient,
+  type WorkspacesListResponse as SdkWorkspacesListResponse,
 } from "@openhands/typescript-client/clients";
-import { HttpClient } from "@openhands/typescript-client/client/http-client";
 
 import { LocalWorkspace, LocalWorkspaceParent } from "#/types/workspace";
 
-import { getAgentServerHttpClientOptions } from "../agent-server-client-options";
+import { getAgentServerClientOptions } from "../agent-server-client-options";
 
 export interface WorkspacesListResponse {
   workspaces: LocalWorkspace[];
   workspaceParents: LocalWorkspaceParent[];
 }
 
-async function supportedClient() {
-  const httpClient = new HttpClient(getAgentServerHttpClientOptions());
-  await assertAgentServerSupports(
-    httpClient,
-    AgentServerFeatureRequirements.workspaces,
-  );
-  return httpClient;
+function client() {
+  return new WorkspacesClient(getAgentServerClientOptions());
+}
+
+function toLocalWorkspacesResponse(
+  response: SdkWorkspacesListResponse,
+): WorkspacesListResponse {
+  return {
+    workspaces: response.workspaces.map(({ parentPath, ...workspace }) => ({
+      ...workspace,
+      ...(parentPath ? { parentPath } : {}),
+    })),
+    workspaceParents: response.workspaceParents,
+  };
 }
 
 class WorkspacesService {
   static async listWorkspaces(): Promise<WorkspacesListResponse> {
-    const client = await supportedClient();
-    const res = await client.get<WorkspacesListResponse>("/api/workspaces");
-    return res.data;
+    return toLocalWorkspacesResponse(await client().listWorkspaces());
   }
 
   static async addWorkspaces(
     items: LocalWorkspace[],
   ): Promise<WorkspacesListResponse> {
-    const client = await supportedClient();
-    const res = await client.post<WorkspacesListResponse>("/api/workspaces", {
-      workspaces: items,
-    });
-    return res.data;
+    return toLocalWorkspacesResponse(await client().addWorkspaces(items));
   }
 
   static async removeWorkspace(path: string): Promise<void> {
-    const client = await supportedClient();
-    await client.delete(`/api/workspaces?path=${encodeURIComponent(path)}`);
+    await client().deleteWorkspace(path);
   }
 
   static async addWorkspaceParents(
     items: LocalWorkspaceParent[],
   ): Promise<WorkspacesListResponse> {
-    const client = await supportedClient();
-    const res = await client.post<WorkspacesListResponse>(
-      "/api/workspaces/parents",
-      { parents: items },
-    );
-    return res.data;
+    return toLocalWorkspacesResponse(await client().addWorkspaceParents(items));
   }
 
   static async removeWorkspaceParent(path: string): Promise<void> {
-    const client = await supportedClient();
-    await client.delete(
-      `/api/workspaces/parents?path=${encodeURIComponent(path)}`,
-    );
+    await client().deleteWorkspaceParent(path);
   }
 }
 
