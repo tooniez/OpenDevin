@@ -63,7 +63,6 @@ export function DetailHeader({
       label: t(I18nKey.AUTOMATIONS$DELETE),
       icon: <TrashIcon className="size-4" />,
       onClick: onDelete,
-      variant: "danger" as const,
     },
   ];
 

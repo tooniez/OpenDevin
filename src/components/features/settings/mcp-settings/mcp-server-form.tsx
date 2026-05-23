@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Trash2 } from "lucide-react";
 import { I18nKey } from "#/i18n/declaration";
 import { SettingsInput } from "../settings-input";
 import { SettingsDropdownInput } from "../settings-dropdown-input";
@@ -28,6 +29,8 @@ interface MCPServerFormProps {
   existingServers?: MCPServerConfig[];
   onSubmit: (server: MCPServerConfig) => void;
   onCancel: () => void;
+  onDelete?: () => void;
+  isActionDisabled?: boolean;
 }
 
 export function MCPServerForm({
@@ -36,6 +39,8 @@ export function MCPServerForm({
   existingServers,
   onSubmit,
   onCancel,
+  onDelete,
+  isActionDisabled = false,
 }: MCPServerFormProps) {
   const { t } = useTranslation("openhands");
   const [serverType, setServerType] = React.useState<MCPServerType>(
@@ -410,19 +415,46 @@ export function MCPServerForm({
         </>
       )}
 
-      <div className="flex items-center justify-end gap-2 w-full">
-        <BrandButton
-          testId="cancel-button"
-          type="button"
-          variant="secondary"
-          onClick={onCancel}
-        >
-          {t(I18nKey.BUTTON$CANCEL)}
-        </BrandButton>
-        <BrandButton testId="submit-button" type="submit" variant="primary">
-          {mode === "add" && t(I18nKey.SETTINGS$MCP_ADD_SERVER)}
-          {mode === "edit" && t(I18nKey.SETTINGS$MCP_SAVE_SERVER)}
-        </BrandButton>
+      <div
+        className={cn(
+          "flex w-full items-center gap-2",
+          onDelete ? "justify-between" : "justify-end",
+        )}
+      >
+        {onDelete ? (
+          <BrandButton
+            testId="mcp-custom-editor-delete"
+            type="button"
+            variant="secondary"
+            onClick={onDelete}
+            isDisabled={isActionDisabled}
+            startContent={
+              <Trash2 aria-hidden className="size-4" strokeWidth={2} />
+            }
+          >
+            {t(I18nKey.BUTTON$DELETE)}
+          </BrandButton>
+        ) : null}
+        <div className="flex items-center gap-2">
+          <BrandButton
+            testId="cancel-button"
+            type="button"
+            variant="secondary"
+            onClick={onCancel}
+            isDisabled={isActionDisabled}
+          >
+            {t(I18nKey.BUTTON$CANCEL)}
+          </BrandButton>
+          <BrandButton
+            testId="submit-button"
+            type="submit"
+            variant="primary"
+            isDisabled={isActionDisabled}
+          >
+            {mode === "add" && t(I18nKey.SETTINGS$MCP_ADD_SERVER)}
+            {mode === "edit" && t(I18nKey.SETTINGS$MCP_SAVE_SERVER)}
+          </BrandButton>
+        </div>
       </div>
     </form>
   );

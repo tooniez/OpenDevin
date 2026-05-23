@@ -1,23 +1,31 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { I18nKey } from "#/i18n/declaration";
 import {
   useAutomations,
   useToggleAutomation,
   useDeleteAutomation,
+  useDispatchAutomation,
 } from "#/hooks/query/use-automations";
 import { useAutomationHealth } from "#/hooks/query/use-automation-health";
 import { useActiveBackend } from "#/contexts/active-backend-context";
 import { SearchInput } from "#/components/features/automations/search-input";
 import { AutomationGroup } from "#/components/features/automations/automation-group";
+import { AutomationViewToggle } from "#/components/features/automations/automation-view-toggle";
+import {
+  readStoredAutomationViewMode,
+  writeStoredAutomationViewMode,
+  type AutomationViewMode,
+} from "#/components/features/automations/automation-view-mode";
 import { AutomationCardSkeleton } from "#/components/features/automations/automation-card-skeleton";
 import { EmptyState } from "#/components/features/automations/empty-state";
 import { ErrorState } from "#/components/features/automations/error-state";
 import { BackendNotConfigured } from "#/components/features/automations/backend-not-configured";
 import { DeleteConfirmationModal } from "#/components/features/automations/delete-confirmation-modal";
 import { EditAutomationModal } from "#/components/features/automations/detail/edit-automation-modal";
-import { CreateInstructions } from "#/components/features/automations/create-instructions";
+import { AddAutomationModal } from "#/components/features/automations/add-automation-modal";
 import { RecommendedAutomationsLauncher } from "#/components/features/automations/recommended-automations-launcher";
+import { BrandButton } from "#/components/features/settings/brand-button";
 import type { Automation } from "#/types/automation";
 
 const PAGE_SIZE = 50;
@@ -25,12 +33,16 @@ const PAGE_SIZE = 50;
 export default function AutomationsList() {
   const { t } = useTranslation("openhands");
   const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState<AutomationViewMode>(() =>
+    readStoredAutomationViewMode(),
+  );
   const [limit, setLimit] = useState(PAGE_SIZE);
   const [deleteTarget, setDeleteTarget] = useState<{
     id: string;
     name: string;
   } | null>(null);
   const [editTarget, setEditTarget] = useState<Automation | null>(null);
+  const [isAddAutomationOpen, setIsAddAutomationOpen] = useState(false);
 
   const active = useActiveBackend();
   // Edit is a local-backend-only feature in MVP — cloud automations
@@ -53,6 +65,7 @@ export default function AutomationsList() {
   });
   const toggleMutation = useToggleAutomation();
   const deleteMutation = useDeleteAutomation();
+  const dispatchMutation = useDispatchAutomation();
 
   const filtered = useMemo(() => {
     if (!data?.automations) return [];
@@ -80,6 +93,10 @@ export default function AutomationsList() {
     toggleMutation.mutate({ id, enabled: !currentEnabled });
   };
 
+  const handleRunNow = (id: string) => {
+    dispatchMutation.mutate(id);
+  };
+
   const handleDeleteRequest = (id: string) => {
     const automation = data?.automations.find((a) => a.id === id);
     if (automation) {
@@ -100,6 +117,11 @@ export default function AutomationsList() {
       setDeleteTarget(null);
     }
   };
+
+  const handleViewModeChange = useCallback((view: AutomationViewMode) => {
+    setViewMode(view);
+    writeStoredAutomationViewMode(view);
+  }, []);
 
   const hasMore = data ? data.total > data.automations.length : false;
 
@@ -145,16 +167,33 @@ export default function AutomationsList() {
     <div className="min-h-full">
       <div className="p-6 max-w-4xl mx-auto">
         {/* Header */}
-        <h1 className="text-xl font-medium text-content">
-          {t(I18nKey.AUTOMATIONS$TITLE)}
-        </h1>
-        <p className="mt-1 text-sm text-muted">
-          {t(I18nKey.AUTOMATIONS$SUBTITLE)}
-        </p>
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h1 className="text-xl font-semibold text-content">
+              {t(I18nKey.AUTOMATIONS$TITLE)}
+            </h1>
+            <p className="mt-1 text-sm text-muted">
+              {t(I18nKey.AUTOMATIONS$SUBTITLE)}
+            </p>
+          </div>
+          <BrandButton
+            type="button"
+            variant="secondary"
+            testId="automations-add-automation"
+            className="shrink-0 whitespace-nowrap"
+            onClick={() => setIsAddAutomationOpen(true)}
+          >
+            {t(I18nKey.AUTOMATIONS$ADD_AUTOMATION)}
+          </BrandButton>
+        </div>
 
         {/* Search */}
-        <div className="mt-6">
+        <div className="mt-6 flex items-stretch gap-2">
           <SearchInput value={searchQuery} onChange={setSearchQuery} />
+          <AutomationViewToggle
+            view={viewMode}
+            onChange={handleViewModeChange}
+          />
         </div>
 
         {/* Content */}
@@ -175,14 +214,18 @@ export default function AutomationsList() {
 
           {!isLoading && !isError && data && data.automations.length > 0 && (
             <>
-              {/* Collapsible creation instructions at the top */}
-              <CreateInstructions collapsible />
-
               <AutomationGroup
                 title={t(I18nKey.AUTOMATIONS$ACTIVE)}
                 count={activeAutomations.length}
                 automations={activeAutomations}
+                view={viewMode}
                 onToggle={handleToggle}
+                onRunNow={handleRunNow}
+                runPendingId={
+                  dispatchMutation.isPending
+                    ? (dispatchMutation.variables ?? null)
+                    : null
+                }
                 onDelete={handleDeleteRequest}
                 onEdit={canEdit ? handleEditRequest : undefined}
               />
@@ -190,7 +233,14 @@ export default function AutomationsList() {
                 title={t(I18nKey.AUTOMATIONS$INACTIVE)}
                 count={inactive.length}
                 automations={inactive}
+                view={viewMode}
                 onToggle={handleToggle}
+                onRunNow={handleRunNow}
+                runPendingId={
+                  dispatchMutation.isPending
+                    ? (dispatchMutation.variables ?? null)
+                    : null
+                }
                 onDelete={handleDeleteRequest}
                 onEdit={canEdit ? handleEditRequest : undefined}
               />
@@ -228,6 +278,11 @@ export default function AutomationsList() {
             onClose={() => setEditTarget(null)}
           />
         )}
+
+        <AddAutomationModal
+          isOpen={isAddAutomationOpen}
+          onClose={() => setIsAddAutomationOpen(false)}
+        />
       </div>
     </div>
   );

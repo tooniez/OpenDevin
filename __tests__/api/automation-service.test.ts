@@ -11,15 +11,15 @@ import type { Backend } from "#/api/backend-registry/types";
 // Use vi.hoisted to define mocks that will be available during vi.mock hoisting
 const {
   mockGet,
-  mockPost,
   mockPatch,
+  mockPost,
   mockDelete,
   mockCallCloudProxy,
   mockGetActive,
 } = vi.hoisted(() => ({
   mockGet: vi.fn(),
-  mockPost: vi.fn(),
   mockPatch: vi.fn(),
+  mockPost: vi.fn(),
   mockDelete: vi.fn(),
   mockCallCloudProxy: vi.fn(),
   mockGetActive: vi.fn(),
@@ -101,7 +101,6 @@ describe("AutomationService", () => {
     mockGet.mockReset();
     mockPatch.mockReset();
     mockPost.mockReset();
-
     mockDelete.mockReset();
     mockCallCloudProxy.mockReset();
     // Default: active backend is local. Cloud-routing tests override this.
@@ -288,6 +287,26 @@ describe("AutomationService", () => {
     });
   });
 
+  describe("dispatchAutomation", () => {
+    it("posts to the dispatch endpoint for local backends", async () => {
+      const run = {
+        id: "run-1",
+        status: "PENDING",
+        conversation_id: null,
+        bash_command_id: null,
+        error_detail: null,
+        started_at: "2026-01-01T00:00:00Z",
+        completed_at: null,
+      };
+      mockPost.mockResolvedValue({ data: run });
+
+      const result = await AutomationService.dispatchAutomation("1");
+
+      expect(mockPost).toHaveBeenCalledWith("/api/automation/v1/1/dispatch");
+      expect(result).toEqual(run);
+    });
+  });
+
   // When the active backend is cloud the local axios instance must be
   // bypassed entirely; calls must route through `callCloudProxy` so the
   // bundled local agent-server forwards the request server-side to the
@@ -374,6 +393,29 @@ describe("AutomationService", () => {
         path: "/api/automation/v1/abc",
       });
       expect(mockDelete).not.toHaveBeenCalled();
+    });
+
+    it("dispatchAutomation forwards method POST via callCloudProxy", async () => {
+      const run = {
+        id: "run-1",
+        status: "PENDING",
+        conversation_id: null,
+        bash_command_id: null,
+        error_detail: null,
+        started_at: "2026-01-01T00:00:00Z",
+        completed_at: null,
+      };
+      mockCallCloudProxy.mockResolvedValue(run);
+
+      const result = await AutomationService.dispatchAutomation("abc");
+
+      expect(mockCallCloudProxy).toHaveBeenCalledWith({
+        backend: cloudBackend,
+        method: "POST",
+        path: "/api/automation/v1/abc/dispatch",
+      });
+      expect(mockPost).not.toHaveBeenCalled();
+      expect(result).toEqual(run);
     });
   });
 });
