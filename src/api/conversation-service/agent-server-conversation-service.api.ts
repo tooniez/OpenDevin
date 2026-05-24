@@ -10,6 +10,7 @@ import {
 } from "@openhands/typescript-client/clients";
 import { v4 as uuidv4 } from "uuid";
 import { Provider } from "#/types/settings";
+import type { ConversationRuntimeContext } from "#/api/conversation-file-upload.api";
 import { buildHttpBaseUrl } from "#/utils/websocket-url";
 import {
   buildConversationWorkingDir,
@@ -288,14 +289,45 @@ class AgentServerConversationService {
   static async sendMessage(
     conversationId: string,
     message: SendMessageRequest,
+    runtime?: ConversationRuntimeContext | null,
   ): Promise<SendMessageResponse> {
-    await new ConversationClient(getAgentServerClientOptions()).sendEvent(
-      conversationId,
-      message,
-      {
-        run: true,
-      },
-    );
+    const active = getActiveBackend().backend;
+    let conversationUrl = runtime?.conversationUrl ?? null;
+    let sessionApiKey = runtime?.sessionApiKey ?? null;
+
+    if (active.kind === "cloud") {
+      if (!conversationUrl || !sessionApiKey) {
+        const [conversation] = await batchGetCloudConversations([
+          conversationId,
+        ]);
+        conversationUrl = conversation?.conversation_url?.trim() ?? null;
+        sessionApiKey = conversation?.session_api_key?.trim() ?? null;
+      }
+
+      if (!conversationUrl || !sessionApiKey) {
+        throw new Error(
+          "Conversation sandbox is still starting. Wait for it to finish, then try again.",
+        );
+      }
+
+      await callCloudProxy({
+        backend: active,
+        method: "POST",
+        hostOverride: buildHttpBaseUrl(conversationUrl),
+        path: `/api/conversations/${conversationId}/events`,
+        body: { ...message, run: true },
+        authMode: "session-api-key",
+        sessionApiKey,
+      });
+
+      return message;
+    }
+
+    await new ConversationClient(
+      getAgentServerClientOptions({ conversationUrl, sessionApiKey }),
+    ).sendEvent(conversationId, message, {
+      run: true,
+    });
 
     return message;
   }

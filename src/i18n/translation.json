@@ -10234,7 +10234,7 @@
     "ca": "Envia el missatge"
   },
   "CHAT_INTERFACE$UPLOAD_IMAGES_AS_FILES": {
-    "en": "upload as file",
+    "en": "Upload as file",
     "ja": "ファイルとしてアップロード",
     "zh-CN": "作为文件上传",
     "zh-TW": "作為檔案上傳",
@@ -10249,6 +10249,23 @@
     "ca": "puja com a fitxer",
     "tr": "dosya olarak yükle",
     "uk": "завантажити як файл"
+  },
+  "CHAT_INTERFACE$DO_NOT_UPLOAD_AS_FILE": {
+    "en": "Do not upload as file",
+    "ja": "ファイルとしてアップロードしない",
+    "zh-CN": "不作为文件上传",
+    "zh-TW": "不作為檔案上傳",
+    "ko-KR": "파일로 업로드하지 않음",
+    "no": "ikke last opp som fil",
+    "ar": "عدم التحميل كملف",
+    "de": "Nicht als Datei hochladen",
+    "fr": "ne pas envoyer en tant que fichier",
+    "it": "non caricare come file",
+    "pt": "não enviar como arquivo",
+    "es": "no subir como archivo",
+    "ca": "no pujar com a fitxer",
+    "tr": "dosya olarak yükleme",
+    "uk": "не завантажувати як файл"
   },
   "CHAT_INTERFACE$TOOLTIP_UPLOAD_IMAGE": {
     "en": "Upload image",
@@ -10283,6 +10300,40 @@
     "de": "Datei hinzufügen",
     "uk": "Додати файл",
     "ca": "Afegeix un fitxer"
+  },
+  "CHAT_INTERFACE$ADD_FILES_AND_IMAGES": {
+    "en": "Add Files and Images",
+    "ja": "ファイルと画像を追加",
+    "zh-CN": "添加文件和图片",
+    "zh-TW": "新增檔案與圖片",
+    "ko-KR": "파일 및 이미지 추가",
+    "no": "Legg til filer og bilder",
+    "it": "Aggiungi file e immagini",
+    "pt": "Adicionar arquivos e imagens",
+    "es": "Añadir archivos e imágenes",
+    "ar": "إضافة ملفات وصور",
+    "fr": "Ajouter des fichiers et des images",
+    "tr": "Dosya ve görsel ekle",
+    "de": "Dateien und Bilder hinzufügen",
+    "uk": "Додати файли та зображення",
+    "ca": "Afegeix fitxers i imatges"
+  },
+  "CHAT_INTERFACE$PLUS_MENU": {
+    "en": "More actions",
+    "ja": "その他の操作",
+    "zh-CN": "更多操作",
+    "zh-TW": "更多操作",
+    "ko-KR": "추가 작업",
+    "no": "Flere handlinger",
+    "it": "Altre azioni",
+    "pt": "Mais ações",
+    "es": "Más acciones",
+    "ar": "المزيد من الإجراءات",
+    "fr": "Plus d'actions",
+    "tr": "Diğer işlemler",
+    "de": "Weitere Aktionen",
+    "uk": "Більше дій",
+    "ca": "Més accions"
   },
   "CHAT_INTERFACE$INITIAL_MESSAGE": {
     "en": "Hi! I'm OpenHands, an AI Software Engineer. What would you like to build with me today?",
