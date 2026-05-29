@@ -133,6 +133,9 @@ export function ConversationWebSocketProvider({
   const queryClient = useQueryClient();
   const addEvent = useEventStore((state) => state.addEvent);
   const addEvents = useEventStore((state) => state.addEvents);
+  const clearEventsForConversation = useEventStore(
+    (state) => state.clearEventsForConversation,
+  );
   const { setErrorMessage, removeErrorMessage, clearConnectionError } =
     useErrorMessageStore();
   const consumeMatchingPendingMessage = useOptimisticUserMessageStore(
@@ -218,6 +221,27 @@ export function ConversationWebSocketProvider({
   } = useConversationHistory(conversationId);
 
   const isLoadingHistoryMain = !!conversationId && isPreloadingHistory;
+
+  // Clear the (global, not conversation-scoped) event store when the active
+  // conversation changes, BEFORE the preloaded-history effect below re-seeds
+  // it. This MUST live here rather than in the route component: a parent's
+  // passive effect runs *after* this child's layout effects, so clearing from
+  // the route would wipe the freshly seeded history. On a conversation switch
+  // the history page is already cached, so `preloadedHistory` is available
+  // synchronously — without ordering the clear first, the user's already-echoed
+  // message gets seeded then immediately wiped, leaving only the `since`
+  // WebSocket resend (the agent's reply). Re-entering the same conversation is
+  // a no-op, so the store survives navigating away to Settings and back.
+  useLayoutEffect(() => {
+    const nextId = conversationId ?? null;
+    if (useEventStore.getState().loadedConversationId === nextId) {
+      return;
+    }
+    // Single atomic action: clears the previous conversation's events and
+    // records the new loaded id in one `set`, so no subscriber can observe a
+    // half-applied state (events gone but the old id still reported).
+    clearEventsForConversation(nextId);
+  }, [conversationId, clearEventsForConversation]);
 
   useLayoutEffect(() => {
     if (!preloadedHistory || preloadedHistory.events.length === 0) {
