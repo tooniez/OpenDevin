@@ -2,17 +2,22 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 # agent-canvas all-in-one entrypoint
 #
-# Starts three services:
+# Starts three services (plus an optional fourth):
 #   1. Agent Server   on port $AGENT_SERVER_PORT  (default 18000)
 #   2. Automation     on port $AUTOMATION_PORT     (default 18001)
 #   3. Static server  on port $PORT               (default 8000)
 #      Routes /api/automation/* → automation, /api/* → agent-server,
 #      and serves the frontend static build for everything else.
+#   4. (Optional) Public-mode static server on $PUBLIC_MODE_PORT
+#      Same frontend, but with --auth-required (no baked session key).
+#      Used by auth-mode E2E tests. Only started when PUBLIC_MODE_PORT is set.
 #
 # Environment variables:
 #   PORT                 – Unified entry point port (default: 8000)
 #   AGENT_SERVER_PORT    – Internal agent-server port (default: 18000)
 #   AUTOMATION_PORT      – Internal automation port (default: 18001)
+#   PUBLIC_MODE_PORT     – If set, starts a second static server on this port
+#                          with --auth-required (no session key injected)
 #   OH_SECRET_KEY        – Secret key for settings encryption (auto-generated
 #                          and persisted if not provided)
 #   OPENHANDS_AUTOMATION_API_KEY – Override automation backend auth key
@@ -23,6 +28,16 @@
 #                          Setting this enables local-mode auth so the session
 #                          API key is validated internally instead of against the
 #                          OpenHands cloud API.
+#   FILE_STORE             – Storage backend for automation tarballs (default: local).
+#                          Without this the automation backend may fall back to
+#                          S3/GCS which fails without cloud credentials.
+#   LOCAL_STORAGE_PATH     – Directory for local file storage (default: ~/.openhands/storage)
+#   AUTOMATION_BASE_URL    – Publicly-reachable base URL for the automation
+#                          service, used in callback URLs and injected into
+#                          sandboxes (default: http://127.0.0.1:$PORT).
+#                          Override in production when the external URL differs.
+#   AUTOMATION_WORKSPACE_BASE – Directory for automation run workspaces
+#                          (default: ~/.openhands/workspaces)
 #   Any agent-server or automation env vars are passed through.
 # ═══════════════════════════════════════════════════════════════════════════════
 set -uo pipefail
@@ -146,6 +161,23 @@ log "Starting automation server on port $AUTOMATION_PORT..."
 # Disable the automation's own frontend — agent-canvas provides the UI.
 export AUTOMATION_FRONTEND_DIR=""
 
+# File storage — use local filesystem unless the user has configured cloud
+# storage.  Without FILE_STORE=local the automation backend may fall back
+# to a cloud provider (S3/GCS) which will fail without credentials, causing
+# tarball-based presets (preset/prompt, preset/plugin) to silently error.
+export FILE_STORE="${FILE_STORE:-local}"
+export LOCAL_STORAGE_PATH="${LOCAL_STORAGE_PATH:-${OPENHANDS_DIR}/storage}"
+mkdir -p "$LOCAL_STORAGE_PATH"
+
+# AUTOMATION_BASE_URL — the publicly-reachable base URL for the automation
+# service.  Appended to callback URLs and injected into each sandbox as
+# AUTOMATION_API_URL.  Defaults to the unified ingress.
+export AUTOMATION_BASE_URL="${AUTOMATION_BASE_URL:-http://127.0.0.1:${PORT}}"
+
+# AUTOMATION_WORKSPACE_BASE — where automation runs unpack tarballs.
+export AUTOMATION_WORKSPACE_BASE="${AUTOMATION_WORKSPACE_BASE:-${OPENHANDS_DIR}/workspaces}"
+mkdir -p "$AUTOMATION_WORKSPACE_BASE"
+
 # Default to SQLite so the automation server works out of the box without
 # an external PostgreSQL instance. Users can override AUTOMATION_DB_URL to
 # point at a real Postgres for production deployments.
@@ -212,6 +244,31 @@ node /opt/agent-canvas/static-server.mjs \
   --route "/redoc=http://127.0.0.1:${AGENT_SERVER_PORT}" \
   --route "/openapi.json=http://127.0.0.1:${AGENT_SERVER_PORT}" &
 PIDS+=($!)
+
+# ── 5. (Optional) Public-mode static server ─────────────────────────────────
+# When PUBLIC_MODE_PORT is set, start a second static-server instance that
+# serves the same frontend WITHOUT injecting the session key into the HTML
+# (--auth-required). This is used by auth-mode E2E tests to verify the
+# ApiKeyEntryScreen gate, key rotation recovery, etc.
+if [ -n "${PUBLIC_MODE_PORT:-}" ]; then
+  log "Starting public-mode frontend on port $PUBLIC_MODE_PORT (--auth-required)..."
+  node /opt/agent-canvas/static-server.mjs \
+    --port "$PUBLIC_MODE_PORT" \
+    --host 0.0.0.0 \
+    --dir /opt/agent-canvas/frontend \
+    --auth-required \
+    --route "/api/automation=http://127.0.0.1:${AUTOMATION_PORT}" \
+    --route "/api=http://127.0.0.1:${AGENT_SERVER_PORT}" \
+    --route "/server_info=http://127.0.0.1:${AGENT_SERVER_PORT}" \
+    --route "/sockets=http://127.0.0.1:${AGENT_SERVER_PORT}" \
+    --route "/alive=http://127.0.0.1:${AGENT_SERVER_PORT}" \
+    --route "/health=http://127.0.0.1:${AGENT_SERVER_PORT}" \
+    --route "/ready=http://127.0.0.1:${AGENT_SERVER_PORT}" \
+    --route "/docs=http://127.0.0.1:${AGENT_SERVER_PORT}" \
+    --route "/redoc=http://127.0.0.1:${AGENT_SERVER_PORT}" \
+    --route "/openapi.json=http://127.0.0.1:${AGENT_SERVER_PORT}" &
+  PIDS+=($!)
+fi
 
 log "All services started. Unified entry point: http://0.0.0.0:${PORT}/"
 
