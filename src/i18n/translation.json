@@ -23001,13 +23001,55 @@
     "uk": "Пісочницю цієї розмови видалено. Наведена вище історія доступна лише для читання."
   },
   "CHAT_INTERFACE$ACP_RESUME_SANDBOX_DESCRIPTION": {
-    "en": "This conversation's sandbox was recycled. Resume to continue where you left off."
+    "en": "This conversation's sandbox was recycled. Resume to continue where you left off.",
+    "ja": "This conversation's sandbox was recycled. Resume to continue where you left off.",
+    "zh-CN": "This conversation's sandbox was recycled. Resume to continue where you left off.",
+    "zh-TW": "This conversation's sandbox was recycled. Resume to continue where you left off.",
+    "ko-KR": "This conversation's sandbox was recycled. Resume to continue where you left off.",
+    "no": "This conversation's sandbox was recycled. Resume to continue where you left off.",
+    "it": "This conversation's sandbox was recycled. Resume to continue where you left off.",
+    "pt": "This conversation's sandbox was recycled. Resume to continue where you left off.",
+    "es": "This conversation's sandbox was recycled. Resume to continue where you left off.",
+    "ar": "This conversation's sandbox was recycled. Resume to continue where you left off.",
+    "fr": "This conversation's sandbox was recycled. Resume to continue where you left off.",
+    "tr": "This conversation's sandbox was recycled. Resume to continue where you left off.",
+    "de": "This conversation's sandbox was recycled. Resume to continue where you left off.",
+    "uk": "This conversation's sandbox was recycled. Resume to continue where you left off.",
+    "ca": "This conversation's sandbox was recycled. Resume to continue where you left off."
   },
   "CHAT_INTERFACE$ACP_RESUME_BUTTON": {
-    "en": "Resume conversation"
+    "en": "Resume conversation",
+    "ja": "Resume conversation",
+    "zh-CN": "Resume conversation",
+    "zh-TW": "Resume conversation",
+    "ko-KR": "Resume conversation",
+    "no": "Resume conversation",
+    "it": "Resume conversation",
+    "pt": "Resume conversation",
+    "es": "Resume conversation",
+    "ar": "Resume conversation",
+    "fr": "Resume conversation",
+    "tr": "Resume conversation",
+    "de": "Resume conversation",
+    "uk": "Resume conversation",
+    "ca": "Resume conversation"
   },
   "CHAT_INTERFACE$ACP_RESUME_STARTING": {
-    "en": "Resuming…"
+    "en": "Resuming…",
+    "ja": "Resuming…",
+    "zh-CN": "Resuming…",
+    "zh-TW": "Resuming…",
+    "ko-KR": "Resuming…",
+    "no": "Resuming…",
+    "it": "Resuming…",
+    "pt": "Resuming…",
+    "es": "Resuming…",
+    "ar": "Resuming…",
+    "fr": "Resuming…",
+    "tr": "Resuming…",
+    "de": "Resuming…",
+    "uk": "Resuming…",
+    "ca": "Resuming…"
   },
   "CHAT_INTERFACE$ERROR_SANDBOX_TITLE": {
     "en": "Sandbox error",
@@ -29757,6 +29799,23 @@
     "ca": "Desat, però aquest backend encara no pot fer servir aquestes credencials: s'aplicaran quan admeti credencials de fitxer ACP.",
     "tr": "Kaydedildi, ancak bu arka uç bu kimlik bilgilerini henüz kullanamıyor — ACP dosya kimlik bilgilerini desteklediğinde geçerli olacaklar.",
     "uk": "Збережено, але цей бекенд поки не може використовувати ці облікові дані — вони застосуються, щойно він підтримає файлові облікові дані ACP."
+  },
+  "SETTINGS$UPGRADE_BUTTON": {
+    "en": "Upgrade",
+    "ja": "Upgrade",
+    "zh-CN": "Upgrade",
+    "zh-TW": "Upgrade",
+    "ko-KR": "Upgrade",
+    "no": "Upgrade",
+    "it": "Upgrade",
+    "pt": "Upgrade",
+    "es": "Upgrade",
+    "ar": "Upgrade",
+    "fr": "Upgrade",
+    "tr": "Upgrade",
+    "de": "Upgrade",
+    "uk": "Upgrade",
+    "ca": "Upgrade"
   },
   "SETTINGS$AGENT": {
     "en": "Agent",
