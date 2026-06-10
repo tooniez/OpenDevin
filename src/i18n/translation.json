@@ -1393,6 +1393,23 @@
     "uk": "Ви впевнені, що хочете видалити цей ключ?",
     "ca": "Esteu segur que voleu eliminar aquesta clau?"
   },
+  "SECRETS$EMPTY": {
+    "en": "No secrets saved yet.",
+    "ja": "まだシークレットが保存されていません。",
+    "zh-CN": "尚未保存任何密钥。",
+    "zh-TW": "尚未儲存任何密鑰。",
+    "ko-KR": "아직 저장된 시크릿이 없습니다.",
+    "no": "Ingen hemmeligheter lagret ennå.",
+    "it": "Nessun segreto salvato.",
+    "pt": "Nenhum segredo salvo ainda.",
+    "es": "Aún no hay secretos guardados.",
+    "ar": "لم يتم حفظ أي أسرار بعد.",
+    "fr": "Aucun secret enregistré pour le moment.",
+    "tr": "Henüz kaydedilmiş gizli anahtar yok.",
+    "de": "Noch keine Geheimnisse gespeichert.",
+    "uk": "Ще немає збережених секретів.",
+    "ca": "Encara no hi ha secrets desats."
+  },
   "SETTINGS$MCP_TITLE": {
     "en": "Model Context Protocol (MCP)",
     "ja": "モデルコンテキストプロトコル (MCP)",
@@ -16251,6 +16268,23 @@
     "uk": "Відключено. Будь ласка, оновіть сторінку",
     "ca": "Desconnectat. Actualitzeu la pàgina"
   },
+  "BROWSER$URL_PLACEHOLDER": {
+    "en": "No URL loaded",
+    "ja": "URLが読み込まれていません",
+    "zh-CN": "未加载 URL",
+    "zh-TW": "未載入 URL",
+    "ko-KR": "로드된 URL 없음",
+    "no": "Ingen URL lastet",
+    "it": "Nessun URL caricato",
+    "pt": "Nenhum URL carregado",
+    "es": "No hay URL cargada",
+    "ar": "لم يتم تحميل عنوان URL",
+    "fr": "Aucune URL chargée",
+    "tr": "URL yüklenmedi",
+    "de": "Keine URL geladen",
+    "uk": "URL не завантажено",
+    "ca": "No s'ha carregat cap URL"
+  },
   "BROWSER$NO_PAGE_LOADED": {
     "en": "No page loaded yet. Ask OpenHands to open a URL. Example: \"Open https://example.com\"",
     "ja": "まだページは読み込まれていません。OpenHandsにURLを開くよう指示してください。例: \"Open https://example.com\"",
@@ -22167,6 +22201,23 @@
     "uk": "Відкрити в новому вікні",
     "ca": "Obre en una finestra nova"
   },
+  "FILES$VSCODE": {
+    "en": "VSCode",
+    "ja": "VSCode",
+    "zh-CN": "VSCode",
+    "zh-TW": "VSCode",
+    "ko-KR": "VSCode",
+    "no": "VSCode",
+    "it": "VSCode",
+    "pt": "VSCode",
+    "es": "VSCode",
+    "ar": "VSCode",
+    "fr": "VSCode",
+    "tr": "VSCode",
+    "de": "VSCode",
+    "uk": "VSCode",
+    "ca": "VSCode"
+  },
   "FILES$REFRESH": {
     "en": "Refresh files",
     "ja": "ファイルを更新",
@@ -23340,6 +23391,23 @@
     "uk": "Консоль",
     "ca": "Consola"
   },
+  "TERMINAL$NO_OUTPUT": {
+    "en": "No terminal output yet. Commands run by the agent will appear here.",
+    "ja": "ターミナル出力はまだありません。エージェントが実行したコマンドがここに表示されます。",
+    "zh-CN": "尚无终端输出。智能体运行的命令将显示在此处。",
+    "zh-TW": "尚無終端機輸出。代理執行的指令將顯示於此。",
+    "ko-KR": "아직 터미널 출력이 없습니다. 에이전트가 실행한 명령이 여기에 표시됩니다.",
+    "no": "Ingen terminalutdata ennå. Kommandoer kjørt av agenten vises her.",
+    "it": "Nessun output del terminale. I comandi eseguiti dall'agente appariranno qui.",
+    "pt": "Ainda não há saída no terminal. Os comandos executados pelo agente aparecerão aqui.",
+    "es": "Aún no hay salida en la terminal. Los comandos ejecutados por el agente aparecerán aquí.",
+    "ar": "لا يوجد إخراج في الطرفية بعد. ستظهر الأوامر التي ينفذها الوكيل هنا.",
+    "de": "Noch keine Terminalausgabe. Vom Agenten ausgeführte Befehle erscheinen hier.",
+    "fr": "Aucune sortie terminal pour le moment. Les commandes exécutées par l'agent s'afficheront ici.",
+    "tr": "Henüz terminal çıktısı yok. Ajanın çalıştırdığı komutlar burada görünecek.",
+    "uk": "Виводу термінала ще немає. Команди, які виконує агент, з’являться тут.",
+    "ca": "Encara no hi ha sortida de terminal. Les ordres executades per l'agent apareixeran aquí."
+  },
   "MICROAGENT$DEFINITION": {
     "en": "Microagents are specialized prompts that enhance OpenHands with domain-specific knowledge. They provide expert guidance, automate common tasks, and ensure consistent practices across projects.",
     "ja": "マイクロエージェントは、OpenHandsにドメイン固有の知識を追加するための専門的なプロンプトです。専門的なガイダンスを提供し、一般的なタスクを自動化し、プロジェクト全体で一貫した実践を保証します。",
@@ -24053,6 +24121,23 @@
     "tr": "Kullanılabilir yetenekleri göster",
     "uk": "Показати доступні навички",
     "ca": "Mostra les habilitats disponibles"
+  },
+  "CONVERSATION$UNAVAILABLE_FOR_ARCHIVES": {
+    "en": "Unavailable for Archives",
+    "ja": "アーカイブでは利用できません",
+    "zh-CN": "归档对话不可用",
+    "zh-TW": "封存對話不可用",
+    "ko-KR": "보관된 대화에서는 사용할 수 없습니다",
+    "no": "Utilgjengelig for arkiver",
+    "ar": "غير متاح للمحادثات المؤرشفة",
+    "de": "Für Archive nicht verfügbar",
+    "fr": "Indisponible pour les archives",
+    "it": "Non disponibile per le conversazioni archiviate",
+    "pt": "Indisponível para arquivos",
+    "es": "No disponible para archivos",
+    "tr": "Arşivler için kullanılamaz",
+    "uk": "Недоступно для архівів",
+    "ca": "No disponible per a arxius"
   },
   "SKILLS_MODAL$TITLE": {
     "en": "Available Skills",
@@ -29087,21 +29172,21 @@
     "ca": "Biblioteca"
   },
   "NAV$CUSTOMIZE": {
-    "en": "Customize:",
-    "ja": "カスタマイズ:",
-    "zh-CN": "自定义:",
-    "zh-TW": "自訂:",
-    "ko-KR": "사용자 지정:",
-    "no": "Tilpass:",
-    "ar": "تخصيص:",
-    "de": "Anpassen:",
-    "fr": "Personnaliser :",
-    "it": "Personalizza:",
-    "pt": "Personalizar:",
-    "es": "Personalizar:",
-    "tr": "Özelleştir:",
-    "uk": "Налаштувати:",
-    "ca": "Personalitza:"
+    "en": "Customize",
+    "ja": "カスタマイズ",
+    "zh-CN": "自定义",
+    "zh-TW": "自訂",
+    "ko-KR": "사용자 지정",
+    "no": "Tilpass",
+    "ar": "تخصيص",
+    "de": "Anpassen",
+    "fr": "Personnaliser",
+    "it": "Personalizza",
+    "pt": "Personalizar",
+    "es": "Personalizar",
+    "tr": "Özelleştir",
+    "uk": "Налаштувати",
+    "ca": "Personalitza"
   },
   "NAV$EXTENSIONS": {
     "en": "Extensions",
