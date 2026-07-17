@@ -5,6 +5,7 @@ import { useSaveSettings } from "#/hooks/mutation/use-save-settings";
 import { useSettings } from "#/hooks/query/use-settings";
 import { AvailableLanguages } from "#/i18n";
 import { DEFAULT_SETTINGS } from "#/services/settings";
+import { setTelemetryConsent } from "#/services/telemetry";
 import { BrandButton } from "#/components/features/settings/brand-button";
 import { SettingsSwitch } from "#/components/features/settings/settings-switch";
 import { SettingsInput } from "#/components/features/settings/settings-input";
@@ -69,6 +70,7 @@ export function AppSettingsScreen() {
       {
         onSuccess: () => {
           handleCaptureConsent(posthog, enableAnalytics);
+          void setTelemetryConsent(enableAnalytics ? "granted" : "denied");
           displaySuccessToast(t(I18nKey.SETTINGS$SAVED));
         },
         onError: (error) => {
