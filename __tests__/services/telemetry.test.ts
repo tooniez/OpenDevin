@@ -18,6 +18,7 @@ const mockPosthog = {
   get_property: vi.fn((property: string) =>
     property === "$user_id" ? identifiedUserId : undefined,
   ),
+  get_distinct_id: vi.fn(() => "ph-test-distinct-id"),
   reset: vi.fn(() => {
     identifiedUserId = undefined;
   }),
@@ -35,6 +36,7 @@ import {
   clearPendingCloudTelemetryConsent,
   configureTelemetry,
   getTelemetryConsent,
+  getTelemetryDistinctId,
   getPendingCloudTelemetryConsent,
   initializePostHogClient,
   setTelemetryConsent,
@@ -68,6 +70,7 @@ describe("Telemetry Service", () => {
     vi.clearAllMocks();
     identifiedUserId = undefined;
     mockPosthog.has_opted_out_capturing.mockReturnValue(false);
+    mockPosthog.get_distinct_id.mockReturnValue("ph-test-distinct-id");
     setTelemetryBackendContext({});
   });
 
@@ -377,6 +380,20 @@ describe("Telemetry Service", () => {
 
       // Should NOT call opt_out_capturing when consent is granted
       expect(mockPosthog.opt_out_capturing).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("getTelemetryDistinctId", () => {
+    it("returns null when consent is not granted", async () => {
+      await expect(getTelemetryDistinctId()).resolves.toBeNull();
+    });
+
+    it("returns the PostHog distinct ID when consent is granted", async () => {
+      await setTelemetryConsent("granted");
+
+      await expect(getTelemetryDistinctId()).resolves.toBe(
+        "ph-test-distinct-id",
+      );
     });
   });
 
