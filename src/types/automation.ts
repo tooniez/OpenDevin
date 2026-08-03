@@ -93,3 +93,20 @@ export interface AutomationRunsResponse {
   runs: AutomationRun[];
   total: number;
 }
+
+export type ActivityLogExportFormat = "json" | "csv";
+
+/** Client-built Activity Log export row (from list runs + automation detail). */
+export interface AutomationRunExportRow {
+  run_id: string;
+  automation_id: string;
+  automation_name: string;
+  trigger: AutomationTrigger | Record<string, unknown>;
+  start_time: string | null;
+  end_time: string | null;
+  duration_seconds: number | null;
+  status: AutomationRunStatus;
+  conversation_id: string | null;
+  conversation_url: string | null;
+  error: string | null;
+}
