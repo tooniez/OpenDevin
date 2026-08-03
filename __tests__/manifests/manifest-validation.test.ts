@@ -18,6 +18,22 @@ describe("validateSetupEntry", () => {
     expect(result).toEqual({ valid: true, errors: [] });
   });
 
+  it("admits a direct entry carrying a fallback-conversation message", () => {
+    // Arrange — the seed for the conversation offered when the deployment
+    // cannot run the direct path.
+    const entry = createSetupEntry({
+      setup: createSetup({
+        message: "Set this up in a conversation instead.",
+      }),
+    });
+
+    // Act
+    const result = validateSetupEntry(entry);
+
+    // Assert
+    expect(result).toEqual({ valid: true, errors: [] });
+  });
+
   // Each case is a separate invariant the host enforces on data authored in
   // another repository. A manifest that trips any of them must not render.
   it.each([
@@ -32,6 +48,12 @@ describe("validateSetupEntry", () => {
     [
       "a placeholder namespace the host does not expose",
       { setup: createSetup({ prompt: "Use {{secrets.githubToken}}." }) },
+    ],
+    [
+      // A direct entry may carry a fallback-conversation seed, but it is still
+      // copy, held to the same injection rules as an assisted message.
+      "markup inside a direct entry's fallback message",
+      { setup: createSetup({ message: "<img src=x onerror=alert(1)>" }) },
     ],
     [
       // The host reads one trigger kind to build the request, so a second one
