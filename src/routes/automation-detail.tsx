@@ -217,9 +217,6 @@ export default function AutomationDetail() {
     trackAutomationExported({ backendKind: active.backend.kind });
   };
 
-  // Edit is a local-backend-only feature in MVP — cloud automations
-  // are managed elsewhere and we don't yet surface them here.
-  const canEdit = active.backend.kind === "local";
   // Write actions on a specific automation: manage OR creator (escape hatch).
   const canManage = hasManagePermission || isOwner;
   // Non-creators may turn an automation off but not back on.
@@ -233,7 +230,7 @@ export default function AutomationDetail() {
           <DetailHeader
             automation={automation}
             onToggle={handleToggle}
-            onEdit={canEdit ? () => setShowEditModal(true) : undefined}
+            onEdit={() => setShowEditModal(true)}
             onDelete={() => setShowDeleteModal(true)}
             onExport={handleExport}
             onDownloadTarball={() =>
@@ -263,7 +260,7 @@ export default function AutomationDetail() {
             onConfirm={handleDelete}
             onCancel={() => setShowDeleteModal(false)}
           />
-          {canEdit && (
+          {showEditModal && (
             <EditAutomationModal
               automation={automation}
               isOpen={showEditModal}
