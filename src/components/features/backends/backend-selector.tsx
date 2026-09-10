@@ -426,8 +426,8 @@ export function BackendSelector({
             {active.backend.kind === "cloud" ? (
               <a
                 href={`${active.backend.host.replace(/\/+$/, "")}/settings${cloudSettingsOrgQuery}`}
-                target="_blank"
-                rel="noopener noreferrer"
+                target={isLockedToCloud ? undefined : "_blank"}
+                rel={isLockedToCloud ? undefined : "noopener noreferrer"}
                 data-testid="backend-selector-settings-link"
                 aria-label={settingsLabel}
                 className={cn(
