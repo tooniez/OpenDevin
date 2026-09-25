@@ -1459,7 +1459,9 @@ describe("Conversation websocket behavior", () => {
     ).toHaveLength(1);
     expect(consumeMatchingPendingMessage).not.toHaveBeenCalled();
     expect(useGoalStore.getState().statusByConversation).toEqual({});
-    expect(invalidateQueries).toHaveBeenCalledWith(
+    // Without a conversation identity there is nothing to invalidate: the
+    // handler is skipped outright rather than aimed at a placeholder key.
+    expect(invalidateQueries).not.toHaveBeenCalledWith(
       { queryKey: ["file_changes", "test-conversation-id"] },
       { cancelRefetch: false },
     );
@@ -2165,7 +2167,9 @@ describe("Conversation websocket behavior", () => {
       planningOptions().onMessage?.({ data: "not-json" } as MessageEvent),
     );
 
-    expect(invalidateQueries).toHaveBeenCalledWith(
+    // Without a conversation identity there is nothing to invalidate: the
+    // handler is skipped outright rather than aimed at a placeholder key.
+    expect(invalidateQueries).not.toHaveBeenCalledWith(
       { queryKey: ["file_changes", "test-conversation-id"] },
       { cancelRefetch: false },
     );
